@@ -4,12 +4,13 @@ import type { Page } from "../App";
 import type { Lang } from "../data.ts";
 import { t, universities, courses, recentActivity } from "../data.ts";
 import Navbar from "../Components/Navbar";
+
 interface Props {
   dark: boolean;
   lang: Lang;
   setDark: Dispatch<SetStateAction<boolean>>;
   setLang: Dispatch<SetStateAction<Lang>>;
-  setPage: Dispatch<SetStateAction<Page>>;
+  setPage?: Dispatch<SetStateAction<Page>>;
 }
 
 type AdminTab =

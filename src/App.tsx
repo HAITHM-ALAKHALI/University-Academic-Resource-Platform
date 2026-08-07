@@ -1,52 +1,68 @@
-import { useState } from 'react'
-import LandingPage from './pages/LandingPage'
-import CourseDetailPage from './pages/CourseDetailPage'
-import AdminDashboard from './pages/AdminDashboard'
-import { courses, type Lang } from './data'
+import { useState } from "react";
+import StudentApp from "./Components/StudentApp";
+import AdminApp from "./Components/AdminApp";
+import LandingPage from "./pages/LandingPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import { courses, type Lang } from "./data";
 
-export type Page = 'landing' | 'course' | 'admin'
+export type Page = "landing" | "course" | "admin" | "app";
 
 export default function App() {
-  const [page, setPage] = useState<Page>('landing')
-  const [courseId, setCourseId] = useState<string>('cs301')
-  const [dark, setDark] = useState(false)
-  const [lang, setLang] = useState<Lang>('en')
+  const [mode, setMode] = useState<"student" | "admin" | "pages">("student");
+  const [page, setPage] = useState<Page>("landing");
+  const [dark, setDark] = useState(true);
+  const [lang, setLang] = useState<Lang>("ar");
+  const [selectedCourseId, setSelectedCourseId] = useState<string>("c1");
 
-  const openCourse = (id: string) => {
-    setCourseId(id)
-    setPage('course')
+  const selectedCourse = courses.find((c) => c.id === selectedCourseId) || courses[0];
+
+  const handleOpenCourse = (id: string) => {
+    setSelectedCourseId(id);
+    setPage("course");
+    setMode("pages");
+  };
+
+  if (mode === "student") {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)" }}>
+        <StudentApp onSwitchAdmin={() => setMode("admin")} />
+      </div>
+    );
   }
 
-  const course = courses.find(c => c.id === courseId) ?? courses[0]
+  if (mode === "admin") {
+    return (
+      <div style={{ minHeight: "100vh", background: "var(--bg-base)" }}>
+        <AdminApp onSwitchStudent={() => setMode("student")} />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={dark ? 'dark' : ''}
-      dir={lang === 'ar' ? 'rtl' : 'ltr'}
-      style={{ minHeight: '100vh', backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
-    >
-      {page === 'landing' && (
+    <div style={{ minHeight: "100vh", background: dark ? "var(--bg-base)" : "#F8FAFC" }}>
+      {page === "landing" && (
         <LandingPage
           dark={dark}
           lang={lang}
           setDark={setDark}
           setLang={setLang}
           setPage={setPage}
-          openCourse={openCourse}
+          openCourse={handleOpenCourse}
         />
       )}
-      {page === 'course' && (
+      {page === "course" && (
         <CourseDetailPage
           dark={dark}
           lang={lang}
           setDark={setDark}
           setLang={setLang}
           setPage={setPage}
-          course={course}
-          openCourse={openCourse}
+          course={selectedCourse}
+          openCourse={handleOpenCourse}
         />
       )}
-      {page === 'admin' && (
+      {page === "admin" && (
         <AdminDashboard
           dark={dark}
           lang={lang}
@@ -56,5 +72,6 @@ export default function App() {
         />
       )}
     </div>
-  )
+  );
 }
+
