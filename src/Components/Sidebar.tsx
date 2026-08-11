@@ -3,11 +3,11 @@ import type { NavState } from './StudentApp'
 
 const navItems = [
   { icon: '⊞',  label: 'الرئيسية',         screen: 'home'         },
-  { icon: '🎓', label: 'تصفح الجامعات',     screen: 'universities' },
-  { icon: '⭐', label: 'المفضلة',            screen: 'home'         },
-  { icon: '🕐', label: 'آخر الملفات',       screen: 'home'         },
-  { icon: '🔔', label: 'الإشعارات',          screen: 'home'         },
-  { icon: '🌐', label: 'المصادر الخارجية',  screen: 'home'         },
+  // { icon: '🎓', label: 'تصفح الجامعات',     screen: 'universities' },
+  // { icon: '⭐', label: 'المفضلة',            screen: 'home'         },
+  // { icon: '🕐', label: 'آخر الملفات',       screen: 'home'         },
+  // { icon: '🔔', label: 'الإشعارات',          screen: 'home'         },
+  // { icon: '🌐', label: 'المصادر الخارجية',  screen: 'home'         },
   { icon: 'ℹ',  label: 'حول الموقع',        screen: 'home'         },
 ]
 

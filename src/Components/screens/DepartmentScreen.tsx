@@ -2,7 +2,7 @@ import { useState } from 'react'
 import type { NavState } from '../StudentApp'
 import TopBar from '../TopBar'
 
-const departments = [
+export const departments = [
   { id: 1, name: 'علوم حاسوب', nameEn: 'CS', color: '#3B82F6', icon: '</>', desc: 'Computer Science' },
   { id: 2, name: 'تقنية معلومات', nameEn: 'IT', color: '#8B5CF6', icon: '🖥', desc: 'Information Technology' },
   { id: 3, name: 'أمن سيبراني', nameEn: 'CYS', color: '#EC4899', icon: '🔐', desc: 'Cyber Security' },
@@ -21,8 +21,8 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
     <div className="fade-in">
       <TopBar breadcrumbs={[
         { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
-        { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
+        // { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
+        // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
         { label: nav.college?.name ?? '' }
       ]} title={nav.college?.name} subtitle="اختر القسم للمتابعة" />
       <div style={{ padding: '32px 32px 48px' }}>

@@ -15,9 +15,11 @@ export default function LevelScreen({ nav, navigate }: Props) {
     <div className="fade-in">
       <TopBar breadcrumbs={[
         { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
-        { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
-        { label: nav.college?.name ?? '', onClick: () => navigate({ ...nav, screen: 'departments' }) },
+        // { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
+                { label: 'التخصصات', onClick: () => navigate({ screen: 'departments' }) },
+
+        // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
+        // { label: nav.college?.name ?? '', onClick: () => navigate({ ...nav, screen: 'departments' }) },
         { label: nav.department?.name ?? '' }
       ]} title={nav.department?.name} subtitle="اختر السنة الدراسية" />
       <div style={{ padding: '32px 32px 48px' }}>
