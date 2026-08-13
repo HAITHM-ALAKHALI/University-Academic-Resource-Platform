@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import type { NavState } from './StudentApp'
 
 const navItems = [
@@ -11,11 +11,11 @@ const navItems = [
   { icon: 'ℹ',  label: 'حول الموقع',        screen: 'home'         },
 ]
 
-const recentCourses = [
-  { name: 'برمجة 1',         color: '#3B82F6' },
-  { name: 'هياكل البيانات',  color: '#8B5CF6' },
-  { name: 'رياضيات',         color: '#06B6D4' },
-]
+// const recentCourses = [
+//   { name: 'برمجة 1',         color: '#3B82F6' },
+//   { name: 'هياكل البيانات',  color: '#8B5CF6' },
+//   { name: 'رياضيات',         color: '#06B6D4' },
+// ]
 
 interface Props {
   nav: NavState
@@ -26,7 +26,7 @@ interface Props {
 }
 
 export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAdmin }: Props) {
-  const [showRecent, setShowRecent] = useState(true)
+  // const [showRecent, setShowRecent] = useState(true)
 
   const isActive = (screen: string) =>
     (screen === 'home' && nav.screen === 'home') ||
@@ -113,7 +113,7 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
         })}
 
         {/* Recent courses section */}
-        {!collapsed && (
+        {/* {!collapsed && (
           <div style={{ padding: '14px 18px 6px' }}>
             <button
               onClick={() => setShowRecent(!showRecent)}
@@ -142,7 +142,7 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
               </div>
             )}
           </div>
-        )}
+        )} */}
       </nav>
 
       {/* Switch to Admin */}
@@ -160,7 +160,7 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
       )}
 
       {/* User */}
-      <div style={{
+      {/* <div style={{
         padding: collapsed ? '14px 0' : '14px 16px',
         borderTop: !collapsed ? 'none' : '1px solid var(--border-subtle)',
         display: 'flex', alignItems: 'center', gap: 10,
@@ -183,7 +183,7 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
             }}>⏻</button>
           </>
         )}
-      </div>
+      </div> */}
     </aside>
   )
 }

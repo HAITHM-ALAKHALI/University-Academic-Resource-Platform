@@ -65,18 +65,18 @@ const popularCourses = [
   },
 ];
 
-const recentFiles = [
-  {
-    name: "محاضرة 4 - التكرار",
-    type: "PDF",
-    course: "برمجة 1",
-    time: "5 دقائق",
-  },
-  { name: "مذكرة - 4I", type: "PDF", course: "هياكل البيانات", time: "ساعتان" },
-  { name: "نبذ الشركات", type: "PDF", course: "قواعد البيانات", time: "يوم" },
-  { name: "Date Science", type: "PDF", course: "علم البيانات", time: "يوم" },
-  { name: "يوجد تسبة 2", type: "PDF", course: "رياضيات", time: "يوم" },
-];
+// const recentFiles = [
+//   {
+//     name: "محاضرة 4 - التكرار",
+//     type: "PDF",
+//     course: "برمجة 1",
+//     time: "5 دقائق",
+//   },
+//   { name: "مذكرة - 4I", type: "PDF", course: "هياكل البيانات", time: "ساعتان" },
+//   { name: "نبذ الشركات", type: "PDF", course: "قواعد البيانات", time: "يوم" },
+//   { name: "Date Science", type: "PDF", course: "علم البيانات", time: "يوم" },
+//   { name: "يوجد تسبة 2", type: "PDF", course: "رياضيات", time: "يوم" },
+// ];
 
 interface Props {
   navigate: (s: NavState) => void;
@@ -92,7 +92,7 @@ export default function HomeScreen({ navigate }: Props) {
       />
       <div style={{ padding: "32px 32px 48px" }}>
         <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 28 }}
+          // style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 28 }}
         >
           {/* Main Left Column (Departments + Popular Courses) */}
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
@@ -348,9 +348,9 @@ export default function HomeScreen({ navigate }: Props) {
           </div>
 
           {/* Right column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          {/* <div style={{ display: "flex", flexDirection: "column", gap: 20 }}> */}
             {/* Start exploring */}
-            <div
+            {/* <div
               style={{
                 background:
                   "linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))",
@@ -397,10 +397,10 @@ export default function HomeScreen({ navigate }: Props) {
               >
                 اختر القسم ←
               </button>
-            </div>
+            </div> */}
 
             {/* Recent files */}
-            <div
+            {/* <div
               style={{
                 background: "var(--bg-card)",
                 border: "1px solid var(--border-subtle)",
@@ -469,8 +469,8 @@ export default function HomeScreen({ navigate }: Props) {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </div>
       </div>
     </div>

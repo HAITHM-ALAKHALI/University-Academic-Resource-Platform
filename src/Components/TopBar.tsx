@@ -52,7 +52,7 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
   const [showNotifs, setShowNotifs] = useState(false);
   // const [showProfile, setShowProfile] = useState(false);
   const [notifList, setNotifList] = useState(notifs);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
 
   const unread = notifList.filter((n) => !n.read).length;
 
@@ -119,7 +119,7 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
           onClick={(e) => e.stopPropagation()}
         >
           {/* Search */}
-          <div style={{ position: "relative" }}>
+          {/*<div style={{ position: "relative" }}>
             <span
               style={{
                 position: "absolute",
@@ -164,7 +164,7 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
             >
               Ctrl K
             </span>
-          </div>
+          </div>*/}
 
           {/* Notifications */}
           <div style={{ position: "relative" }}>
