@@ -54,7 +54,7 @@ export default function StudentNavbar({
             </div>
             <div className="flex flex-col">
               <span className="font-['Outfit'] text-lg font-extrabold tracking-tight text-[var(--text-primary)]">
-                UniHub
+                دراستي
               </span>
               <span className="text-[10px] font-semibold text-blue-400">
                 بوابة الموارد الأكاديمية
@@ -216,7 +216,7 @@ export default function StudentNavbar({
                 </div>
                 <div>
                   <h3 className="m-0 text-lg font-bold text-[var(--text-primary)]">
-                    منصة UniHub الأكاديمية
+                    منصة دراستي الأكاديمية
                   </h3>
                   <p className="m-0 text-xs font-medium text-blue-400">
                     بوابة الموارد والمناهج الجامعية
@@ -233,7 +233,7 @@ export default function StudentNavbar({
             </div>
 
             <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">
-              منصة UniHub هي بيئة تعليمية أكاديمية متكاملة مصممة خصيصاً للطلاب
+              منصة دراستي هي بيئة تعليمية أكاديمية متكاملة مصممة خصيصاً للطلاب
               والأكاديميين لتسهيل تصفح، مشاركة، وتحميل المناهج الدراسية،
               المحاضرات، المراجع، ونماذج الاختبارات بأسلوب عصري وسلس.
             </p>

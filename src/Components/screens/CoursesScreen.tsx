@@ -83,7 +83,7 @@ export default function CoursesScreen({ nav, navigate }: Props) {
       ? [
           {
             label: nav.level.name,
-            onClick: () => navigate({ ...nav, screen: "semesters" as const }),
+            onClick: () => navigate({ ...nav, screen: "levels" as const }),
           },
         ]
       : []),

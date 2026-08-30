@@ -140,7 +140,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                   color: "var(--text-primary)",
                 }}
               >
-                UniHub
+                دراستي
               </div>
               <div
                 style={{
@@ -286,7 +286,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                 marginBottom: 2,
               }}
             >
-              UniHub / Admin
+              دراستي / Admin
             </div>
             <h1
               style={{
@@ -1950,11 +1950,11 @@ function AdminSettings() {
             >
               إعدادات عامة
             </h3>
-            <Field label="اسم المنصة" value="UniHub" />
+            <Field label="اسم المنصة" value="دراستي" />
             <Field label="وصف المنصة" value="منصة موارد أكاديمية شاملة" />
             <Field
               label="البريد الإلكتروني الرسمي"
-              value="admin@unihub.edu.eg"
+              value="admin@دراستي.edu.eg"
               type="email"
             />
             <Field label="رقم الهاتف" value="+20 123 456 7890" />
@@ -2280,7 +2280,7 @@ function AdminSettings() {
             <Field label="منفذ SMTP" value="587" />
             <Field
               label="البريد المُرسِل"
-              value="noreply@unihub.edu.eg"
+              value="noreply@دراستي.edu.eg"
               type="email"
             />
             <Field

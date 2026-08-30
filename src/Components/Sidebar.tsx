@@ -51,7 +51,7 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
               boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
             }}>🎓</div>
             <div>
-              <div style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 16, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>UniHub</div>
+              <div style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 16, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>دراستي</div>
               <div style={{ fontSize: 10, color: 'var(--accent-blue)', fontWeight: 600 }}>بوابة الموارد الأكاديمية</div>
             </div>
           </div>

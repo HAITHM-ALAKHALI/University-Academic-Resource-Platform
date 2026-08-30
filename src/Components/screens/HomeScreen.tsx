@@ -79,7 +79,7 @@ export default function HomeScreen({ navigate }: Props) {
     <div className="w-full">
       <TopBar
         breadcrumbs={[{ label: "الرئيسية" }]}
-        title="مرحباً بك في UniHub 👋"
+        title="مرحباً بك في دراستي 👋"
         subtitle="جميع المواد والملفات الدراسية في مكان منظم وسهل الوصول"
       />
       <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-10">
@@ -151,8 +151,8 @@ export default function HomeScreen({ navigate }: Props) {
                 }
                 className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
               >
-                <div
-                  className="absolute -top-6 -right-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-15"
+                 <div
+                  className="absolute -top-12 -left-12 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40"
                   style={{ background: dept.color }}
                 />
 
@@ -278,10 +278,10 @@ export default function HomeScreen({ navigate }: Props) {
 
                   {/* University & Department Tags */}
                   <div className="flex flex-wrap items-center gap-2 mb-4">
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
+                    {/* <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
                       <span>🏛️</span>
                       <span>{course.uni}</span>
-                    </span>
+                    </span> */}
                     <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
                       <span>📂</span>
                       <span>{course.dept}</span>

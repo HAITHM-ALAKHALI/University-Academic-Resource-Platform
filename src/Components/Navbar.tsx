@@ -49,7 +49,7 @@ export default function Navbar({
           </div>
           <div className="flex flex-col">
             <span className="font-['Outfit'] text-lg font-extrabold tracking-tight">
-              UniHub
+              دراستي
             </span>
             <span className="text-[10px] font-medium text-slate-400">
               {tx.hero.badge || "Academic Platform"}
