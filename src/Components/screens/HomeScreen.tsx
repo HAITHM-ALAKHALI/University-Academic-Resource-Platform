@@ -192,9 +192,14 @@ export default function HomeScreen({ navigate }: Props) {
         {/* 2. Popular Courses */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
-              المواد الشائعة
-            </h3>
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+                المواد الشائعة
+              </h3>
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                أبرز المواد والمقررات الأكثر تحميلاً وتفاعلاً
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -219,40 +224,83 @@ export default function HomeScreen({ navigate }: Props) {
                     },
                   })
                 }
-                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-[#121a2d] p-5 text-right transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl cursor-pointer"
+                style={{
+                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.35)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = `${course.color}70`;
+                  e.currentTarget.style.boxShadow = `0 12px 36px ${course.color}25`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor =
+                    "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 30px rgba(0, 0, 0, 0.35)";
+                }}
               >
+                {/* Colorful Top Accent Bar */}
                 <div
-                  className="absolute -top-6 -left-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-15"
+                  className="absolute top-0 right-0 left-0 h-1.5 transition-all duration-300 group-hover:h-2"
+                  style={{
+                    background: ``,
+                  }}
+                />
+
+                {/* Subtle Ambient Background Gradient */}
+                <div
+                  className="absolute -top-12 -left-12 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40"
                   style={{ background: course.color }}
                 />
 
-                <div
-                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110"
-                  style={{
-                    background: `${course.color}25`,
-                    color: course.color,
-                  }}
-                >
-                  {course.icon}
+                <div>
+                  {/* Top Header with Icon & Title */}
+                  <div className="flex items-start gap-3.5 mb-4">
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110 shadow-md"
+                      style={{
+                        background: `${course.color}25`,
+                        color: course.color,
+                        border: `1px solid ${course.color}40`,
+                      }}
+                    >
+                      {course.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="truncate text-base font-bold text-white transition-colors group-hover:text-blue-300">
+                        {course.name}
+                      </h4>
+                      <p className="truncate text-xs font-medium text-slate-400 mt-0.5">
+                        {course.nameEn}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* University & Department Tags */}
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
+                      <span>🏛️</span>
+                      <span>{course.uni}</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
+                      <span>📂</span>
+                      <span>{course.dept}</span>
+                    </span>
+                  </div>
                 </div>
 
-                <h4 className="mb-1 text-base font-bold text-[var(--text-primary)]">
-                  {course.name}
-                </h4>
-                <p className="mb-3 text-xs text-[var(--text-secondary)]">
-                  {course.dept} · {course.uni}
-                </p>
-
-                <div className="flex items-center justify-between">
+                {/* Bottom Action Footer */}
+                <div className="flex items-center justify-between  pt-1 mt-1">
                   <span
-                    className="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold"
+                    className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm"
                     style={{
                       color: course.color,
-                      background: `${course.color}15`,
+                      background: `${course.color}20`,
+                      border: `1px solid ${course.color}30`,
                     }}
                   >
-                    <FileText className="h-3 w-3" />
-                    <span>{course.files} ملف</span>
+                    <FileText className="h-3.5 w-3.5" />
+                    <span>{course.files} ملف دراسي</span>
                   </span>
                 </div>
               </div>
