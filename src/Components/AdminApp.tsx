@@ -544,7 +544,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
         </div>
 
         {/* Content */}
-        <div style={{ padding: "28px 28px 48px" }}>
+        <div style={{ padding: "28px 28px 48px" }} className="tab-content" key={view}>
           {view === "dashboard" && <AdminDashboard setView={setView} />}
           {view === "settings" && <AdminSettings />}
           {view !== "dashboard" && view !== "settings" && (
@@ -719,6 +719,7 @@ function AdminDashboard({ setView }: { setView: (v: AdminView) => void }) {
     <div className="fade-in">
       {/* Quick actions */}
       <div
+        className="stagger-children"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4,1fr)",
@@ -753,6 +754,7 @@ function AdminDashboard({ setView }: { setView: (v: AdminView) => void }) {
 
       {/* Stats */}
       <div
+        className="stagger-children"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(6,1fr)",

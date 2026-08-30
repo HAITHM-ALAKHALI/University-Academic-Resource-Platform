@@ -21,17 +21,23 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
     <div className="fade-in">
       <TopBar breadcrumbs={[
         { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        // { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
-        // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
         { label: nav.college?.name ?? '' }
       ]} title={nav.college?.name} subtitle="اختر القسم للمتابعة" />
       <div style={{ padding: '32px 32px 48px' }}>
-        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }}>
+        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }} className="slide-up">
           <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>🔍</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="ابحث عن قسم..."
-            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: 12, padding: '11px 44px 11px 16px', color: 'var(--text-primary)', fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box' }} />
+            style={{
+              width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)',
+              borderRadius: 12, padding: '11px 44px 11px 16px', color: 'var(--text-primary)',
+              fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box',
+              transition: 'border-color 0.2s, box-shadow 0.2s',
+            }}
+            onFocus={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)' }}
+            onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.boxShadow = 'none' }}
+          />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+        <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
           {filtered.map(dept => (
             <div key={dept.id} className="dept-card" style={{
               background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
@@ -39,6 +45,8 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
               position: 'relative', overflow: 'hidden'
             }}
               onClick={() => navigate({ ...nav, screen: 'levels', department: { id: dept.id, name: dept.name, nameEn: dept.nameEn, color: dept.color, icon: dept.icon } })}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = dept.color + '40'; e.currentTarget.style.boxShadow = `0 0 24px ${dept.color}15, 0 16px 48px rgba(0,0,0,0.3)` }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               <div style={{
                 position: 'absolute', bottom: -40, left: -40, width: 140, height: 140,
@@ -48,7 +56,8 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
                 width: 60, height: 60, borderRadius: 16,
                 background: dept.color + '22',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 28, marginBottom: 16, fontFamily: 'monospace', fontWeight: 700, color: dept.color
+                fontSize: 28, marginBottom: 16, fontFamily: 'monospace', fontWeight: 700, color: dept.color,
+                transition: 'transform 0.3s ease',
               }}>{dept.icon}</div>
               <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 4 }}>{dept.name}</div>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>{dept.nameEn}</div>

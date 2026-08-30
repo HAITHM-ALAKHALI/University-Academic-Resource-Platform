@@ -15,16 +15,12 @@ export default function LevelScreen({ nav, navigate }: Props) {
     <div className="fade-in">
       <TopBar breadcrumbs={[
         { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        // { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
                 { label: 'التخصصات', onClick: () => navigate({ screen: 'departments' }) },
-
-        // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
-        // { label: nav.college?.name ?? '', onClick: () => navigate({ ...nav, screen: 'departments' }) },
         { label: nav.department?.name ?? '' }
       ]} title={nav.department?.name} subtitle="اختر السنة الدراسية" />
       <div style={{ padding: '32px 32px 48px' }}>
         {/* Dept Header */}
-        <div style={{
+        <div className="slide-up" style={{
           background: 'linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1))',
           border: '1px solid rgba(59,130,246,0.15)',
           borderRadius: 20, padding: '24px 28px', marginBottom: 28,
@@ -34,10 +30,11 @@ export default function LevelScreen({ nav, navigate }: Props) {
             width: 64, height: 64, borderRadius: 16,
             background: (nav.department?.color ?? '#3B82F6') + '25',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 30, color: nav.department?.color ?? '#3B82F6', fontWeight: 700
+            fontSize: 30, color: nav.department?.color ?? '#3B82F6', fontWeight: 700,
+            boxShadow: `0 4px 16px ${(nav.department?.color ?? '#3B82F6')}20`,
           }}>{nav.department?.icon ?? '💻'}</div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)' }}>{nav.department?.name}</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif" }}>{nav.department?.name}</div>
             <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>{nav.department?.nameEn} — {nav.college?.name}</div>
           </div>
         </div>
@@ -45,7 +42,7 @@ export default function LevelScreen({ nav, navigate }: Props) {
         <h2 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 700, color: 'var(--text-secondary)' }}>المستويات الدراسية</h2>
 
         {/* Levels as accordion-style list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="stagger-children" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {levels.map(level => (
             <div key={level.id}
               onClick={() => navigate({ ...nav, screen: 'semesters', level: { id: level.id, name: level.name } })}
@@ -53,16 +50,19 @@ export default function LevelScreen({ nav, navigate }: Props) {
                 background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
                 borderRadius: 14, padding: '18px 22px', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                transition: 'all 0.2s'
+                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
               }}
               className="file-row"
+              onMouseEnter={e => { e.currentTarget.style.borderColor = level.color + '40'; e.currentTarget.style.boxShadow = `0 4px 20px ${level.color}10` }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{
                   width: 42, height: 42, borderRadius: 12,
                   background: level.color + '20',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 18, color: level.color, fontWeight: 700
+                  fontSize: 18, color: level.color, fontWeight: 700,
+                  transition: 'transform 0.3s ease',
                 }}>{level.icon}</div>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{level.name}</div>
@@ -74,7 +74,7 @@ export default function LevelScreen({ nav, navigate }: Props) {
                   fontSize: 12, color: level.color, fontWeight: 600,
                   background: level.color + '15', padding: '3px 10px', borderRadius: 8
                 }}>المستوى {level.year}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: 20 }}>‹</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: 20, transition: 'transform 0.2s' }}>‹</span>
               </div>
             </div>
           ))}

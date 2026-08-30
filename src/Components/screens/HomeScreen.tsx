@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 import { departments } from "./DepartmentScreen";
@@ -65,24 +66,14 @@ const popularCourses = [
   },
 ];
 
-// const recentFiles = [
-//   {
-//     name: "محاضرة 4 - التكرار",
-//     type: "PDF",
-//     course: "برمجة 1",
-//     time: "5 دقائق",
-//   },
-//   { name: "مذكرة - 4I", type: "PDF", course: "هياكل البيانات", time: "ساعتان" },
-//   { name: "نبذ الشركات", type: "PDF", course: "قواعد البيانات", time: "يوم" },
-//   { name: "Date Science", type: "PDF", course: "علم البيانات", time: "يوم" },
-//   { name: "يوجد تسبة 2", type: "PDF", course: "رياضيات", time: "يوم" },
-// ];
-
 interface Props {
   navigate: (s: NavState) => void;
 }
 
 export default function HomeScreen({ navigate }: Props) {
+  const deptList = useMemo(() => departments, []);
+  const courseList = useMemo(() => popularCourses, []);
+
   return (
     <div className="fade-in">
       <TopBar
@@ -91,13 +82,11 @@ export default function HomeScreen({ navigate }: Props) {
         subtitle="جميع المواد والملفات الدراسية في مكان منظم وسهل الوصول"
       />
       <div style={{ padding: "32px 32px 48px" }}>
-        <div
-          // style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 28 }}
-        >
-          {/* Main Left Column (Departments + Popular Courses) */}
+        <div>
+          {/* Main Column (Departments + Popular Courses) */}
           <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
             {/* 1. Browse by Department */}
-            <div>
+            <div className="slide-up">
               <div
                 style={{
                   display: "flex",
@@ -112,21 +101,24 @@ export default function HomeScreen({ navigate }: Props) {
                     fontSize: 18,
                     fontWeight: 700,
                     color: "var(--text-primary)",
+                    fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
                   }}
                 >
                   تصفح حسب القسم
                 </h2>
               </div>
               <div
+                className="stagger-children"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
                   gap: 14,
                 }}
               >
-                {departments.map((dept) => (
+                {deptList.map((dept) => (
                   <div
                     key={dept.id}
+                    className="popular-card hover-glow-blue"
                     style={{
                       background: "var(--bg-card)",
                       border: "1px solid var(--border-subtle)",
@@ -140,7 +132,6 @@ export default function HomeScreen({ navigate }: Props) {
                       alignItems: "center",
                       textAlign: "center",
                     }}
-                    // توجيه المستخدم مباشرة لمستويات القسم المختار
                     onClick={() =>
                       navigate({
                         screen: "levels",
@@ -163,6 +154,7 @@ export default function HomeScreen({ navigate }: Props) {
                         height: 80,
                         borderRadius: "50%",
                         background: dept.color + "10",
+                        transition: "transform 0.4s ease",
                       }}
                     />
                     <div
@@ -180,6 +172,7 @@ export default function HomeScreen({ navigate }: Props) {
                         position: "relative",
                         fontFamily: "monospace",
                         fontWeight: 700,
+                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
                       }}
                     >
                       {dept.icon}
@@ -220,7 +213,7 @@ export default function HomeScreen({ navigate }: Props) {
             </div>
 
             {/* 2. Popular Courses */}
-            <div>
+            <div className="content-auto">
               <div
                 style={{
                   display: "flex",
@@ -235,6 +228,7 @@ export default function HomeScreen({ navigate }: Props) {
                     fontSize: 18,
                     fontWeight: 700,
                     color: "var(--text-primary)",
+                    fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
                   }}
                 >
                   المواد الشائعة
@@ -248,19 +242,21 @@ export default function HomeScreen({ navigate }: Props) {
                     color: "var(--accent-blue)",
                     fontSize: 13,
                     fontWeight: 500,
+                    transition: "opacity 0.15s",
                   }}
                 >
                   عرض الكل ←
                 </button>
               </div>
               <div
+                className="stagger-children"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(3,1fr)",
                   gap: 14,
                 }}
               >
-                {popularCourses.map((course) => (
+                {courseList.map((course) => (
                   <div
                     key={course.id}
                     className="popular-card"
@@ -274,6 +270,14 @@ export default function HomeScreen({ navigate }: Props) {
                       position: "relative",
                     }}
                     onClick={() => navigate({ screen: "departments" })}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = `0 0 24px ${course.color}20, 0 16px 48px rgba(0,0,0,0.4)`;
+                      e.currentTarget.style.borderColor = course.color + "30";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.borderColor = "var(--border-subtle)";
+                    }}
                   >
                     <div
                       style={{
@@ -346,131 +350,6 @@ export default function HomeScreen({ navigate }: Props) {
               </div>
             </div>
           </div>
-
-          {/* Right column */}
-          {/* <div style={{ display: "flex", flexDirection: "column", gap: 20 }}> */}
-            {/* Start exploring */}
-            {/* <div
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))",
-                border: "1px solid rgba(59,130,246,0.2)",
-                borderRadius: 18,
-                padding: "22px 20px",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: 32, marginBottom: 8 }}>🎓</div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 700,
-                  color: "var(--text-primary)",
-                  marginBottom: 6,
-                }}
-              >
-                ابدأ استكشاف المواد
-              </div>
-              <div
-                style={{
-                  fontSize: 12,
-                  color: "var(--text-secondary)",
-                  marginBottom: 14,
-                  lineHeight: 1.6,
-                }}
-              >
-                اختر قسمك وتصفح المواد المتاحة
-              </div>
-              <button
-                onClick={() => navigate({ screen: "departments" })}
-                style={{
-                  background: "linear-gradient(135deg, #3B82F6, #8B5CF6)",
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "10px 24px",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: 13,
-                  cursor: "pointer",
-                  width: "100%",
-                }}
-              >
-                اختر القسم ←
-              </button>
-            </div> */}
-
-            {/* Recent files */}
-            {/* <div
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 18,
-                padding: "18px 16px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "var(--text-primary)",
-                  marginBottom: 14,
-                }}
-              >
-                آخر الملفات المضافة
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                {recentFiles.map((f, i) => (
-                  <div
-                    key={i}
-                    className="file-row"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      padding: "8px 8px",
-                      borderRadius: 8,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 8,
-                        background: "rgba(239,68,68,0.15)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 12,
-                        color: "#EF4444",
-                        fontWeight: 700,
-                        flexShrink: 0,
-                      }}
-                    >
-                      PDF
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 500,
-                          color: "var(--text-primary)",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {f.name}
-                      </div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                        منذ {f.time}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
-          {/* </div> */}
         </div>
       </div>
     </div>

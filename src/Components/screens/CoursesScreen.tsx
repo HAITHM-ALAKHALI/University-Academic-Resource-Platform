@@ -73,8 +73,6 @@ export default function CoursesScreen({ nav, navigate }: Props) {
             label: "التخصصات",
             onClick: () => navigate({ screen: "departments" }),
           },
-
-          // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
           {
             label: nav.department?.name ?? "",
             onClick: () => navigate({ ...nav, screen: "levels" }),
@@ -90,6 +88,7 @@ export default function CoursesScreen({ nav, navigate }: Props) {
       />
       <div style={{ padding: "32px 32px 48px" }}>
         <div
+          className="stagger-children"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3,1fr)",
@@ -121,6 +120,14 @@ export default function CoursesScreen({ nav, navigate }: Props) {
                 position: "relative",
                 overflow: "hidden",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = course.color + "40";
+                e.currentTarget.style.boxShadow = `0 0 24px ${course.color}15, 0 16px 48px rgba(0,0,0,0.3)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border-subtle)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               <div
                 style={{
@@ -150,6 +157,7 @@ export default function CoursesScreen({ nav, navigate }: Props) {
                     color: course.color,
                     fontFamily: "monospace",
                     flexShrink: 0,
+                    transition: "transform 0.3s ease",
                   }}
                 >
                   {course.icon}
@@ -190,9 +198,9 @@ export default function CoursesScreen({ nav, navigate }: Props) {
                 >
                   {course.files} ملف
                 </span>
-                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                {/* <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
                   ⭐ {course.rating}
-                </span>
+                </span> */}
               </div>
             </div>
           ))}

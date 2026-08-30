@@ -32,24 +32,34 @@ export default function CollegeScreen({ nav, navigate }: Props) {
         { label: nav.university?.name ?? '' }
       ]} title={nav.university?.name} subtitle="اختر الكلية للمتابعة" />
       <div style={{ padding: '32px 32px 48px' }}>
-        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }}>
+        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }} className="slide-up">
           <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>🔍</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="ابحث عن كلية..."
-            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)', borderRadius: 12, padding: '11px 44px 11px 16px', color: 'var(--text-primary)', fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box' }} />
+            style={{
+              width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)',
+              borderRadius: 12, padding: '11px 44px 11px 16px', color: 'var(--text-primary)',
+              fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box',
+              transition: 'border-color 0.2s, box-shadow 0.2s',
+            }}
+            onFocus={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)' }}
+            onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.boxShadow = 'none' }}
+          />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
           {colleges.map(college => (
             <div key={college.id} className="dept-card" style={{
               background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
               borderRadius: 18, padding: '22px 18px', cursor: 'pointer', position: 'relative', overflow: 'hidden'
             }}
               onClick={() => navigate({ ...nav, screen: 'departments', college: { id: college.id, name: college.name, nameEn: college.nameEn } })}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = college.color + '40' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)' }}
             >
               <div style={{ position: 'absolute', top: -20, left: -20, width: 70, height: 70, borderRadius: '50%', background: college.color + '12' }} />
               <div style={{
                 width: 50, height: 50, borderRadius: 14, background: college.color + '22',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 24, marginBottom: 12
+                fontSize: 24, marginBottom: 12, transition: 'transform 0.3s ease',
               }}>{college.icon}</div>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.4 }}>{college.name}</div>
               <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 10 }}>{college.nameEn}</div>

@@ -27,7 +27,7 @@ export default function UniversityScreen({ navigate }: Props) {
       ]} title="اختر الجامعة" subtitle="تصفح الجامعات المتاحة واختر جامعتك" />
       <div style={{ padding: '32px 32px 48px' }}>
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }}>
+        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }} className="slide-up">
           <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>🔍</span>
           <input
             value={search} onChange={e => setSearch(e.target.value)}
@@ -35,12 +35,15 @@ export default function UniversityScreen({ navigate }: Props) {
             style={{
               width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)',
               borderRadius: 12, padding: '11px 44px 11px 16px',
-              color: 'var(--text-primary)', fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box'
+              color: 'var(--text-primary)', fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box',
+              transition: 'border-color 0.2s, box-shadow 0.2s',
             }}
+            onFocus={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)' }}
+            onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.boxShadow = 'none' }}
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
           {filtered.map(uni => (
             <div key={uni.id} className="dept-card" style={{
               background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
@@ -48,6 +51,8 @@ export default function UniversityScreen({ navigate }: Props) {
               textAlign: 'center', position: 'relative', overflow: 'hidden'
             }}
               onClick={() => navigate({ screen: 'colleges', university: { id: uni.id, name: uni.name, nameEn: uni.nameEn } })}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = uni.color + '40' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)' }}
             >
               <div style={{
                 position: 'absolute', top: -30, right: -30, width: 100, height: 100,
@@ -57,7 +62,7 @@ export default function UniversityScreen({ navigate }: Props) {
                 width: 56, height: 56, borderRadius: 16,
                 background: uni.color + '20', margin: '0 auto 14px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 26
+                fontSize: 26, transition: 'transform 0.3s ease',
               }}>{uni.logo}</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{uni.name}</div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>{uni.nameEn}</div>

@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
 const tabs = [
   { id: "lectures", label: "المحاضرات", icon: "📹", count: 12 },
   { id: "books", label: "الكتب", icon: "📕", count: 4 },
-  { id: "pdfs", label: "الكتب PDF", icon: "📗", count: 6 },
-  { id: "assignments", label: "الواجبات", icon: "📝", count: 8 },
+  // { id: "pdfs", label: "الكتب PDF", icon: "📗", count: 6 },
+  // { id: "assignments", label: "الواجبات", icon: "📝", count: 8 },
   { id: "exams", label: "الامتحانات السابقة", icon: "📋", count: 10 },
   { id: "videos", label: "المقاطع", icon: "🎬", count: 5 },
   { id: "projects", label: "المشاريع", icon: "🗂", count: 4 },
@@ -97,95 +97,95 @@ const books = [
   },
 ];
 
-const pdfBooks = [
-  {
-    id: 1,
-    name: "مذكرة المادة - القسم الأول",
-    size: "4.2 MB",
-    pages: 85,
-    date: "2024-01-05",
-  },
-  {
-    id: 2,
-    name: "مذكرة المادة - القسم الثاني",
-    size: "3.8 MB",
-    pages: 76,
-    date: "2024-01-05",
-  },
-  {
-    id: 3,
-    name: "ملخص شامل للمادة",
-    size: "2.1 MB",
-    pages: 42,
-    date: "2024-02-10",
-  },
-  {
-    id: 4,
-    name: "أسئلة وحلول تدريبية",
-    size: "1.7 MB",
-    pages: 34,
-    date: "2024-02-15",
-  },
-  {
-    id: 5,
-    name: "شرح إضافي - الفصل الأول",
-    size: "1.2 MB",
-    pages: 24,
-    date: "2024-03-01",
-  },
-  {
-    id: 6,
-    name: "مراجعة نهاية الترم",
-    size: "0.9 MB",
-    pages: 18,
-    date: "2024-03-20",
-  },
-];
+// const pdfBooks = [
+//   {
+//     id: 1,
+//     name: "مذكرة المادة - القسم الأول",
+//     size: "4.2 MB",
+//     pages: 85,
+//     date: "2024-01-05",
+//   },
+//   {
+//     id: 2,
+//     name: "مذكرة المادة - القسم الثاني",
+//     size: "3.8 MB",
+//     pages: 76,
+//     date: "2024-01-05",
+//   },
+//   {
+//     id: 3,
+//     name: "ملخص شامل للمادة",
+//     size: "2.1 MB",
+//     pages: 42,
+//     date: "2024-02-10",
+//   },
+//   {
+//     id: 4,
+//     name: "أسئلة وحلول تدريبية",
+//     size: "1.7 MB",
+//     pages: 34,
+//     date: "2024-02-15",
+//   },
+//   {
+//     id: 5,
+//     name: "شرح إضافي - الفصل الأول",
+//     size: "1.2 MB",
+//     pages: 24,
+//     date: "2024-03-01",
+//   },
+//   {
+//     id: 6,
+//     name: "مراجعة نهاية الترم",
+//     size: "0.9 MB",
+//     pages: 18,
+//     date: "2024-03-20",
+//   },
+// ];
 
-const assignments = [
-  {
-    id: 1,
-    name: "Assignment 1 - Hello World Program",
-    due: "2024-01-25",
-    status: "مكتمل",
-    score: "95/100",
-  },
-  {
-    id: 2,
-    name: "Assignment 2 - Calculator App",
-    due: "2024-02-08",
-    status: "مكتمل",
-    score: "88/100",
-  },
-  {
-    id: 3,
-    name: "Assignment 3 - Array Sorting",
-    due: "2024-02-22",
-    status: "قيد التسليم",
-    score: "—",
-  },
-  {
-    id: 4,
-    name: "Assignment 4 - Linked List",
-    due: "2024-03-07",
-    status: "قادم",
-    score: "—",
-  },
-  {
-    id: 5,
-    name: "Assignment 5 - File Operations",
-    due: "2024-03-21",
-    status: "قادم",
-    score: "—",
-  },
-  {
-    id: 6,
-    name: "Assignment 6 - Memory Management",
-    due: "2024-04-04",
-    status: "قادم",
-    score: "—",
-  },
-];
+// const assignments = [
+//   {
+//     id: 1,
+//     name: "Assignment 1 - Hello World Program",
+//     due: "2024-01-25",
+//     status: "مكتمل",
+//     score: "95/100",
+//   },
+//   {
+//     id: 2,
+//     name: "Assignment 2 - Calculator App",
+//     due: "2024-02-08",
+//     status: "مكتمل",
+//     score: "88/100",
+//   },
+//   {
+//     id: 3,
+//     name: "Assignment 3 - Array Sorting",
+//     due: "2024-02-22",
+//     status: "قيد التسليم",
+//     score: "—",
+//   },
+//   {
+//     id: 4,
+//     name: "Assignment 4 - Linked List",
+//     due: "2024-03-07",
+//     status: "قادم",
+//     score: "—",
+//   },
+//   {
+//     id: 5,
+//     name: "Assignment 5 - File Operations",
+//     due: "2024-03-21",
+//     status: "قادم",
+//     score: "—",
+//   },
+//   {
+//     id: 6,
+//     name: "Assignment 6 - Memory Management",
+//     due: "2024-04-04",
+//     status: "قادم",
+//     score: "—",
+//   },
+// ];
 
 const exams = [
   {
@@ -444,7 +444,7 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
   const [activeTab, setActiveTab] = useState("lectures");
   const color = nav.course?.color ?? "#3B82F6";
 
-  const FileRow = ({
+  const FileRow = memo(function FileRow({
     icon,
     iconBg,
     iconColor,
@@ -458,70 +458,92 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     name: string;
     meta: string;
     extra?: React.ReactNode;
-  }) => (
-    <div
-      className="file-row"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        padding: "12px 14px",
-        borderRadius: 10,
-        marginBottom: 2,
-        cursor: "pointer",
-      }}
-    >
+  }) {
+    return (
       <div
+        className="file-row"
         style={{
-          width: 38,
-          height: 38,
-          borderRadius: 10,
-          background: iconBg,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          fontSize: 13,
-          color: iconColor,
-          fontWeight: 700,
-          flexShrink: 0,
+          gap: 14,
+          padding: "12px 14px",
+          borderRadius: 10,
+          marginBottom: 2,
+          cursor: "pointer",
+          border: "1px solid transparent",
+          transition: "all 0.2s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "var(--border-medium)";
+          e.currentTarget.style.background = "rgba(59,130,246,0.04)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "transparent";
+          e.currentTarget.style.background = "transparent";
         }}
       >
-        {icon}
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
+            width: 38,
+            height: 38,
+            borderRadius: 10,
+            background: iconBg,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             fontSize: 13,
-            fontWeight: 500,
-            color: "var(--text-primary)",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            color: iconColor,
+            fontWeight: 700,
+            flexShrink: 0,
+            transition: "transform 0.2s ease",
           }}
         >
-          {name}
+          {icon}
         </div>
-        <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
-          {meta}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 500,
+              color: "var(--text-primary)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {name}
+          </div>
+          <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
+            {meta}
+          </div>
         </div>
+        {extra}
+        <button
+          style={{
+            background: "rgba(59,130,246,0.1)",
+            border: "1px solid rgba(59,130,246,0.2)",
+            borderRadius: 8,
+            padding: "5px 10px",
+            cursor: "pointer",
+            color: "var(--accent-blue)",
+            fontSize: 15,
+            flexShrink: 0,
+            transition: "all 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(59,130,246,0.2)";
+            e.currentTarget.style.borderColor = "rgba(59,130,246,0.4)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(59,130,246,0.1)";
+            e.currentTarget.style.borderColor = "rgba(59,130,246,0.2)";
+          }}
+        >
+          ⬇
+        </button>
       </div>
-      {extra}
-      <button
-        style={{
-          background: "rgba(59,130,246,0.1)",
-          border: "1px solid rgba(59,130,246,0.2)",
-          borderRadius: 8,
-          padding: "5px 10px",
-          cursor: "pointer",
-          color: "var(--accent-blue)",
-          fontSize: 15,
-          flexShrink: 0,
-        }}
-      >
-        ⬇
-      </button>
-    </div>
-  );
+    );
+  });
 
   const renderContent = () => {
     switch (activeTab) {
@@ -657,9 +679,9 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                 marginBottom: 14,
               }}
             >
-              {pdfBooks.length} ملفات PDF
+              {/* {pdfBooks.length} ملفات PDF */}
             </div>
-            {pdfBooks.map((f) => (
+            {/* {pdfBooks.map((f) => (
               <FileRow
                 key={f.id}
                 icon="PDF"
@@ -668,14 +690,14 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                 name={f.name}
                 meta={`${f.date} · ${f.size} · ${f.pages} صفحة`}
               />
-            ))}
+            ))} */}
           </>
         );
 
       case "assignments":
         return (
           <>
-            {assignments.map((a) => (
+            {/* {assignments.map((a) => (
               <div
                 key={a.id}
                 className="file-row"
@@ -765,7 +787,7 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                   {a.status}
                 </span>
               </div>
-            ))}
+            ))} */}
           </>
         );
 
@@ -1290,7 +1312,7 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
               </button>
             </div>
           </div>
-          <div className="fade-in">{renderContent()}</div>
+          <div className="tab-content" key={activeTab}>{renderContent()}</div>
         </div>
       </div>
     </div>

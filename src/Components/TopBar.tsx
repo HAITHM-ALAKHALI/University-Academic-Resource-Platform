@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import type { NavState } from "./StudentApp";
 
 interface BreadcrumbItem {
@@ -48,11 +48,82 @@ const notifs = [
   },
 ];
 
+const NotifItem = memo(function NotifItem({
+  n,
+  onClick,
+}: {
+  n: (typeof notifs)[0];
+  onClick: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className="file-row"
+      style={{
+        display: "flex",
+        gap: 10,
+        padding: "11px 16px",
+        borderBottom: "1px solid var(--border-subtle)",
+        background: n.read ? "transparent" : "rgba(59,130,246,0.04)",
+        cursor: "pointer",
+        transition: "background 0.15s",
+      }}
+    >
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          background: n.color + "20",
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 15,
+        }}
+      >
+        {n.icon}
+      </div>
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            fontSize: 12,
+            color: "var(--text-primary)",
+            lineHeight: 1.4,
+          }}
+        >
+          {n.text}
+        </div>
+        <div
+          style={{
+            fontSize: 10,
+            color: "var(--text-muted)",
+            marginTop: 3,
+          }}
+        >
+          منذ {n.time}
+        </div>
+      </div>
+      {!n.read && (
+        <div
+          className="glow-pulse"
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: "50%",
+            background: "#3B82F6",
+            flexShrink: 0,
+            marginTop: 5,
+          }}
+        />
+      )}
+    </div>
+  );
+});
+
 export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
   const [showNotifs, setShowNotifs] = useState(false);
-  // const [showProfile, setShowProfile] = useState(false);
   const [notifList, setNotifList] = useState(notifs);
-  // const [search, setSearch] = useState("");
 
   const unread = notifList.filter((n) => !n.read).length;
 
@@ -61,15 +132,15 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
       style={{
         padding: "14px 28px",
         borderBottom: "1px solid var(--border-subtle)",
-        background: "rgba(10,15,30,0.85)",
-        backdropFilter: "blur(16px)",
+        background: "rgba(10,15,30,0.88)",
+        backdropFilter: "blur(20px) saturate(1.2)",
+        WebkitBackdropFilter: "blur(20px) saturate(1.2)",
         position: "sticky",
         top: 0,
         zIndex: 50,
       }}
       onClick={() => {
         setShowNotifs(false);
-        // setShowProfile(false);
       }}
     >
       {/* Breadcrumbs row */}
@@ -93,18 +164,30 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
               )}
               <button
                 onClick={crumb.onClick}
+                className="focus-ring"
                 style={{
                   background: "none",
                   border: "none",
                   cursor: crumb.onClick ? "pointer" : "default",
-                  padding: 0,
+                  padding: "2px 4px",
+                  borderRadius: 4,
                   color:
                     i === breadcrumbs.length - 1
                       ? "var(--text-primary)"
                       : "var(--text-secondary)",
                   fontSize: 13,
                   fontWeight: i === breadcrumbs.length - 1 ? 600 : 400,
-                  transition: "color 0.15s",
+                  transition: "color 0.15s, background 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  if (crumb.onClick)
+                    e.currentTarget.style.color = "var(--accent-blue)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color =
+                    i === breadcrumbs.length - 1
+                      ? "var(--text-primary)"
+                      : "var(--text-secondary)";
                 }}
               >
                 {crumb.label}
@@ -118,60 +201,11 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
           style={{ display: "flex", alignItems: "center", gap: 10 }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Search */}
-          {/*<div style={{ position: "relative" }}>
-            <span
-              style={{
-                position: "absolute",
-                right: 11,
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "var(--text-muted)",
-                fontSize: 14,
-              }}
-            >
-              🔍
-            </span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="ابحث عن مادة، ملف، محاضرة..."
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid var(--border-medium)",
-                borderRadius: 11,
-                padding: "7px 36px 7px 60px",
-                color: "var(--text-primary)",
-                fontSize: 13,
-                width: 270,
-                outline: "none",
-                direction: "rtl",
-              }}
-            />
-            <span
-              style={{
-                position: "absolute",
-                left: 10,
-                top: "50%",
-                transform: "translateY(-50%)",
-                background: "rgba(255,255,255,0.08)",
-                color: "var(--text-muted)",
-                fontSize: 10,
-                borderRadius: 6,
-                padding: "2px 5px",
-                fontFamily: "monospace",
-              }}
-            >
-              Ctrl K
-            </span>
-          </div>*/}
-
           {/* Notifications */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => {
                 setShowNotifs(!showNotifs);
-                // setShowProfile(false);
               }}
               style={{
                 background: "rgba(255,255,255,0.05)",
@@ -185,6 +219,15 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                 cursor: "pointer",
                 fontSize: 17,
                 position: "relative",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+                e.currentTarget.style.borderColor = "var(--border-medium)";
               }}
             >
               🔔
@@ -204,6 +247,7 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    boxShadow: "0 0 8px rgba(239, 68, 68, 0.4)",
                   }}
                 >
                   {unread}
@@ -213,6 +257,7 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
 
             {showNotifs && (
               <div
+                className="notif-dropdown"
                 style={{
                   position: "absolute",
                   top: 46,
@@ -222,7 +267,8 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                   border: "1px solid var(--border-medium)",
                   borderRadius: 16,
                   overflow: "hidden",
-                  boxShadow: "0 16px 60px rgba(0,0,0,0.6)",
+                  boxShadow:
+                    "0 20px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03)",
                   zIndex: 200,
                 }}
               >
@@ -247,7 +293,8 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                       <span
                         style={{
                           fontSize: 11,
-                          background: "#3B82F6",
+                          background:
+                            "linear-gradient(135deg, #3B82F6, #8B5CF6)",
                           color: "#fff",
                           borderRadius: 8,
                           padding: "1px 6px",
@@ -260,7 +307,9 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                   </span>
                   <button
                     onClick={() =>
-                      setNotifList((n) => n.map((x) => ({ ...x, read: true })))
+                      setNotifList((n) =>
+                        n.map((x) => ({ ...x, read: true })),
+                      )
                     }
                     style={{
                       background: "none",
@@ -268,14 +317,16 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                       cursor: "pointer",
                       color: "var(--accent-blue)",
                       fontSize: 12,
+                      transition: "opacity 0.15s",
                     }}
                   >
                     تحديد الكل مقروء
                   </button>
                 </div>
                 {notifList.map((n) => (
-                  <div
+                  <NotifItem
                     key={n.id}
+                    n={n}
                     onClick={() =>
                       setNotifList((prev) =>
                         prev.map((x) =>
@@ -283,144 +334,24 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
                         ),
                       )
                     }
-                    style={{
-                      display: "flex",
-                      gap: 10,
-                      padding: "11px 16px",
-                      borderBottom: "1px solid var(--border-subtle)",
-                      background: n.read
-                        ? "transparent"
-                        : "rgba(59,130,246,0.04)",
-                      cursor: "pointer",
-                      transition: "background 0.15s",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 8,
-                        background: n.color + "20",
-                        flexShrink: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 15,
-                      }}
-                    >
-                      {n.icon}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "var(--text-primary)",
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {n.text}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 10,
-                          color: "var(--text-muted)",
-                          marginTop: 3,
-                        }}
-                      >
-                        منذ {n.time}
-                      </div>
-                    </div>
-                    {!n.read && (
-                      <div
-                        style={{
-                          width: 7,
-                          height: 7,
-                          borderRadius: "50%",
-                          background: "#3B82F6",
-                          flexShrink: 0,
-                          marginTop: 5,
-                        }}
-                      />
-                    )}
-                  </div>
+                  />
                 ))}
-                {/* <div style={{ padding: "10px 16px", textAlign: "center" }}>
-                  <button
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--accent-blue)",
-                      fontSize: 12,
-                    }}
-                  >
-                    عرض كل الإشعارات ←
-                  </button>
-                </div> */}
               </div>
             )}
           </div>
-
-          {/* Profile */}
-          {/* <div style={{ position: 'relative' }}>
-            <button onClick={() => { setShowProfile(!showProfile); setShowNotifs(false) }} style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-medium)',
-              borderRadius: 10, padding: '5px 10px 5px 8px', cursor: 'pointer'
-            }}>
-              <div style={{
-                width: 26, height: 26, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 700, color: '#fff'
-              }}>عم</div>
-              <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500 }}>عبد الرحمن</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>▾</span>
-            </button>
-
-            {showProfile && (
-              <div style={{
-                position: 'absolute', top: 44, left: 0, width: 200,
-                background: '#131C2E', border: '1px solid var(--border-medium)',
-                borderRadius: 14, overflow: 'hidden',
-                boxShadow: '0 16px 60px rgba(0,0,0,0.6)', zIndex: 200
-              }}>
-                <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-subtle)' }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>عبد الرحمن</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>student@cairo.edu</div>
-                </div>
-                {[
-                  { icon: '👤', label: 'الملف الشخصي' },
-                  { icon: '⭐', label: 'المفضلة' },
-                  { icon: '⬇', label: 'تحميلاتي' },
-                  { icon: '⚙', label: 'الإعدادات' },
-                  { icon: '↩', label: 'تسجيل الخروج', danger: true },
-                ].map((item, i, arr) => (
-                  <button key={i} style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '10px 16px', background: 'none', border: 'none',
-                    borderBottom: i < arr.length - 1 ? '1px solid var(--border-subtle)' : 'none',
-                    cursor: 'pointer', color: (item as {danger?: boolean}).danger ? '#EF4444' : 'var(--text-secondary)', fontSize: 13
-                  }} className="file-row">
-                    <span>{item.icon}</span>
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div> */}
         </div>
       </div>
 
       {/* Title row */}
       {title && (
-        <div style={{ marginTop: 10 }}>
+        <div style={{ marginTop: 10 }} className="slide-up">
           <h1
             style={{
               margin: 0,
               fontSize: 20,
               fontWeight: 800,
               color: "var(--text-primary)",
+              fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
             }}
           >
             {title}

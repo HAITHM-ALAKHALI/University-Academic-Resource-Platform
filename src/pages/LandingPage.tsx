@@ -36,7 +36,17 @@ export default function LandingPage({ dark, lang, setDark, setLang, setPage, ope
       <Navbar dark={dark} lang={lang} setDark={setDark} setLang={setLang} setPage={setPage} currentPage="landing" />
 
       {/* Hero */}
-      <section style={{ padding: '80px 24px 72px', textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
+      <section style={{
+        padding: '80px 24px 72px', textAlign: 'center', maxWidth: 760, margin: '0 auto',
+        position: 'relative',
+      }}>
+        {/* Animated gradient orbs */}
+        <div style={{
+          position: 'absolute', top: '-40%', left: '50%', transform: 'translateX(-50%)',
+          width: 600, height: 400, borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(59,130,246,0.12), transparent 60%)',
+          filter: 'blur(60px)', pointerEvents: 'none',
+        }} className="float" />
         <span style={{
           display: 'inline-block', padding: '4px 12px', borderRadius: 99,
           backgroundColor: 'var(--secondary)', color: 'var(--primary)',
@@ -143,7 +153,7 @@ export default function LandingPage({ dark, lang, setDark, setLang, setPage, ope
       {/* Stats */}
       <section style={{ padding: '0 24px 80px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
             {stats.map(s => (
               <div key={s.key} style={{
                 backgroundColor: 'var(--card)', border: '1px solid var(--border)',
@@ -171,7 +181,7 @@ export default function LandingPage({ dark, lang, setDark, setLang, setPage, ope
             </h2>
             <p style={{ fontSize: 15, color: 'var(--muted-foreground)' }}>{tx.features.subtitle}</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
             {tx.features.items.map((item, i) => (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div style={{
@@ -219,7 +229,7 @@ export default function LandingPage({ dark, lang, setDark, setLang, setPage, ope
               </svg>
             </button>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
             {featured.map(course => (
               <CourseCard key={course.id} course={course} lang={lang} tx={tx} openCourse={openCourse} />
             ))}

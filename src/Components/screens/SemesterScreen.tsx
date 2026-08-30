@@ -21,8 +21,6 @@ export default function SemesterScreen({ nav, navigate }: Props) {
             label: "التخصصات",
             onClick: () => navigate({ screen: "departments" }),
           },
-
-          // { label: nav.university?.name ?? '', onClick: () => navigate({ ...nav, screen: 'colleges' }) },
           {
             label: nav.department?.name ?? "",
             onClick: () => navigate({ ...nav, screen: "levels" }),
@@ -34,6 +32,7 @@ export default function SemesterScreen({ nav, navigate }: Props) {
       />
       <div style={{ padding: "32px 32px 48px" }}>
         <div
+          className="stagger-children"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -60,6 +59,14 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                 cursor: "pointer",
                 textAlign: "center",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = sem.color + "40";
+                e.currentTarget.style.boxShadow = `0 0 32px ${sem.color}12, 0 16px 48px rgba(0,0,0,0.3)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border-subtle)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               <div
                 style={{
@@ -73,6 +80,8 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   fontSize: 28,
                   margin: "0 auto 16px",
                   color: sem.color,
+                  transition: "transform 0.3s ease",
+                  boxShadow: `0 4px 16px ${sem.color}15`,
                 }}
               >
                 📅
@@ -83,6 +92,7 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   fontWeight: 800,
                   color: "var(--text-primary)",
                   marginBottom: 8,
+                  fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
                 }}
               >
                 {sem.name}
@@ -97,6 +107,7 @@ export default function SemesterScreen({ nav, navigate }: Props) {
               >
                 <div style={{ textAlign: "center" }}>
                   <div
+                    className="count-up"
                     style={{ fontSize: 22, fontWeight: 800, color: sem.color }}
                   >
                     {sem.courses}
@@ -108,6 +119,7 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                 <div style={{ width: 1, background: "var(--border-subtle)" }} />
                 <div style={{ textAlign: "center" }}>
                   <div
+                    className="count-up"
                     style={{ fontSize: 22, fontWeight: 800, color: sem.color }}
                   >
                     {sem.files}
@@ -134,6 +146,14 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   fontSize: 13,
                   cursor: "pointer",
                   width: "100%",
+                  transition: "opacity 0.2s, box-shadow 0.2s",
+                  boxShadow: `0 4px 16px ${sem.color}30`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
                 }}
               >
                 عرض المواد ←

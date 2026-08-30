@@ -15,6 +15,17 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: emitSourcemaps ? "inline" : false,
       minify: !emitSourcemaps,
+      target: "esnext",
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) {
+              return "vendor";
+            }
+          },
+        },
+      },
     },
     plugins: [
       react(),

@@ -188,6 +188,7 @@ function OverviewTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
     >
       <div>
         <div
+          className="stagger-children"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(2, 1fr)",

@@ -188,7 +188,7 @@ export default function CourseDetailPage({
             }}
           >
             <div style={{ height: 6, backgroundColor: course.color }} />
-            <div style={{ padding: "28px 28px 24px" }}>
+            <div style={{ padding: "28px 28px 24px" }} className="slide-up">
               <div
                 style={{
                   display: "flex",
@@ -378,7 +378,7 @@ export default function CourseDetailPage({
                 </button>
               ))}
             </div>
-            <div style={{ padding: 20 }}>
+            <div style={{ padding: 20 }} className="tab-content" key={activeTab}>
               {currentResources.length === 0 ? (
                 <div
                   style={{
