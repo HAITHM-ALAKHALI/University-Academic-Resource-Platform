@@ -7,7 +7,7 @@ import {
   CheckCircle2,
   Eye,
   Clock,
-  ArrowRight,
+  // ArrowRight,
 } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
@@ -668,15 +668,15 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     ...(nav.course?.name ? [{ label: nav.course.name }] : []),
   ];
 
-  const handleGoBack = () => {
-    if (nav.semester || nav.level) {
-      navigate({ ...nav, screen: "courses" });
-    } else if (nav.department) {
-      navigate({ ...nav, screen: "levels" });
-    } else {
-      navigate({ screen: "home" });
-    }
-  };
+  // const handleGoBack = () => {
+  //   if (nav.semester || nav.level) {
+  //     navigate({ ...nav, screen: "courses" });
+  //   } else if (nav.department) {
+  //     navigate({ ...nav, screen: "levels" });
+  //   } else {
+  //     navigate({ screen: "home" });
+  //   }
+  // };
 
   const subtitleText = [nav.course?.nameEn, nav.semester?.name]
     .filter(Boolean)
@@ -739,14 +739,14 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <button
+              {/* <button
                 type="button"
                 onClick={handleGoBack}
                 className="flex items-center gap-1.5 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/80 px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-all hover:bg-[#35425E] hover:border-[#899C9A] cursor-pointer shadow-sm"
               >
                 <ArrowRight className="h-3.5 w-3.5 text-[#899C9A]" />
                 <span>العودة للمواد</span>
-              </button>
+              </button> */}
 
               <button
                 type="button"
