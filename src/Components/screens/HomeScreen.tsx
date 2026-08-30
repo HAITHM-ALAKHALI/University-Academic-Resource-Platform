@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowLeft, FileText, Layers, Sparkles } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 import { departments } from "./DepartmentScreen";

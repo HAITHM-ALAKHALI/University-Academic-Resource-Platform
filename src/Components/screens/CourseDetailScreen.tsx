@@ -1,10 +1,7 @@
 import { useState, memo } from "react";
 import {
   Download,
-  UploadCloud,
   ExternalLink,
-  FileText,
-  BookOpen,
   Video,
   Code2,
   CheckCircle2,
@@ -362,7 +359,6 @@ interface Props {
 
 export default function CourseDetailScreen({ nav, navigate }: Props) {
   const [activeTab, setActiveTab] = useState("lectures");
-  const color = nav.course?.color ?? "#3B82F6";
 
   const FileRow = memo(function FileRow({
     icon,
@@ -546,12 +542,13 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                           {p.name}
                         </h4>
                         <span
-                          className={`rounded-md px-2 py-0.5 text-xs font-semibold ${p.level === "مبتدئ"
-                            ? "bg-emerald-500/15 text-emerald-400"
-                            : p.level === "متوسط"
-                              ? "bg-amber-500/15 text-amber-400"
-                              : "bg-red-500/15 text-red-400"
-                            }`}
+                          className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
+                            p.level === "مبتدئ"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : p.level === "متوسط"
+                                ? "bg-amber-500/15 text-amber-400"
+                                : "bg-red-500/15 text-red-400"
+                          }`}
                         >
                           {p.level}
                         </span>
@@ -696,20 +693,22 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-medium transition-all cursor-pointer border-0 ${isActive
-                    ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
-                    : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]"
-                    }`}
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-medium transition-all cursor-pointer border-0 ${
+                    isActive
+                      ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
+                      : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]"
+                  }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <span>{tab.icon}</span>
                     <span>{tab.label}</span>
                   </div>
                   <span
-                    className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${isActive
-                      ? "bg-blue-500/20 text-blue-300"
-                      : "bg-white/[0.05] text-[var(--text-muted)]"
-                      }`}
+                    className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                      isActive
+                        ? "bg-blue-500/20 text-blue-300"
+                        : "bg-white/[0.05] text-[var(--text-muted)]"
+                    }`}
                   >
                     {tab.count}
                   </span>
@@ -739,7 +738,6 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                 <Download className="h-3.5 w-3.5" />
                 <span>تحميل الكل</span>
               </button>
-
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, MapPin, Building, GraduationCap } from "lucide-react";
+import { Search, MapPin, Building } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
