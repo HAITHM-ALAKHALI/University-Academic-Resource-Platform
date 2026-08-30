@@ -1,16 +1,26 @@
 import { useState, memo } from "react";
+import {
+  Download,
+  UploadCloud,
+  ExternalLink,
+  FileText,
+  BookOpen,
+  Video,
+  Code2,
+  CheckCircle2,
+  Eye,
+  Clock,
+} from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
 const tabs = [
   { id: "lectures", label: "المحاضرات", icon: "📹", count: 12 },
   { id: "books", label: "الكتب", icon: "📕", count: 4 },
-  // { id: "pdfs", label: "الكتب PDF", icon: "📗", count: 6 },
-  // { id: "assignments", label: "الواجبات", icon: "📝", count: 8 },
   { id: "exams", label: "الامتحانات السابقة", icon: "📋", count: 10 },
   { id: "videos", label: "المقاطع", icon: "🎬", count: 5 },
   { id: "projects", label: "المشاريع", icon: "🗂", count: 4 },
-  { id: "external", label: "مصادر خارجية", icon: "🌐", count: 15 },
+  { id: "external", label: "مصادر خارجية", icon: "🌐", count: 10 },
 ];
 
 const lectures = [
@@ -96,96 +106,6 @@ const books = [
     year: 2015,
   },
 ];
-
-// const pdfBooks = [
-//   {
-//     id: 1,
-//     name: "مذكرة المادة - القسم الأول",
-//     size: "4.2 MB",
-//     pages: 85,
-//     date: "2024-01-05",
-//   },
-//   {
-//     id: 2,
-//     name: "مذكرة المادة - القسم الثاني",
-//     size: "3.8 MB",
-//     pages: 76,
-//     date: "2024-01-05",
-//   },
-//   {
-//     id: 3,
-//     name: "ملخص شامل للمادة",
-//     size: "2.1 MB",
-//     pages: 42,
-//     date: "2024-02-10",
-//   },
-//   {
-//     id: 4,
-//     name: "أسئلة وحلول تدريبية",
-//     size: "1.7 MB",
-//     pages: 34,
-//     date: "2024-02-15",
-//   },
-//   {
-//     id: 5,
-//     name: "شرح إضافي - الفصل الأول",
-//     size: "1.2 MB",
-//     pages: 24,
-//     date: "2024-03-01",
-//   },
-//   {
-//     id: 6,
-//     name: "مراجعة نهاية الترم",
-//     size: "0.9 MB",
-//     pages: 18,
-//     date: "2024-03-20",
-//   },
-// ];
-
-// const assignments = [
-//   {
-//     id: 1,
-//     name: "Assignment 1 - Hello World Program",
-//     due: "2024-01-25",
-//     status: "مكتمل",
-//     score: "95/100",
-//   },
-//   {
-//     id: 2,
-//     name: "Assignment 2 - Calculator App",
-//     due: "2024-02-08",
-//     status: "مكتمل",
-//     score: "88/100",
-//   },
-//   {
-//     id: 3,
-//     name: "Assignment 3 - Array Sorting",
-//     due: "2024-02-22",
-//     status: "قيد التسليم",
-//     score: "—",
-//   },
-//   {
-//     id: 4,
-//     name: "Assignment 4 - Linked List",
-//     due: "2024-03-07",
-//     status: "قادم",
-//     score: "—",
-//   },
-//   {
-//     id: 5,
-//     name: "Assignment 5 - File Operations",
-//     due: "2024-03-21",
-//     status: "قادم",
-//     score: "—",
-//   },
-//   {
-//     id: 6,
-//     name: "Assignment 6 - Memory Management",
-//     due: "2024-04-04",
-//     status: "قادم",
-//     score: "—",
-//   },
-// ];
 
 const exams = [
   {
@@ -460,87 +380,31 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     extra?: React.ReactNode;
   }) {
     return (
-      <div
-        className="file-row"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          padding: "12px 14px",
-          borderRadius: 10,
-          marginBottom: 2,
-          cursor: "pointer",
-          border: "1px solid transparent",
-          transition: "all 0.2s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "var(--border-medium)";
-          e.currentTarget.style.background = "rgba(59,130,246,0.04)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "transparent";
-          e.currentTarget.style.background = "transparent";
-        }}
-      >
-        <div
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            background: iconBg,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 13,
-            color: iconColor,
-            fontWeight: 700,
-            flexShrink: 0,
-            transition: "transform 0.2s ease",
-          }}
-        >
-          {icon}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
+      <div className="group flex items-center justify-between gap-4 rounded-xl border border-transparent p-3.5 transition-all duration-200 hover:border-[var(--border-medium)] hover:bg-white/[0.04] cursor-pointer">
+        <div className="flex items-center gap-3.5 min-w-0 flex-1">
           <div
-            style={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: "var(--text-primary)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition-transform group-hover:scale-105"
+            style={{ background: iconBg, color: iconColor }}
           >
-            {name}
+            {icon}
           </div>
-          <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
-            {meta}
+          <div className="flex-1 min-w-0">
+            <h4 className="truncate text-sm font-semibold text-[var(--text-primary)]">
+              {name}
+            </h4>
+            <p className="mt-0.5 text-xs text-[var(--text-muted)]">{meta}</p>
           </div>
         </div>
-        {extra}
-        <button
-          style={{
-            background: "rgba(59,130,246,0.1)",
-            border: "1px solid rgba(59,130,246,0.2)",
-            borderRadius: 8,
-            padding: "5px 10px",
-            cursor: "pointer",
-            color: "var(--accent-blue)",
-            fontSize: 15,
-            flexShrink: 0,
-            transition: "all 0.15s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(59,130,246,0.2)";
-            e.currentTarget.style.borderColor = "rgba(59,130,246,0.4)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(59,130,246,0.1)";
-            e.currentTarget.style.borderColor = "rgba(59,130,246,0.2)";
-          }}
-        >
-          ⬇
-        </button>
+
+        <div className="flex items-center gap-3">
+          {extra}
+          <button
+            type="button"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400 transition-colors hover:bg-blue-500/20 hover:text-blue-300 cursor-pointer"
+          >
+            <Download className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     );
   });
@@ -549,117 +413,49 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     switch (activeTab) {
       case "lectures":
         return (
-          <>
-            <div
-              style={{
-                fontSize: 12,
-                color: "var(--text-secondary)",
-                marginBottom: 14,
-              }}
-            >
+          <div className="space-y-2">
+            <div className="mb-4 text-xs text-[var(--text-secondary)]">
               {lectures.length} محاضرة متاحة
             </div>
             {lectures.map((f) => (
               <FileRow
                 key={f.id}
                 icon="PDF"
-                iconBg="rgba(239,68,68,0.12)"
+                iconBg="rgba(239,68,68,0.15)"
                 iconColor="#EF4444"
                 name={f.name}
                 meta={`${f.date} · ${f.size}`}
               />
             ))}
-          </>
+          </div>
         );
 
       case "books":
         return (
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {books.map((b) => (
               <div
                 key={b.id}
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: 14,
-                  padding: "18px",
-                  display: "flex",
-                  gap: 14,
-                  cursor: "pointer",
-                  transition: "background 0.15s",
-                }}
-                className="file-row"
+                className="group flex gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-blue-500/30 hover:shadow-lg cursor-pointer"
               >
-                <div
-                  style={{
-                    width: 52,
-                    height: 70,
-                    borderRadius: 8,
-                    flexShrink: 0,
-                    background: `linear-gradient(160deg, ${color}30, ${color}15)`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 26,
-                  }}
-                >
+                <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/10 text-3xl shadow-md">
                   {b.cover}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: "var(--text-primary)",
-                      marginBottom: 4,
-                      lineHeight: 1.4,
-                    }}
-                  >
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-bold text-[var(--text-primary)] leading-snug">
                     {b.title}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "var(--text-secondary)",
-                      marginBottom: 6,
-                    }}
-                  >
+                  </h4>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
                     {b.author}
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        color: "var(--text-muted)",
-                        background: "rgba(255,255,255,0.06)",
-                        padding: "2px 6px",
-                        borderRadius: 5,
-                      }}
-                    >
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[var(--text-muted)]">
+                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
                       الطبعة {b.edition}
                     </span>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        color: "var(--text-muted)",
-                        background: "rgba(255,255,255,0.06)",
-                        padding: "2px 6px",
-                        borderRadius: 5,
-                      }}
-                    >
+                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
                       {b.pages} صفحة
                     </span>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        color: "var(--text-muted)",
-                        background: "rgba(255,255,255,0.06)",
-                        padding: "2px 6px",
-                        borderRadius: 5,
-                      }}
-                    >
+                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
                       {b.year}
                     </span>
                   </div>
@@ -669,237 +465,55 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
           </div>
         );
 
-      case "pdfs":
-        return (
-          <>
-            <div
-              style={{
-                fontSize: 12,
-                color: "var(--text-secondary)",
-                marginBottom: 14,
-              }}
-            >
-              {/* {pdfBooks.length} ملفات PDF */}
-            </div>
-            {/* {pdfBooks.map((f) => (
-              <FileRow
-                key={f.id}
-                icon="PDF"
-                iconBg="rgba(16,185,129,0.12)"
-                iconColor="#10B981"
-                name={f.name}
-                meta={`${f.date} · ${f.size} · ${f.pages} صفحة`}
-              />
-            ))} */}
-          </>
-        );
-
-      case "assignments":
-        return (
-          <>
-            {/* {assignments.map((a) => (
-              <div
-                key={a.id}
-                className="file-row"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 14,
-                  padding: "14px 14px",
-                  borderRadius: 10,
-                  marginBottom: 2,
-                  cursor: "pointer",
-                }}
-              >
-                <div
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 10,
-                    background: "rgba(139,92,246,0.12)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 18,
-                    flexShrink: 0,
-                  }}
-                >
-                  📝
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "var(--text-primary)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {a.name}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "var(--text-muted)",
-                      marginTop: 2,
-                    }}
-                  >
-                    موعد التسليم: {a.due}
-                  </div>
-                </div>
-                {a.score !== "—" && (
-                  <span
-                    style={{
-                      fontSize: 12,
-                      color: "#10B981",
-                      fontWeight: 700,
-                      background: "rgba(16,185,129,0.1)",
-                      padding: "3px 8px",
-                      borderRadius: 7,
-                    }}
-                  >
-                    {a.score}
-                  </span>
-                )}
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: "3px 10px",
-                    borderRadius: 8,
-                    flexShrink: 0,
-                    background:
-                      a.status === "مكتمل"
-                        ? "rgba(16,185,129,0.15)"
-                        : a.status === "قيد التسليم"
-                          ? "rgba(245,158,11,0.15)"
-                          : "rgba(100,116,139,0.1)",
-                    color:
-                      a.status === "مكتمل"
-                        ? "#10B981"
-                        : a.status === "قيد التسليم"
-                          ? "#F59E0B"
-                          : "var(--text-muted)",
-                  }}
-                >
-                  {a.status}
-                </span>
-              </div>
-            ))} */}
-          </>
-        );
-
       case "exams":
         return (
-          <>
-            <div
-              style={{
-                fontSize: 12,
-                color: "var(--text-secondary)",
-                marginBottom: 14,
-              }}
-            >
+          <div className="space-y-2">
+            <div className="mb-4 text-xs text-[var(--text-secondary)]">
               {exams.length} امتحان سابق
             </div>
             {exams.map((e) => (
               <FileRow
                 key={e.id}
                 icon="PDF"
-                iconBg="rgba(6,182,212,0.12)"
+                iconBg="rgba(6,182,212,0.15)"
                 iconColor="#06B6D4"
                 name={e.name}
                 meta={`${e.year} · امتحان ${e.type} · ${e.size}`}
                 extra={
                   e.withSolution ? (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        color: "#10B981",
-                        background: "rgba(16,185,129,0.1)",
-                        padding: "2px 8px",
-                        borderRadius: 6,
-                        fontWeight: 600,
-                        flexShrink: 0,
-                      }}
-                    >
-                      مع الحل ✓
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>مع الحل</span>
                     </span>
                   ) : undefined
                 }
               />
             ))}
-          </>
+          </div>
         );
 
       case "videos":
         return (
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {videos.map((v) => (
               <div
                 key={v.id}
-                className="file-row"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: 14,
-                  padding: "14px",
-                  cursor: "pointer",
-                }}
+                className="group overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-red-500/30 hover:shadow-lg cursor-pointer"
               >
-                <div
-                  style={{
-                    width: "100%",
-                    height: 110,
-                    borderRadius: 10,
-                    marginBottom: 12,
-                    background:
-                      "linear-gradient(135deg, rgba(239,68,68,0.15), rgba(245,158,11,0.1))",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 42,
-                    color: "#EF4444",
-                  }}
-                >
-                  ▶
+                <div className="mb-3 flex h-32 w-full items-center justify-center rounded-xl bg-gradient-to-tr from-red-600/20 via-orange-500/10 to-transparent text-4xl text-red-500 shadow-inner">
+                  <Video className="h-10 w-10" />
                 </div>
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--text-primary)",
-                    marginBottom: 8,
-                    lineHeight: 1.4,
-                  }}
-                >
+                <h4 className="text-sm font-bold text-[var(--text-primary)] leading-snug">
                   {v.name}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color: "var(--text-muted)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 4,
-                    }}
-                  >
-                    ⏱ {v.duration}
+                </h4>
+                <div className="mt-3 flex items-center justify-between text-xs text-[var(--text-muted)]">
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>{v.duration}</span>
                   </span>
-                  <span
-                    style={{ fontSize: 11, color: "#F59E0B", fontWeight: 600 }}
-                  >
-                    👁 {v.views}
+                  <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>{v.views}</span>
                   </span>
                 </div>
               </div>
@@ -909,132 +523,61 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "projects":
         return (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="grid grid-cols-1 gap-4">
             {projects.map((p) => (
               <div
                 key={p.id}
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: 16,
-                  padding: "20px",
-                  cursor: "pointer",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-                className="file-row"
+                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 transition-all duration-200 hover:border-blue-500/30 hover:shadow-xl cursor-pointer"
               >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -30,
-                    left: -30,
-                    width: 100,
-                    height: 100,
-                    borderRadius: "50%",
-                    background: p.color + "08",
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    marginBottom: 12,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      background: p.color + "20",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 22,
-                      flexShrink: 0,
-                    }}
-                  >
-                    🗂
-                  </div>
-                  <div style={{ flex: 1 }}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4">
                     <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold"
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        marginBottom: 4,
+                        background: `${p.color}20`,
+                        color: p.color,
                       }}
                     >
-                      <span
-                        style={{
-                          fontSize: 15,
-                          fontWeight: 700,
-                          color: "var(--text-primary)",
-                        }}
-                      >
-                        {p.name}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 600,
-                          padding: "2px 8px",
-                          borderRadius: 6,
-                          background:
-                            p.level === "مبتدئ"
-                              ? "rgba(16,185,129,0.15)"
-                              : p.level === "متوسط"
-                                ? "rgba(245,158,11,0.15)"
-                                : "rgba(239,68,68,0.15)",
-                          color:
-                            p.level === "مبتدئ"
-                              ? "#10B981"
-                              : p.level === "متوسط"
-                                ? "#F59E0B"
-                                : "#EF4444",
-                        }}
-                      >
-                        {p.level}
-                      </span>
+                      <Code2 className="h-6 w-6" />
                     </div>
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: "var(--text-secondary)",
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {p.desc}
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-base font-bold text-[var(--text-primary)]">
+                          {p.name}
+                        </h4>
+                        <span
+                          className={`rounded-md px-2 py-0.5 text-xs font-semibold ${p.level === "مبتدئ"
+                            ? "bg-emerald-500/15 text-emerald-400"
+                            : p.level === "متوسط"
+                              ? "bg-amber-500/15 text-amber-400"
+                              : "bg-red-500/15 text-red-400"
+                            }`}
+                        >
+                          {p.level}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-[var(--text-secondary)] leading-relaxed">
+                        {p.desc}
+                      </p>
                     </div>
                   </div>
+
                   <button
-                    style={{
-                      background: "rgba(59,130,246,0.1)",
-                      border: "1px solid rgba(59,130,246,0.2)",
-                      borderRadius: 8,
-                      padding: "6px 12px",
-                      cursor: "pointer",
-                      color: "var(--accent-blue)",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      flexShrink: 0,
-                    }}
+                    type="button"
+                    className="flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/20 cursor-pointer"
                   >
-                    ⬇ تحميل
+                    <Download className="h-3.5 w-3.5" />
+                    <span>تحميل</span>
                   </button>
                 </div>
-                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+
+                <div className="mt-4 flex flex-wrap gap-2">
                   {p.tech.map((t) => (
                     <span
                       key={t}
+                      className="rounded-md px-2.5 py-0.5 text-xs font-semibold"
                       style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        padding: "3px 8px",
-                        borderRadius: 6,
-                        background: p.color + "15",
+                        background: `${p.color}15`,
                         color: p.color,
                       }}
                     >
@@ -1049,91 +592,44 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "external":
         return (
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {externalResources.map((r) => (
               <div
                 key={r.id}
-                className="file-row"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: 12,
-                  padding: "14px 14px",
-                  cursor: "pointer",
-                }}
+                className="group flex items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-blue-500/30 hover:shadow-lg cursor-pointer"
               >
-                <div
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 10,
-                    background: r.color + "20",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 18,
-                    color: r.color,
-                    flexShrink: 0,
-                  }}
-                >
-                  {r.icon}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
                   <div
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
                     style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "var(--text-primary)",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      marginBottom: 3,
+                      background: `${r.color}20`,
+                      color: r.color,
                     }}
                   >
-                    {r.title}
+                    {r.icon}
                   </div>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
-                  >
-                    <span
-                      style={{
-                        fontSize: 10,
-                        color: r.color,
-                        background: r.color + "15",
-                        padding: "1px 6px",
-                        borderRadius: 5,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {r.type}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: 10,
-                        color: "var(--text-muted)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {r.url}
-                    </span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="truncate text-sm font-bold text-[var(--text-primary)]">
+                      {r.title}
+                    </h4>
+                    <div className="mt-1 flex items-center gap-2 text-xs">
+                      <span
+                        className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                        style={{
+                          color: r.color,
+                          background: `${r.color}15`,
+                        }}
+                      >
+                        {r.type}
+                      </span>
+                      <span className="truncate text-[var(--text-muted)]">
+                        {r.url}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span
-                  style={{
-                    color: "var(--text-muted)",
-                    fontSize: 14,
-                    flexShrink: 0,
-                  }}
-                >
-                  ↗
-                </span>
+
+                <ExternalLink className="h-4 w-4 shrink-0 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" />
               </div>
             ))}
           </div>
@@ -1144,176 +640,113 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     }
   };
 
-  return (
-    <div className="fade-in">
-      <TopBar
-        breadcrumbs={[
-          { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+  const breadcrumbsList = [
+    { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+    {
+      label: "التخصصات",
+      onClick: () => navigate({ screen: "departments" }),
+    },
+    ...(nav.department?.name
+      ? [
           {
-            label: "التخصصات",
-            onClick: () => navigate({ screen: "departments" }),
+            label: nav.department.name,
+            onClick: () => navigate({ ...nav, screen: "levels" as const }),
           },
+        ]
+      : []),
+    ...(nav.level?.name
+      ? [
+          {
+            label: nav.level.name,
+            onClick: () => navigate({ ...nav, screen: "semesters" as const }),
+          },
+        ]
+      : []),
+    ...(nav.semester?.name
+      ? [
+          {
+            label: nav.semester.name,
+            onClick: () => navigate({ ...nav, screen: "courses" as const }),
+          },
+        ]
+      : []),
+    ...(nav.course?.name ? [{ label: nav.course.name }] : []),
+  ];
 
-          {
-            label: nav.department?.name ?? "",
-            onClick: () => navigate({ ...nav, screen: "levels" }),
-          },
-          {
-            label: nav.level?.name ?? "",
-            onClick: () => navigate({ ...nav, screen: "semesters" }),
-          },
-          {
-            label: nav.semester?.name ?? "",
-            onClick: () => navigate({ ...nav, screen: "courses" }),
-          },
-          { label: nav.course?.name ?? "" },
-        ]}
+  const subtitleText = [nav.course?.nameEn, nav.semester?.name]
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <div className="w-full">
+      <TopBar
+        breadcrumbs={breadcrumbsList}
         title={nav.course?.name}
-        subtitle={`${nav.course?.nameEn} · ${nav.semester?.name}`}
+        subtitle={subtitleText}
       />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "200px 1fr",
-          minHeight: "calc(100vh - 100px)",
-        }}
-      >
-        {/* Tab sidebar */}
-        <div
-          style={{
-            borderLeft: "1px solid var(--border-subtle)",
-            padding: "20px 0",
-            background: "rgba(10,15,30,0.5)",
-            position: "sticky",
-            top: "100px",
-            height: "fit-content",
-          }}
-        >
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "11px 20px",
-                background:
-                  activeTab === tab.id ? "rgba(59,130,246,0.08)" : "none",
-                border: "none",
-                borderRight:
-                  activeTab === tab.id
-                    ? `2px solid ${color}`
-                    : "2px solid transparent",
-                cursor: "pointer",
-                transition: "all 0.15s",
-              }}
-            >
-              <span style={{ fontSize: 15 }}>{tab.icon}</span>
-              <span
-                style={{
-                  fontSize: 13,
-                  fontWeight: activeTab === tab.id ? 600 : 400,
-                  color:
-                    activeTab === tab.id
-                      ? "var(--text-primary)"
-                      : "var(--text-secondary)",
-                  flex: 1,
-                  textAlign: "right",
-                }}
-              >
-                {tab.label}
-              </span>
-              <span
-                style={{
-                  fontSize: 11,
-                  background:
-                    activeTab === tab.id
-                      ? color + "25"
-                      : "rgba(255,255,255,0.06)",
-                  color: activeTab === tab.id ? color : "var(--text-muted)",
-                  padding: "1px 6px",
-                  borderRadius: 6,
-                  fontWeight: 600,
-                }}
-              >
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
+      <div className="mx-auto flex max-w-7xl flex-col md:flex-row gap-6 p-6 sm:p-8">
+        {/* Tab Sidebar */}
+        <aside className="w-full md:w-56 shrink-0 rounded-2xl border border-[var(--border-subtle)] bg-[rgba(10,15,30,0.5)] p-2.5 backdrop-blur-xl h-fit">
+          <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-medium transition-all cursor-pointer border-0 ${isActive
+                    ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
+                    : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]"
+                    }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span>{tab.icon}</span>
+                    <span>{tab.label}</span>
+                  </div>
+                  <span
+                    className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${isActive
+                      ? "bg-blue-500/20 text-blue-300"
+                      : "bg-white/[0.05] text-[var(--text-muted)]"
+                      }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
 
-        {/* Content */}
-        <div style={{ padding: "24px 28px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 20,
-            }}
-          >
+        {/* Content Area */}
+        <main className="flex-1 min-w-0">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: 17,
-                  fontWeight: 700,
-                  color: "var(--text-primary)",
-                }}
-              >
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">
                 {tabs.find((t) => t.id === activeTab)?.label}
               </h2>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "var(--text-secondary)",
-                  marginTop: 2,
-                }}
-              >
+              <p className="text-xs text-[var(--text-secondary)]">
                 {nav.course?.name}
-              </div>
+              </p>
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
+
+            <div className="flex items-center gap-2.5">
               <button
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid var(--border-medium)",
-                  borderRadius: 10,
-                  padding: "7px 14px",
-                  color: "var(--text-secondary)",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
+                type="button"
+                className="flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] bg-white/[0.05] px-3.5 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-all hover:bg-white/[0.08] hover:text-white cursor-pointer"
               >
-                ⬇ تحميل الكل
+                <Download className="h-3.5 w-3.5" />
+                <span>تحميل الكل</span>
               </button>
-              <button
-                style={{
-                  background: `linear-gradient(135deg, ${color}, ${color}cc)`,
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "7px 16px",
-                  color: "#fff",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                + رفع ملف
-              </button>
+
             </div>
           </div>
-          <div className="tab-content" key={activeTab}>{renderContent()}</div>
-        </div>
+
+          <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 shadow-xl">
+            {renderContent()}
+          </div>
+        </main>
       </div>
     </div>
   );

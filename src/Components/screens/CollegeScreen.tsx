@@ -1,75 +1,178 @@
-import { useState } from 'react'
-import type { NavState } from '../StudentApp'
-import TopBar from '../TopBar'
+import { useState } from "react";
+import { Search, Layers } from "lucide-react";
+import type { NavState } from "../StudentApp";
+import TopBar from "../TopBar";
 
-const collegesData: Record<number, Array<{ id: number; name: string; nameEn: string; depts: number; color: string; icon: string }>> = {
+const collegesData: Record<
+  number,
+  Array<{
+    id: number;
+    name: string;
+    nameEn: string;
+    depts: number;
+    color: string;
+    icon: string;
+  }>
+> = {
   1: [
-    { id: 1, name: 'كلية علوم الحاسوب والمعلومات', nameEn: 'Faculty of Computer Science', depts: 4, color: '#3B82F6', icon: '💻' },
-    { id: 2, name: 'كلية الهندسة', nameEn: 'Faculty of Engineering', depts: 8, color: '#8B5CF6', icon: '⚙' },
-    { id: 3, name: 'كلية الطب', nameEn: 'Faculty of Medicine', depts: 12, color: '#EF4444', icon: '⚕' },
-    { id: 4, name: 'كلية العلوم', nameEn: 'Faculty of Science', depts: 6, color: '#06B6D4', icon: '🔬' },
-    { id: 5, name: 'كلية الاقتصاد والعلوم السياسية', nameEn: 'Faculty of Economics', depts: 5, color: '#10B981', icon: '📊' },
-    { id: 6, name: 'كلية الآداب', nameEn: 'Faculty of Arts', depts: 7, color: '#F59E0B', icon: '📖' },
-    { id: 7, name: 'كلية الحقوق', nameEn: 'Faculty of Law', depts: 3, color: '#EC4899', icon: '⚖' },
-    { id: 8, name: 'كلية التجارة', nameEn: 'Faculty of Commerce', depts: 5, color: '#8B5CF6', icon: '💰' },
+    {
+      id: 1,
+      name: "كلية علوم الحاسوب والمعلومات",
+      nameEn: "Faculty of Computer Science",
+      depts: 4,
+      color: "#3B82F6",
+      icon: "💻",
+    },
+    {
+      id: 2,
+      name: "كلية الهندسة",
+      nameEn: "Faculty of Engineering",
+      depts: 8,
+      color: "#8B5CF6",
+      icon: "⚙",
+    },
+    {
+      id: 3,
+      name: "كلية الطب",
+      nameEn: "Faculty of Medicine",
+      depts: 12,
+      color: "#EF4444",
+      icon: "⚕",
+    },
+    {
+      id: 4,
+      name: "كلية العلوم",
+      nameEn: "Faculty of Science",
+      depts: 6,
+      color: "#06B6D4",
+      icon: "🔬",
+    },
+    {
+      id: 5,
+      name: "كلية الاقتصاد والعلوم السياسية",
+      nameEn: "Faculty of Economics",
+      depts: 5,
+      color: "#10B981",
+      icon: "📊",
+    },
+    {
+      id: 6,
+      name: "كلية الآداب",
+      nameEn: "Faculty of Arts",
+      depts: 7,
+      color: "#F59E0B",
+      icon: "📖",
+    },
+    {
+      id: 7,
+      name: "كلية الحقوق",
+      nameEn: "Faculty of Law",
+      depts: 3,
+      color: "#EC4899",
+      icon: "⚖",
+    },
+    {
+      id: 8,
+      name: "كلية التجارة",
+      nameEn: "Faculty of Commerce",
+      depts: 5,
+      color: "#8B5CF6",
+      icon: "💰",
+    },
   ],
+};
+
+interface Props {
+  nav: NavState;
+  navigate: (s: NavState) => void;
 }
 
-interface Props { nav: NavState; navigate: (s: NavState) => void }
-
 export default function CollegeScreen({ nav, navigate }: Props) {
-  const [search, setSearch] = useState('')
-  const uniId = nav.university?.id ?? 1
-  const colleges = (collegesData[uniId] ?? collegesData[1]).filter(c =>
-    c.name.includes(search) || c.nameEn.toLowerCase().includes(search.toLowerCase())
-  )
+  const [search, setSearch] = useState("");
+  const uniId = nav.university?.id ?? 1;
+  const colleges = (collegesData[uniId] ?? collegesData[1]).filter(
+    (c) =>
+      c.name.includes(search) ||
+      c.nameEn.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
-    <div className="fade-in">
-      <TopBar breadcrumbs={[
-        { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        { label: 'الجامعات', onClick: () => navigate({ screen: 'universities' }) },
-        { label: nav.university?.name ?? '' }
-      ]} title={nav.university?.name} subtitle="اختر الكلية للمتابعة" />
-      <div style={{ padding: '32px 32px 48px' }}>
-        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }} className="slide-up">
-          <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>🔍</span>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="ابحث عن كلية..."
-            style={{
-              width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)',
-              borderRadius: 12, padding: '11px 44px 11px 16px', color: 'var(--text-primary)',
-              fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box',
-              transition: 'border-color 0.2s, box-shadow 0.2s',
-            }}
-            onFocus={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)' }}
-            onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.boxShadow = 'none' }}
+    <div className="w-full">
+      <TopBar
+        breadcrumbs={[
+          { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+          {
+            label: "الجامعات",
+            onClick: () => navigate({ screen: "universities" }),
+          },
+          { label: nav.university?.name ?? "" },
+        ]}
+        title={nav.university?.name}
+        subtitle="اختر الكلية للمتابعة"
+      />
+      <div className="p-6 sm:p-8 max-w-7xl mx-auto">
+        {/* Search */}
+        <div className="relative mb-8 max-w-md">
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] h-4 w-4" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="ابحث عن كلية..."
+            className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)] py-2.5 pr-11 pl-4 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
-        <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-          {colleges.map(college => (
-            <div key={college.id} className="dept-card" style={{
-              background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-              borderRadius: 18, padding: '22px 18px', cursor: 'pointer', position: 'relative', overflow: 'hidden'
-            }}
-              onClick={() => navigate({ ...nav, screen: 'departments', college: { id: college.id, name: college.name, nameEn: college.nameEn } })}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = college.color + '40' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)' }}
+
+        {/* Colleges Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {colleges.map((college) => (
+            <div
+              key={college.id}
+              onClick={() =>
+                navigate({
+                  ...nav,
+                  screen: "departments",
+                  college: {
+                    id: college.id,
+                    name: college.name,
+                    nameEn: college.nameEn,
+                  },
+                })
+              }
+              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:shadow-xl hover:shadow-violet-500/5 cursor-pointer"
             >
-              <div style={{ position: 'absolute', top: -20, left: -20, width: 70, height: 70, borderRadius: '50%', background: college.color + '12' }} />
-              <div style={{
-                width: 50, height: 50, borderRadius: 14, background: college.color + '22',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 24, marginBottom: 12, transition: 'transform 0.3s ease',
-              }}>{college.icon}</div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6, lineHeight: 1.4 }}>{college.name}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 10 }}>{college.nameEn}</div>
-              <span style={{ fontSize: 11, color: college.color, fontWeight: 600, background: college.color+'15', padding: '2px 8px', borderRadius: 6 }}>
-                {college.depts} قسم
+              <div
+                className="absolute -top-6 -left-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-20"
+                style={{ background: college.color }}
+              />
+
+              <div
+                className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-transform duration-300 group-hover:scale-110"
+                style={{ background: `${college.color}25` }}
+              >
+                {college.icon}
+              </div>
+
+              <h3 className="mb-1 text-sm sm:text-base font-bold text-[var(--text-primary)] leading-snug">
+                {college.name}
+              </h3>
+              <p className="mb-4 text-xs text-[var(--text-secondary)]">
+                {college.nameEn}
+              </p>
+
+              <span
+                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold"
+                style={{
+                  color: college.color,
+                  background: `${college.color}15`,
+                }}
+              >
+                <Layers className="h-3 w-3" />
+                <span>{college.depts} قسم</span>
               </span>
             </div>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

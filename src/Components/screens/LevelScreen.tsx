@@ -1,85 +1,142 @@
-import type { NavState } from '../StudentApp'
-import TopBar from '../TopBar'
+import { ChevronLeft, BookOpen } from "lucide-react";
+import type { NavState } from "../StudentApp";
+import TopBar from "../TopBar";
 
 const levels = [
-  { id: 1, name: 'السنة الأولى', year: 1, color: '#3B82F6', icon: '①', courses: 8 },
-  { id: 2, name: 'السنة الثانية', year: 2, color: '#8B5CF6', icon: '②', courses: 10 },
-  { id: 3, name: 'السنة الثالثة', year: 3, color: '#06B6D4', icon: '③', courses: 10 },
-  { id: 4, name: 'السنة الرابعة', year: 4, color: '#10B981', icon: '④', courses: 9 },
-]
+  {
+    id: 1,
+    name: "السنة الأولى",
+    year: 1,
+    color: "#3B82F6",
+    icon: "①",
+    courses: 8,
+  },
+  {
+    id: 2,
+    name: "السنة الثانية",
+    year: 2,
+    color: "#8B5CF6",
+    icon: "②",
+    courses: 10,
+  },
+  {
+    id: 3,
+    name: "السنة الثالثة",
+    year: 3,
+    color: "#06B6D4",
+    icon: "③",
+    courses: 10,
+  },
+  {
+    id: 4,
+    name: "السنة الرابعة",
+    year: 4,
+    color: "#10B981",
+    icon: "④",
+    courses: 9,
+  },
+];
 
-interface Props { nav: NavState; navigate: (s: NavState) => void }
+interface Props {
+  nav: NavState;
+  navigate: (s: NavState) => void;
+}
 
 export default function LevelScreen({ nav, navigate }: Props) {
+  const deptColor = nav.department?.color ?? "#3B82F6";
+
   return (
-    <div className="fade-in">
-      <TopBar breadcrumbs={[
-        { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-                { label: 'التخصصات', onClick: () => navigate({ screen: 'departments' }) },
-        { label: nav.department?.name ?? '' }
-      ]} title={nav.department?.name} subtitle="اختر السنة الدراسية" />
-      <div style={{ padding: '32px 32px 48px' }}>
-        {/* Dept Header */}
-        <div className="slide-up" style={{
-          background: 'linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1))',
-          border: '1px solid rgba(59,130,246,0.15)',
-          borderRadius: 20, padding: '24px 28px', marginBottom: 28,
-          display: 'flex', alignItems: 'center', gap: 20
-        }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 16,
-            background: (nav.department?.color ?? '#3B82F6') + '25',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 30, color: nav.department?.color ?? '#3B82F6', fontWeight: 700,
-            boxShadow: `0 4px 16px ${(nav.department?.color ?? '#3B82F6')}20`,
-          }}>{nav.department?.icon ?? '💻'}</div>
+    <div className="w-full">
+      <TopBar
+        breadcrumbs={[
+          { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+          {
+            label: "التخصصات",
+            onClick: () => navigate({ screen: "departments" }),
+          },
+          { label: nav.department?.name ?? "" },
+        ]}
+        title={nav.department?.name}
+        subtitle="اختر السنة الدراسية"
+      />
+      <div className="p-6 sm:p-8 max-w-7xl mx-auto">
+        {/* Department Banner Header */}
+        <div className="mb-8 flex items-center gap-5 rounded-2xl border border-blue-500/20 bg-gradient-to-r from-blue-500/10 via-violet-500/10 to-transparent p-6 shadow-lg">
+          <div
+            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl font-mono text-3xl font-bold shadow-md"
+            style={{
+              background: `${deptColor}25`,
+              color: deptColor,
+              boxShadow: `0 4px 20px ${deptColor}20`,
+            }}
+          >
+            {nav.department?.icon ?? "💻"}
+          </div>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif" }}>{nav.department?.name}</div>
-            <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>{nav.department?.nameEn} — {nav.college?.name}</div>
+            <h2 className="text-xl sm:text-2xl font-black text-[var(--text-primary)]">
+              {nav.department?.name}
+            </h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+              {nav.department?.nameEn} {nav.college?.name ? `— ${nav.college.name}` : ""}
+            </p>
           </div>
         </div>
 
-        <h2 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 700, color: 'var(--text-secondary)' }}>المستويات الدراسية</h2>
+        <h3 className="mb-4 text-base font-bold text-[var(--text-secondary)]">
+          المستويات الدراسية
+        </h3>
 
-        {/* Levels as accordion-style list */}
-        <div className="stagger-children" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {levels.map(level => (
-            <div key={level.id}
-              onClick={() => navigate({ ...nav, screen: 'semesters', level: { id: level.id, name: level.name } })}
-              style={{
-                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-                borderRadius: 14, padding: '18px 22px', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-              }}
-              className="file-row"
-              onMouseEnter={e => { e.currentTarget.style.borderColor = level.color + '40'; e.currentTarget.style.boxShadow = `0 4px 20px ${level.color}10` }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.boxShadow = 'none' }}
+        {/* Levels List */}
+        <div className="flex flex-col gap-3">
+          {levels.map((level) => (
+            <div
+              key={level.id}
+              onClick={() =>
+                navigate({
+                  ...nav,
+                  screen: "semesters",
+                  level: { id: level.id, name: level.name },
+                })
+              }
+              className="group flex items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 sm:p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-500/40 hover:shadow-lg cursor-pointer"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{
-                  width: 42, height: 42, borderRadius: 12,
-                  background: level.color + '20',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 18, color: level.color, fontWeight: 700,
-                  transition: 'transform 0.3s ease',
-                }}>{level.icon}</div>
+              <div className="flex items-center gap-4">
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-bold transition-transform duration-200 group-hover:scale-105"
+                  style={{
+                    background: `${level.color}20`,
+                    color: level.color,
+                  }}
+                >
+                  {level.icon}
+                </div>
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{level.name}</div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>{level.courses} مادة دراسية</div>
+                  <h4 className="text-base font-bold text-[var(--text-primary)]">
+                    {level.name}
+                  </h4>
+                  <div className="mt-0.5 flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+                    <BookOpen className="h-3 w-3" />
+                    <span>{level.courses} مادة دراسية</span>
+                  </div>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{
-                  fontSize: 12, color: level.color, fontWeight: 600,
-                  background: level.color + '15', padding: '3px 10px', borderRadius: 8
-                }}>المستوى {level.year}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: 20, transition: 'transform 0.2s' }}>‹</span>
+
+              <div className="flex items-center gap-3">
+                <span
+                  className="rounded-lg px-2.5 py-1 text-xs font-semibold"
+                  style={{
+                    color: level.color,
+                    background: `${level.color}15`,
+                  }}
+                >
+                  المستوى {level.year}
+                </span>
+                <ChevronLeft className="h-4 w-4 text-[var(--text-muted)] transition-transform group-hover:-translate-x-1 rtl:rotate-0" />
               </div>
             </div>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

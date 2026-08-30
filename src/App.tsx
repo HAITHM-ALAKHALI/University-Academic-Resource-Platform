@@ -11,16 +11,10 @@ export type Page = "landing" | "course" | "admin" | "app";
 
 function LoadingFallback() {
   return (
-    <div className="loading-screen">
-      <div style={{ textAlign: "center" }}>
-        <div className="loading-spinner" style={{ margin: "0 auto 16px" }} />
-        <div
-          style={{
-            fontSize: 13,
-            color: "var(--text-muted)",
-            fontWeight: 500,
-          }}
-        >
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg-base)]">
+      <div className="text-center">
+        <div className="loading-spinner mx-auto mb-4" />
+        <div className="text-xs font-medium text-[var(--text-muted)]">
           جاري التحميل...
         </div>
       </div>
@@ -31,7 +25,7 @@ function LoadingFallback() {
 export default function App() {
   const [mode, setMode] = useState<"student" | "admin" | "pages">("student");
   const [page, setPage] = useState<Page>("landing");
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState<boolean>(true);
   const [lang, setLang] = useState<Lang>("ar");
   const [selectedCourseId, setSelectedCourseId] = useState<string>("c1");
 
@@ -48,7 +42,7 @@ export default function App() {
 
   if (mode === "student") {
     return (
-      <div style={{ minHeight: "100vh", background: "var(--bg-base)" }}>
+      <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
           <StudentApp onSwitchAdmin={() => setMode("admin")} />
         </Suspense>
@@ -58,7 +52,7 @@ export default function App() {
 
   if (mode === "admin") {
     return (
-      <div style={{ minHeight: "100vh", background: "var(--bg-base)" }}>
+      <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
           <AdminApp onSwitchStudent={() => setMode("student")} />
         </Suspense>
@@ -67,12 +61,7 @@ export default function App() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: dark ? "var(--bg-base)" : "#F8FAFC",
-      }}
-    >
+    <div className={`min-h-screen ${dark ? "bg-[var(--bg-base)] text-[var(--text-primary)]" : "bg-slate-50 text-slate-900"}`}>
       <Suspense fallback={<LoadingFallback />}>
         {page === "landing" && (
           <LandingPage

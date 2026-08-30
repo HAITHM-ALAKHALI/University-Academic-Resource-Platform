@@ -1,75 +1,175 @@
-import { useState } from 'react'
-import type { NavState } from '../StudentApp'
-import TopBar from '../TopBar'
+import { useState } from "react";
+import { Search, MapPin, Building, GraduationCap } from "lucide-react";
+import type { NavState } from "../StudentApp";
+import TopBar from "../TopBar";
 
 const universities = [
-  { id: 1, name: 'جامعة القاهرة', nameEn: 'Cairo University', colleges: 24, logo: '🏛', city: 'القاهرة', founded: 1908, color: '#3B82F6' },
-  { id: 2, name: 'جامعة الإسكندرية', nameEn: 'Alexandria University', colleges: 22, logo: '⚓', city: 'الإسكندرية', founded: 1938, color: '#8B5CF6' },
-  { id: 3, name: 'جامعة الأزهر', nameEn: 'Al-Azhar University', colleges: 18, logo: '🕌', city: 'القاهرة', founded: 970, color: '#06B6D4' },
-  { id: 4, name: 'جامعة عين شمس', nameEn: 'Ain Shams University', colleges: 20, logo: '☀', city: 'القاهرة', founded: 1950, color: '#10B981' },
-  { id: 5, name: 'جامعة المنصورة', nameEn: 'Mansoura University', colleges: 16, logo: '🌿', city: 'المنصورة', founded: 1972, color: '#F59E0B' },
-  { id: 6, name: 'جامعة حلوان', nameEn: 'Helwan University', colleges: 14, logo: '⚙', city: 'حلوان', founded: 1975, color: '#EC4899' },
-  { id: 7, name: 'جامعة بنها', nameEn: 'Benha University', colleges: 12, logo: '📚', city: 'بنها', founded: 1976, color: '#EF4444' },
-  { id: 8, name: 'جامعة أسيوط', nameEn: 'Assiut University', colleges: 15, logo: '🏜', city: 'أسيوط', founded: 1949, color: '#8B5CF6' },
-]
+  {
+    id: 1,
+    name: "جامعة القاهرة",
+    nameEn: "Cairo University",
+    colleges: 24,
+    logo: "🏛",
+    city: "القاهرة",
+    founded: 1908,
+    color: "#3B82F6",
+  },
+  {
+    id: 2,
+    name: "جامعة الإسكندرية",
+    nameEn: "Alexandria University",
+    colleges: 22,
+    logo: "⚓",
+    city: "الإسكندرية",
+    founded: 1938,
+    color: "#8B5CF6",
+  },
+  {
+    id: 3,
+    name: "جامعة الأزهر",
+    nameEn: "Al-Azhar University",
+    colleges: 18,
+    logo: "🕌",
+    city: "القاهرة",
+    founded: 970,
+    color: "#06B6D4",
+  },
+  {
+    id: 4,
+    name: "جامعة عين شمس",
+    nameEn: "Ain Shams University",
+    colleges: 20,
+    logo: "☀",
+    city: "القاهرة",
+    founded: 1950,
+    color: "#10B981",
+  },
+  {
+    id: 5,
+    name: "جامعة المنصورة",
+    nameEn: "Mansoura University",
+    colleges: 16,
+    logo: "🌿",
+    city: "المنصورة",
+    founded: 1972,
+    color: "#F59E0B",
+  },
+  {
+    id: 6,
+    name: "جامعة حلوان",
+    nameEn: "Helwan University",
+    colleges: 14,
+    logo: "⚙",
+    city: "حلوان",
+    founded: 1975,
+    color: "#EC4899",
+  },
+  {
+    id: 7,
+    name: "جامعة بنها",
+    nameEn: "Benha University",
+    colleges: 12,
+    logo: "📚",
+    city: "بنها",
+    founded: 1976,
+    color: "#EF4444",
+  },
+  {
+    id: 8,
+    name: "جامعة أسيوط",
+    nameEn: "Assiut University",
+    colleges: 15,
+    logo: "🏜",
+    city: "أسيوط",
+    founded: 1949,
+    color: "#8B5CF6",
+  },
+];
 
-interface Props { navigate: (s: NavState) => void }
+interface Props {
+  navigate: (s: NavState) => void;
+}
 
 export default function UniversityScreen({ navigate }: Props) {
-  const [search, setSearch] = useState('')
-  const filtered = universities.filter(u => u.name.includes(search) || u.nameEn.toLowerCase().includes(search.toLowerCase()))
+  const [search, setSearch] = useState("");
+  const filtered = universities.filter(
+    (u) =>
+      u.name.includes(search) ||
+      u.nameEn.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
-    <div className="fade-in">
-      <TopBar breadcrumbs={[
-        { label: 'الرئيسية', onClick: () => navigate({ screen: 'home' }) },
-        { label: 'الجامعات' }
-      ]} title="اختر الجامعة" subtitle="تصفح الجامعات المتاحة واختر جامعتك" />
-      <div style={{ padding: '32px 32px 48px' }}>
+    <div className="w-full">
+      <TopBar
+        breadcrumbs={[
+          { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+          { label: "الجامعات" },
+        ]}
+        title="اختر الجامعة"
+        subtitle="تصفح الجامعات المتاحة واختر جامعتك"
+      />
+      <div className="p-6 sm:p-8 max-w-7xl mx-auto">
         {/* Search */}
-        <div style={{ position: 'relative', marginBottom: 28, maxWidth: 420 }} className="slide-up">
-          <span style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>🔍</span>
+        <div className="relative mb-8 max-w-md">
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] h-4 w-4" />
           <input
-            value={search} onChange={e => setSearch(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="ابحث عن جامعة..."
-            style={{
-              width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-medium)',
-              borderRadius: 12, padding: '11px 44px 11px 16px',
-              color: 'var(--text-primary)', fontSize: 14, outline: 'none', direction: 'rtl', boxSizing: 'border-box',
-              transition: 'border-color 0.2s, box-shadow 0.2s',
-            }}
-            onFocus={e => { e.currentTarget.style.borderColor = 'var(--accent-blue)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.1)' }}
-            onBlur={e => { e.currentTarget.style.borderColor = 'var(--border-medium)'; e.currentTarget.style.boxShadow = 'none' }}
+            className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)] py-2.5 pr-11 pl-4 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
 
-        <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-          {filtered.map(uni => (
-            <div key={uni.id} className="dept-card" style={{
-              background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-              borderRadius: 18, padding: '24px 20px', cursor: 'pointer',
-              textAlign: 'center', position: 'relative', overflow: 'hidden'
-            }}
-              onClick={() => navigate({ screen: 'colleges', university: { id: uni.id, name: uni.name, nameEn: uni.nameEn } })}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = uni.color + '40' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)' }}
+        {/* Universities Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {filtered.map((uni) => (
+            <div
+              key={uni.id}
+              onClick={() =>
+                navigate({
+                  screen: "colleges",
+                  university: {
+                    id: uni.id,
+                    name: uni.name,
+                    nameEn: uni.nameEn,
+                  },
+                })
+              }
+              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-500/5 cursor-pointer"
             >
-              <div style={{
-                position: 'absolute', top: -30, right: -30, width: 100, height: 100,
-                borderRadius: '50%', background: uni.color + '10'
-              }} />
-              <div style={{
-                width: 56, height: 56, borderRadius: 16,
-                background: uni.color + '20', margin: '0 auto 14px',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 26, transition: 'transform 0.3s ease',
-              }}>{uni.logo}</div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{uni.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>{uni.nameEn}</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📍 {uni.city}</span>
-                <span style={{ fontSize: 11, color: uni.color, fontWeight: 600, background: uni.color+'15', padding: '2px 8px', borderRadius: 6 }}>
-                  {uni.colleges} كلية
+              <div
+                className="absolute -top-6 -right-6 h-24 w-24 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-20"
+                style={{ background: uni.color }}
+              />
+
+              <div
+                className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110"
+                style={{ background: `${uni.color}25` }}
+              >
+                {uni.logo}
+              </div>
+
+              <h3 className="mb-1 text-base font-bold text-[var(--text-primary)]">
+                {uni.name}
+              </h3>
+              <p className="mb-4 text-xs text-[var(--text-secondary)]">
+                {uni.nameEn}
+              </p>
+
+              <div className="flex items-center justify-center gap-3 text-xs">
+                <span className="flex items-center gap-1 text-[var(--text-muted)]">
+                  <MapPin className="h-3 w-3" />
+                  <span>{uni.city}</span>
+                </span>
+                <span
+                  className="flex items-center gap-1 rounded-md px-2 py-0.5 font-semibold"
+                  style={{
+                    color: uni.color,
+                    background: `${uni.color}15`,
+                  }}
+                >
+                  <Building className="h-3 w-3" />
+                  <span>{uni.colleges} كلية</span>
                 </span>
               </div>
             </div>
@@ -77,5 +177,5 @@ export default function UniversityScreen({ navigate }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

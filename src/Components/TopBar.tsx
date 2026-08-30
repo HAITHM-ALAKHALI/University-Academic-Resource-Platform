@@ -1,4 +1,5 @@
 import { useState, memo } from "react";
+import { Bell, ChevronLeft, CheckCheck } from "lucide-react";
 import type { NavState } from "./StudentApp";
 
 interface BreadcrumbItem {
@@ -6,7 +7,7 @@ interface BreadcrumbItem {
   onClick?: () => void;
 }
 
-interface Props {
+interface TopBarProps {
   breadcrumbs: BreadcrumbItem[];
   title?: string;
   subtitle?: string;
@@ -58,311 +59,143 @@ const NotifItem = memo(function NotifItem({
   return (
     <div
       onClick={onClick}
-      className="file-row"
-      style={{
-        display: "flex",
-        gap: 10,
-        padding: "11px 16px",
-        borderBottom: "1px solid var(--border-subtle)",
-        background: n.read ? "transparent" : "rgba(59,130,246,0.04)",
-        cursor: "pointer",
-        transition: "background 0.15s",
-      }}
+      className={`flex items-start gap-3 p-3 border-b border-[var(--border-subtle)] cursor-pointer transition-colors hover:bg-white/[0.04] ${
+        n.read ? "bg-transparent" : "bg-blue-500/[0.06]"
+      }`}
     >
       <div
-        style={{
-          width: 32,
-          height: 32,
-          borderRadius: 8,
-          background: n.color + "20",
-          flexShrink: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 15,
-        }}
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm"
+        style={{ background: `${n.color}20` }}
       >
         {n.icon}
       </div>
-      <div style={{ flex: 1 }}>
-        <div
-          style={{
-            fontSize: 12,
-            color: "var(--text-primary)",
-            lineHeight: 1.4,
-          }}
-        >
+      <div className="flex-1 text-right">
+        <div className="text-xs text-[var(--text-primary)] leading-snug">
           {n.text}
         </div>
-        <div
-          style={{
-            fontSize: 10,
-            color: "var(--text-muted)",
-            marginTop: 3,
-          }}
-        >
+        <div className="mt-1 text-[10px] text-[var(--text-muted)]">
           منذ {n.time}
         </div>
       </div>
       {!n.read && (
-        <div
-          className="glow-pulse"
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            background: "#3B82F6",
-            flexShrink: 0,
-            marginTop: 5,
-          }}
-        />
+        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50 animate-pulse" />
       )}
     </div>
   );
 });
 
-export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
-  const [showNotifs, setShowNotifs] = useState(false);
+export default function TopBar({ breadcrumbs, title, subtitle }: TopBarProps) {
+  const [showNotifs, setShowNotifs] = useState<boolean>(false);
   const [notifList, setNotifList] = useState(notifs);
 
   const unread = notifList.filter((n) => !n.read).length;
 
   return (
     <div
-      style={{
-        padding: "16px 32px",
-        borderBottom: "1px solid var(--border-subtle)",
-        background: "rgba(10,15,30,0.5)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        position: "relative",
-        zIndex: 40,
-      }}
-      onClick={() => {
-        setShowNotifs(false);
-      }}
+      className="relative z-40 w-full border-b border-[var(--border-subtle)] bg-[rgba(10,15,30,0.5)] px-6 py-4 backdrop-blur-md transition-all sm:px-8"
+      onClick={() => setShowNotifs(false)}
     >
-      {/* Breadcrumbs row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          {breadcrumbs.map((crumb, i) => (
-            <span
-              key={i}
-              style={{ display: "flex", alignItems: "center", gap: 6 }}
-            >
-              {i > 0 && (
-                <span style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                  ›
-                </span>
-              )}
-              <button
-                onClick={crumb.onClick}
-                className="focus-ring"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: crumb.onClick ? "pointer" : "default",
-                  padding: "2px 4px",
-                  borderRadius: 4,
-                  color:
-                    i === breadcrumbs.length - 1
-                      ? "var(--text-primary)"
-                      : "var(--text-secondary)",
-                  fontSize: 13,
-                  fontWeight: i === breadcrumbs.length - 1 ? 600 : 400,
-                  transition: "color 0.15s, background 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  if (crumb.onClick)
-                    e.currentTarget.style.color = "var(--accent-blue)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color =
-                    i === breadcrumbs.length - 1
-                      ? "var(--text-primary)"
-                      : "var(--text-secondary)";
-                }}
-              >
-                {crumb.label}
-              </button>
-            </span>
-          ))}
+      <div className="flex items-center justify-between gap-4">
+        {/* Breadcrumbs */}
+        <div className="flex flex-wrap items-center gap-1.5 text-xs sm:text-sm">
+          {breadcrumbs
+            .filter((crumb) => Boolean(crumb && crumb.label && crumb.label.trim()))
+            .map((crumb, i, arr) => (
+              <div key={i} className="flex items-center gap-1.5">
+                {i > 0 && (
+                  <ChevronLeft className="h-3.5 w-3.5 text-[var(--text-muted)] rtl:rotate-0" />
+                )}
+                <button
+                  type="button"
+                  onClick={crumb.onClick}
+                  className={`rounded px-1.5 py-0.5 border-0 bg-transparent transition-colors ${
+                    crumb.onClick
+                      ? "cursor-pointer hover:text-blue-400"
+                      : "cursor-default"
+                  } ${
+                    i === arr.length - 1
+                      ? "font-semibold text-[var(--text-primary)]"
+                      : "font-normal text-[var(--text-secondary)]"
+                  }`}
+                >
+                  {crumb.label}
+                </button>
+              </div>
+            ))}
         </div>
 
-        {/* Right controls */}
+        {/* Right Controls */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 10 }}
+          className="flex items-center gap-3"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Notifications */}
-          <div style={{ position: "relative" }}>
+          <div className="relative">
             <button
-              onClick={() => {
-                setShowNotifs(!showNotifs);
-              }}
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid var(--border-medium)",
-                borderRadius: 10,
-                width: 36,
-                height: 36,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                fontSize: 17,
-                position: "relative",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                e.currentTarget.style.borderColor = "var(--border-medium)";
-              }}
+              type="button"
+              onClick={() => setShowNotifs(!showNotifs)}
+              aria-label="الإشعارات"
+              className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-medium)] bg-white/[0.05] text-[var(--text-primary)] transition-all hover:border-white/20 hover:bg-white/[0.08] cursor-pointer"
             >
-              🔔
+              <Bell className="h-4 w-4" />
               {unread > 0 && (
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 5,
-                    left: 5,
-                    width: 14,
-                    height: 14,
-                    borderRadius: "50%",
-                    background: "#EF4444",
-                    color: "#fff",
-                    fontSize: 8,
-                    fontWeight: 700,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: "0 0 8px rgba(239, 68, 68, 0.4)",
-                  }}
-                >
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-sm shadow-red-500/50">
                   {unread}
                 </span>
               )}
             </button>
 
+            {/* Notification Dropdown */}
             {showNotifs && (
-              <div
-                className="notif-dropdown"
-                style={{
-                  position: "absolute",
-                  top: 46,
-                  left: 0,
-                  width: 320,
-                  background: "#131C2E",
-                  border: "1px solid var(--border-medium)",
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  boxShadow:
-                    "0 20px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03)",
-                  zIndex: 200,
-                }}
-              >
-                <div
-                  style={{
-                    padding: "13px 16px",
-                    borderBottom: "1px solid var(--border-subtle)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: "var(--text-primary)",
-                    }}
-                  >
-                    الإشعارات{" "}
+              <div className="notif-dropdown absolute left-0 top-11 z-50 w-80 overflow-hidden rounded-2xl border border-[var(--border-medium)] bg-[#131C2E] shadow-2xl">
+                <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-3">
+                  <div className="flex items-center gap-2 text-sm font-bold text-[var(--text-primary)]">
+                    <span>الإشعارات</span>
                     {unread > 0 && (
-                      <span
-                        style={{
-                          fontSize: 11,
-                          background:
-                            "linear-gradient(135deg, #3B82F6, #8B5CF6)",
-                          color: "#fff",
-                          borderRadius: 8,
-                          padding: "1px 6px",
-                          marginRight: 4,
-                        }}
-                      >
+                      <span className="rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-2 py-0.5 text-[10px] text-white">
                         {unread}
                       </span>
                     )}
-                  </span>
+                  </div>
                   <button
+                    type="button"
                     onClick={() =>
-                      setNotifList((n) =>
-                        n.map((x) => ({ ...x, read: true })),
-                      )
+                      setNotifList((n) => n.map((x) => ({ ...x, read: true })))
                     }
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "var(--accent-blue)",
-                      fontSize: 12,
-                      transition: "opacity 0.15s",
-                    }}
+                    className="flex items-center gap-1 border-0 bg-transparent text-xs text-blue-400 hover:text-blue-300 cursor-pointer"
                   >
-                    تحديد الكل مقروء
+                    <CheckCheck className="h-3 w-3" />
+                    <span>تحديد الكل مقروء</span>
                   </button>
                 </div>
-                {notifList.map((n) => (
-                  <NotifItem
-                    key={n.id}
-                    n={n}
-                    onClick={() =>
-                      setNotifList((prev) =>
-                        prev.map((x) =>
-                          x.id === n.id ? { ...x, read: true } : x,
-                        ),
-                      )
-                    }
-                  />
-                ))}
+                <div className="max-h-72 overflow-y-auto">
+                  {notifList.map((n) => (
+                    <NotifItem
+                      key={n.id}
+                      n={n}
+                      onClick={() =>
+                        setNotifList((prev) =>
+                          prev.map((x) =>
+                            x.id === n.id ? { ...x, read: true } : x,
+                          ),
+                        )
+                      }
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Title row */}
+      {/* Screen Title & Subtitle */}
       {title && (
-        <div style={{ marginTop: 10 }} className="slide-up">
-          <h1
-            style={{
-              margin: 0,
-              fontSize: 20,
-              fontWeight: 800,
-              color: "var(--text-primary)",
-              fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
-            }}
-          >
+        <div className="mt-3 text-right">
+          <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-2xl">
             {title}
           </h1>
           {subtitle && (
-            <p
-              style={{
-                margin: "3px 0 0",
-                fontSize: 13,
-                color: "var(--text-secondary)",
-              }}
-            >
+            <p className="mt-1 text-xs text-[var(--text-secondary)] sm:text-sm">
               {subtitle}
             </p>
           )}

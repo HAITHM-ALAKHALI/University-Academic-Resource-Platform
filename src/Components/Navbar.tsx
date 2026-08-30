@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import { GraduationCap, Globe, Sun, Moon } from "lucide-react";
 import type { Lang } from "../data";
 import type { Page } from "../App";
 import { t } from "../data";
@@ -30,171 +31,97 @@ export default function Navbar({
 
   return (
     <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 100,
-        backgroundColor: dark ? "rgba(10, 15, 30, 0.85)" : "rgba(255, 255, 255, 0.85)",
-        backdropFilter: "blur(16px)",
-        borderBottom: dark ? "1px solid var(--border-subtle)" : "1px solid #E2E8F0",
-        padding: "12px 24px",
-        transition: "all 0.2s ease",
-      }}
+      className={`sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-200 ${
+        dark
+          ? "border-[var(--border-subtle)] bg-[rgba(10,15,30,0.85)] text-white"
+          : "border-slate-200 bg-white/85 text-slate-900"
+      }`}
     >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
         {/* Brand Logo */}
-        <div
+        <button
+          type="button"
           onClick={() => handleNav("landing")}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            cursor: "pointer",
-          }}
+          className="flex items-center gap-3 bg-transparent border-0 p-0 text-right cursor-pointer"
         >
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              background: "linear-gradient(135deg, #3B82F6, #8B5CF6)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 20,
-              boxShadow: "0 4px 12px rgba(59, 130, 246, 0.3)",
-            }}
-          >
-            🎓
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/30">
+            <GraduationCap className="h-6 w-6" />
           </div>
-          <div>
-            <span
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontWeight: 800,
-                fontSize: 18,
-                letterSpacing: "-0.02em",
-                color: dark ? "#F1F5F9" : "#0F172A",
-              }}
-            >
+          <div className="flex flex-col">
+            <span className="font-['Outfit'] text-lg font-extrabold tracking-tight">
               UniHub
             </span>
-            <span
-              style={{
-                display: "block",
-                fontSize: 10,
-                color: dark ? "#94A3B8" : "#64748B",
-                fontWeight: 500,
-              }}
-            >
+            <span className="text-[10px] font-medium text-slate-400">
               {tx.hero.badge || "Academic Platform"}
             </span>
           </div>
-        </div>
+        </button>
 
         {/* Links */}
-        <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <nav className="flex items-center gap-1.5">
           <button
+            type="button"
             onClick={() => handleNav("landing")}
-            style={{
-              padding: "6px 14px",
-              borderRadius: 8,
-              border: "none",
-              background: currentPage === "landing" ? "rgba(59, 130, 246, 0.15)" : "transparent",
-              color: currentPage === "landing" ? "#3B82F6" : dark ? "#94A3B8" : "#475569",
-              fontWeight: currentPage === "landing" ? 600 : 500,
-              fontSize: 14,
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
+            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+              currentPage === "landing"
+                ? "bg-blue-500/15 text-blue-400 font-semibold"
+                : "bg-transparent text-slate-400 hover:text-slate-200"
+            }`}
           >
             {tx.nav?.home || "الرئيسية"}
           </button>
           <button
+            type="button"
             onClick={() => handleNav("course")}
-            style={{
-              padding: "6px 14px",
-              borderRadius: 8,
-              border: "none",
-              background: currentPage === "course" ? "rgba(59, 130, 246, 0.15)" : "transparent",
-              color: currentPage === "course" ? "#3B82F6" : dark ? "#94A3B8" : "#475569",
-              fontWeight: currentPage === "course" ? 600 : 500,
-              fontSize: 14,
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
+            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+              currentPage === "course"
+                ? "bg-blue-500/15 text-blue-400 font-semibold"
+                : "bg-transparent text-slate-400 hover:text-slate-200"
+            }`}
           >
             {tx.nav?.courses || "المواد"}
           </button>
           <button
+            type="button"
             onClick={() => handleNav("admin")}
-            style={{
-              padding: "6px 14px",
-              borderRadius: 8,
-              border: "none",
-              background: currentPage === "admin" ? "rgba(59, 130, 246, 0.15)" : "transparent",
-              color: currentPage === "admin" ? "#3B82F6" : dark ? "#94A3B8" : "#475569",
-              fontWeight: currentPage === "admin" ? 600 : 500,
-              fontSize: 14,
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
+            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+              currentPage === "admin"
+                ? "bg-blue-500/15 text-blue-400 font-semibold"
+                : "bg-transparent text-slate-400 hover:text-slate-200"
+            }`}
           >
             {tx.nav?.admin || "لوحة التحكم"}
           </button>
         </nav>
 
         {/* Controls: Lang & Theme */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="flex items-center gap-2.5">
           {/* Language Switcher */}
           <button
+            type="button"
             onClick={() => setLang(lang === "ar" ? "en" : "ar")}
-            style={{
-              padding: "6px 12px",
-              borderRadius: 8,
-              border: dark ? "1px solid var(--border-subtle)" : "1px solid #CBD5E1",
-              background: dark ? "rgba(255, 255, 255, 0.05)" : "#F8FAFC",
-              color: dark ? "#F1F5F9" : "#0F172A",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              transition: "all 0.15s ease",
-            }}
+            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+              dark
+                ? "border-[var(--border-subtle)] bg-white/5 text-white hover:bg-white/10"
+                : "border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200"
+            }`}
           >
-            🌐 {lang === "ar" ? "English" : "العربية"}
+            <Globe className="h-3.5 w-3.5" />
+            <span>{lang === "ar" ? "English" : "العربية"}</span>
           </button>
 
           {/* Dark / Light Mode Toggle */}
           <button
+            type="button"
             onClick={() => setDark(!dark)}
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              border: dark ? "1px solid var(--border-subtle)" : "1px solid #CBD5E1",
-              background: dark ? "rgba(255, 255, 255, 0.05)" : "#F8FAFC",
-              color: dark ? "#F1F5F9" : "#0F172A",
-              fontSize: 16,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.15s ease",
-            }}
             title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
+              dark
+                ? "border-[var(--border-subtle)] bg-white/5 text-amber-300 hover:bg-white/10"
+                : "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
           >
-            {dark ? "☀️" : "🌙"}
+            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
       </div>

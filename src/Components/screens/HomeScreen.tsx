@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { ArrowLeft, FileText, Layers, Sparkles } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 import { departments } from "./DepartmentScreen";
@@ -75,283 +76,189 @@ export default function HomeScreen({ navigate }: Props) {
   const courseList = useMemo(() => popularCourses, []);
 
   return (
-    <div className="fade-in">
+    <div className="w-full">
       <TopBar
         breadcrumbs={[{ label: "الرئيسية" }]}
         title="مرحباً بك في UniHub 👋"
         subtitle="جميع المواد والملفات الدراسية في مكان منظم وسهل الوصول"
       />
-      <div style={{ padding: "32px 32px 48px" }}>
-        <div>
-          {/* Main Column (Departments + Popular Courses) */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-            {/* 1. Browse by Department */}
-            <div className="slide-up">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 18,
-                }}
-              >
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: "var(--text-primary)",
-                    fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
-                  }}
-                >
-                  تصفح حسب القسم
-                </h2>
-              </div>
-              <div
-                className="stagger-children"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: 14,
-                }}
-              >
-                {deptList.map((dept) => (
-                  <div
-                    key={dept.id}
-                    className="popular-card hover-glow-blue"
-                    style={{
-                      background: "var(--bg-card)",
-                      border: "1px solid var(--border-subtle)",
-                      borderRadius: 18,
-                      padding: "20px",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      position: "relative",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      textAlign: "center",
-                    }}
-                    onClick={() =>
-                      navigate({
-                        screen: "levels",
-                        department: {
-                          id: dept.id,
-                          name: dept.name,
-                          nameEn: dept.nameEn,
-                          color: dept.color,
-                          icon: dept.icon,
-                        },
-                      })
-                    }
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: -20,
-                        right: -20,
-                        width: 80,
-                        height: 80,
-                        borderRadius: "50%",
-                        background: dept.color + "10",
-                        transition: "transform 0.4s ease",
-                      }}
-                    />
-                    <div
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 14,
-                        background: dept.color + "20",
-                        color: dept.color,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 24,
-                        marginBottom: 16,
-                        position: "relative",
-                        fontFamily: "monospace",
-                        fontWeight: 700,
-                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                      }}
-                    >
-                      {dept.icon}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: "var(--text-primary)",
-                        marginBottom: 6,
-                      }}
-                    >
-                      {dept.name}
-                    </div>
-                    <div
-                      style={{ display: "flex", gap: 6, alignItems: "center" }}
-                    >
-                      <span
-                        style={{ fontSize: 12, color: "var(--text-secondary)" }}
-                      >
-                        {dept.nameEn}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 10,
-                          color: dept.color,
-                          background: dept.color + "15",
-                          padding: "2px 8px",
-                          borderRadius: 10,
-                        }}
-                      >
-                        {dept.desc}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-10">
+        {/* Quick Hero Feature Banner */}
+        {/* <div className="relative overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-r from-blue-600/15 via-violet-600/15 to-purple-600/10 p-8 shadow-2xl backdrop-blur-xl">
+          <div className="relative z-10 max-w-2xl text-right">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3.5 py-1 text-xs font-semibold text-blue-300 mb-4">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>منصة أكاديمية مفتوحة للطلاب</span>
             </div>
-
-            {/* 2. Popular Courses */}
-            <div className="content-auto">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 18,
-                }}
+            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+              تصفح كل ما تحتاجه لرحلتك الجامعية
+            </h2>
+            <p className="mt-2 text-sm text-slate-300 leading-relaxed">
+              محاضرات، ملخصات، مراجع، ونماذج امتحانات سابقة مصنفة حسب الجامعة والكلية والمستوى الدراسي.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => navigate({ screen: "universities" })}
+                className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-500 cursor-pointer border-0"
               >
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: "var(--text-primary)",
-                    fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
-                  }}
-                >
-                  المواد الشائعة
-                </h2>
-                <button
-                  onClick={() => navigate({ screen: "departments" })}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: "var(--accent-blue)",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    transition: "opacity 0.15s",
-                  }}
-                >
-                  عرض الكل ←
-                </button>
-              </div>
-              <div
-                className="stagger-children"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3,1fr)",
-                  gap: 14,
-                }}
+                <span>تصفح الجامعات</span>
+                <ArrowLeft className="h-4 w-4 rtl:rotate-0" />
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate({ screen: "departments" })}
+                className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-200 backdrop-blur transition-all hover:bg-white/10 cursor-pointer"
               >
-                {courseList.map((course) => (
-                  <div
-                    key={course.id}
-                    className="popular-card"
-                    style={{
-                      background: "var(--bg-card)",
-                      border: "1px solid var(--border-subtle)",
-                      borderRadius: 18,
-                      padding: "20px",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      position: "relative",
-                    }}
-                    onClick={() => navigate({ screen: "departments" })}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = `0 0 24px ${course.color}20, 0 16px 48px rgba(0,0,0,0.4)`;
-                      e.currentTarget.style.borderColor = course.color + "30";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = "none";
-                      e.currentTarget.style.borderColor =
-                        "var(--border-subtle)";
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: -20,
-                        left: -20,
-                        width: 80,
-                        height: 80,
-                        borderRadius: "50%",
-                        background: course.color + "15",
-                      }}
-                    />
-                    <div
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 12,
-                        background: course.color + "25",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 22,
-                        marginBottom: 12,
-                        position: "relative",
-                      }}
-                    >
-                      {course.icon}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: "var(--text-primary)",
-                        marginBottom: 4,
-                      }}
-                    >
-                      {course.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 12,
-                        color: "var(--text-secondary)",
-                        marginBottom: 8,
-                      }}
-                    >
-                      {course.dept}
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <span
-                        style={{
-                          fontSize: 11,
-                          color: course.color,
-                          fontWeight: 600,
-                          background: course.color + "15",
-                          padding: "3px 8px",
-                          borderRadius: 6,
-                        }}
-                      >
-                        {course.files} ملف
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                <Layers className="h-4 w-4" />
+                <span>الأقسام الدراسية</span>
+              </button>
             </div>
           </div>
-        </div>
+        </div> */}
+
+        {/* 1. Browse by Department */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+              تصفح حسب القسم
+            </h3>
+            <button
+              type="button"
+              onClick={() => navigate({ screen: "departments" })}
+              className="flex items-center gap-1 text-xs sm:text-sm font-medium text-blue-400 hover:text-blue-300 cursor-pointer border-0 bg-transparent"
+            >
+              <span>عرض كل الأقسام</span>
+              <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-0" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {deptList.map((dept) => (
+              <div
+                key={dept.id}
+                onClick={() =>
+                  navigate({
+                    screen: "levels",
+                    department: {
+                      id: dept.id,
+                      name: dept.name,
+                      nameEn: dept.nameEn,
+                      color: dept.color,
+                      icon: dept.icon,
+                    },
+                  })
+                }
+                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
+              >
+                <div
+                  className="absolute -top-6 -right-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-15"
+                  style={{ background: dept.color }}
+                />
+
+                <div
+                  className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-2xl font-bold transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: `${dept.color}20`,
+                    color: dept.color,
+                  }}
+                >
+                  {dept.icon}
+                </div>
+
+                <h4 className="mb-1 text-base font-bold text-[var(--text-primary)]">
+                  {dept.name}
+                </h4>
+
+                <div className="flex items-center justify-center gap-2 text-xs">
+                  <span className="text-[var(--text-secondary)]">
+                    {dept.nameEn}
+                  </span>
+                  <span
+                    className="rounded-full px-2 py-0.5 font-semibold text-[10px]"
+                    style={{
+                      color: dept.color,
+                      background: `${dept.color}15`,
+                    }}
+                  >
+                    {dept.desc}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 2. Popular Courses */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+              المواد الشائعة
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {courseList.map((course) => (
+              <div
+                key={course.id}
+                onClick={() =>
+                  navigate({
+                    screen: "course-detail",
+                    course: {
+                      id: course.id,
+                      name: course.name,
+                      nameEn: course.nameEn,
+                      color: course.color,
+                    },
+                    department: {
+                      id: 1,
+                      name: course.dept,
+                      nameEn: course.dept,
+                      color: course.color,
+                      icon: course.icon,
+                    },
+                  })
+                }
+                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
+              >
+                <div
+                  className="absolute -top-6 -left-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-15"
+                  style={{ background: course.color }}
+                />
+
+                <div
+                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: `${course.color}25`,
+                    color: course.color,
+                  }}
+                >
+                  {course.icon}
+                </div>
+
+                <h4 className="mb-1 text-base font-bold text-[var(--text-primary)]">
+                  {course.name}
+                </h4>
+                <p className="mb-3 text-xs text-[var(--text-secondary)]">
+                  {course.dept} · {course.uni}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <span
+                    className="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold"
+                    style={{
+                      color: course.color,
+                      background: `${course.color}15`,
+                    }}
+                  >
+                    <FileText className="h-3 w-3" />
+                    <span>{course.files} ملف</span>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

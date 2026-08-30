@@ -1,3 +1,4 @@
+import { FileText } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
@@ -64,37 +65,51 @@ interface Props {
 }
 
 export default function CoursesScreen({ nav, navigate }: Props) {
+  const breadcrumbsList = [
+    { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+    {
+      label: "التخصصات",
+      onClick: () => navigate({ screen: "departments" }),
+    },
+    ...(nav.department?.name
+      ? [
+          {
+            label: nav.department.name,
+            onClick: () => navigate({ ...nav, screen: "levels" as const }),
+          },
+        ]
+      : []),
+    ...(nav.level?.name
+      ? [
+          {
+            label: nav.level.name,
+            onClick: () => navigate({ ...nav, screen: "semesters" as const }),
+          },
+        ]
+      : []),
+    ...(nav.semester?.name ? [{ label: nav.semester.name }] : []),
+  ];
+
+  const titleText = [nav.level?.name, nav.semester?.name]
+    .filter(Boolean)
+    .join(" — ");
+
+  const subtitleText = [
+    nav.department?.name,
+    `${coursesData.length} مواد دراسية`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <div className="fade-in">
+    <div className="w-full">
       <TopBar
-        breadcrumbs={[
-          { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
-          {
-            label: "التخصصات",
-            onClick: () => navigate({ screen: "departments" }),
-          },
-          {
-            label: nav.department?.name ?? "",
-            onClick: () => navigate({ ...nav, screen: "levels" }),
-          },
-          {
-            label: nav.level?.name ?? "",
-            onClick: () => navigate({ ...nav, screen: "semesters" }),
-          },
-          { label: nav.semester?.name ?? "" },
-        ]}
-        title={`${nav.level?.name} — ${nav.semester?.name}`}
-        subtitle={`${nav.department?.name} · ${coursesData.length} مواد دراسية`}
+        breadcrumbs={breadcrumbsList}
+        title={titleText || "المواد الدراسية"}
+        subtitle={subtitleText}
       />
-      <div style={{ padding: "32px 32px 48px" }}>
-        <div
-          className="stagger-children"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: 14,
-          }}
-        >
+      <div className="p-6 sm:p-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {coursesData.map((course) => (
             <div
               key={course.id}
@@ -110,97 +125,44 @@ export default function CoursesScreen({ nav, navigate }: Props) {
                   },
                 })
               }
-              className="dept-card"
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 18,
-                padding: "22px 20px",
-                cursor: "pointer",
-                position: "relative",
-                overflow: "hidden",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = course.color + "40";
-                e.currentTarget.style.boxShadow = `0 0 24px ${course.color}15, 0 16px 48px rgba(0,0,0,0.3)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-subtle)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
             >
               <div
-                style={{
-                  position: "absolute",
-                  top: -30,
-                  left: -30,
-                  width: 100,
-                  height: 100,
-                  borderRadius: "50%",
-                  background: course.color + "10",
-                }}
+                className="absolute -top-6 -left-6 h-24 w-24 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-20"
+                style={{ background: course.color }}
               />
-              <div
-                style={{ display: "flex", alignItems: "flex-start", gap: 14 }}
-              >
+
+              <div className="flex items-start gap-4">
                 <div
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110"
                   style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 13,
-                    background: course.color + "22",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 22,
-                    fontWeight: 700,
+                    background: `${course.color}22`,
                     color: course.color,
-                    fontFamily: "monospace",
-                    flexShrink: 0,
-                    transition: "transform 0.3s ease",
                   }}
                 >
                   {course.icon}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 700,
-                      color: "var(--text-primary)",
-                      marginBottom: 3,
-                    }}
-                  >
+                <div className="flex-1">
+                  <h3 className="text-base font-bold text-[var(--text-primary)]">
                     {course.name}
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                  </h3>
+                  <p className="text-xs text-[var(--text-secondary)]">
                     {course.nameEn}
-                  </div>
+                  </p>
                 </div>
               </div>
-              <div
-                style={{
-                  marginTop: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
+
+              <div className="mt-5 flex items-center justify-between">
                 <span
+                  className="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold"
                   style={{
-                    fontSize: 12,
                     color: course.color,
-                    fontWeight: 600,
-                    background: course.color + "15",
-                    padding: "3px 8px",
-                    borderRadius: 6,
+                    background: `${course.color}15`,
                   }}
                 >
-                  {course.files} ملف
+                  <FileText className="h-3 w-3" />
+                  <span>{course.files} ملف</span>
                 </span>
-                {/* <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                  ⭐ {course.rating}
-                </span> */}
               </div>
             </div>
           ))}

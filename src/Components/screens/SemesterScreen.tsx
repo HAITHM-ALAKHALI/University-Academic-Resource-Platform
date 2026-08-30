@@ -1,3 +1,4 @@
+import { Calendar, ArrowLeft } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
@@ -13,7 +14,7 @@ interface Props {
 
 export default function SemesterScreen({ nav, navigate }: Props) {
   return (
-    <div className="fade-in">
+    <div className="w-full">
       <TopBar
         breadcrumbs={[
           { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
@@ -27,19 +28,11 @@ export default function SemesterScreen({ nav, navigate }: Props) {
           },
           { label: nav.level?.name ?? "" },
         ]}
-        title={`${nav.department?.name} — ${nav.level?.name}`}
+        title={`${nav.department?.name ?? ""} — ${nav.level?.name ?? ""}`}
         subtitle="اختر الترم الدراسي"
       />
-      <div style={{ padding: "32px 32px 48px" }}>
-        <div
-          className="stagger-children"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 20,
-            maxWidth: 700,
-          }}
-        >
+      <div className="p-6 sm:p-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {semesters.map((sem) => (
             <div
               key={sem.id}
@@ -50,113 +43,55 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   semester: { id: sem.id, name: sem.name },
                 })
               }
-              className="dept-card"
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: 20,
-                padding: "32px 28px",
-                cursor: "pointer",
-                textAlign: "center",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = sem.color + "40";
-                e.currentTarget.style.boxShadow = `0 0 32px ${sem.color}12, 0 16px 48px rgba(0,0,0,0.3)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-subtle)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
+              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-8 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-500/40 hover:shadow-2xl cursor-pointer"
             >
               <div
+                className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110 shadow-lg"
                 style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 18,
-                  background: sem.color + "20",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 28,
-                  margin: "0 auto 16px",
+                  background: `${sem.color}20`,
                   color: sem.color,
-                  transition: "transform 0.3s ease",
-                  boxShadow: `0 4px 16px ${sem.color}15`,
+                  boxShadow: `0 4px 20px ${sem.color}15`,
                 }}
               >
-                📅
+                <Calendar className="h-7 w-7" />
               </div>
-              <div
-                style={{
-                  fontSize: 20,
-                  fontWeight: 800,
-                  color: "var(--text-primary)",
-                  marginBottom: 8,
-                  fontFamily: "Outfit, 'Noto Sans Arabic', sans-serif",
-                }}
-              >
+
+              <h3 className="mb-3 text-xl font-extrabold text-[var(--text-primary)]">
                 {sem.name}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 16,
-                  marginTop: 12,
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
+              </h3>
+
+              <div className="my-4 flex items-center justify-center gap-6">
+                <div>
                   <div
-                    className="count-up"
-                    style={{ fontSize: 22, fontWeight: 800, color: sem.color }}
+                    className="text-2xl font-black"
+                    style={{ color: sem.color }}
                   >
                     {sem.courses}
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                    مادة
-                  </div>
+                  <div className="text-xs text-[var(--text-muted)]">مادة</div>
                 </div>
-                <div style={{ width: 1, background: "var(--border-subtle)" }} />
-                <div style={{ textAlign: "center" }}>
+                <div className="h-8 w-px bg-[var(--border-subtle)]" />
+                <div>
                   <div
-                    className="count-up"
-                    style={{ fontSize: 22, fontWeight: 800, color: sem.color }}
+                    className="text-2xl font-black"
+                    style={{ color: sem.color }}
                   >
                     {sem.files}
                   </div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-                    ملف
-                  </div>
+                  <div className="text-xs text-[var(--text-muted)]">ملف</div>
                 </div>
               </div>
+
               <button
+                type="button"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer border-0 shadow-lg"
                 style={{
-                  marginTop: 18,
-                  background:
-                    "linear-gradient(135deg, " +
-                    sem.color +
-                    ", " +
-                    sem.color +
-                    "99)",
-                  border: "none",
-                  borderRadius: 10,
-                  padding: "10px 24px",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: 13,
-                  cursor: "pointer",
-                  width: "100%",
-                  transition: "opacity 0.2s, box-shadow 0.2s",
-                  boxShadow: `0 4px 16px ${sem.color}30`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.opacity = "0.9";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = "1";
+                  background: `linear-gradient(135deg, ${sem.color}, ${sem.color}dd)`,
+                  boxShadow: `0 4px 16px ${sem.color}35`,
                 }}
               >
-                عرض المواد ←
+                <span>عرض المواد</span>
+                <ArrowLeft className="h-4 w-4 rtl:rotate-0" />
               </button>
             </div>
           ))}
