@@ -1,9 +1,23 @@
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { Page } from "../App";
-import type { Lang } from "../data.ts";
-import { t, universities, courses, recentActivity } from "../data.ts";
+import type { Lang } from "../data";
+import { t, universities, courses, recentActivity } from "../data";
 import Navbar from "../Components/Navbar";
+import {
+  Building2,
+  BookOpen,
+  FileText,
+  Users,
+  Upload,
+  Plus,
+  Trash2,
+  Edit3,
+  Sparkles,
+  TrendingUp,
+  FolderOpen,
+  FileSpreadsheet,
+} from "lucide-react";
 
 interface Props {
   dark: boolean;
@@ -19,6 +33,7 @@ type AdminTab =
   | "courses"
   | "resources"
   | "upload";
+
 const adminTabs: AdminTab[] = [
   "overview",
   "universities",
@@ -27,10 +42,33 @@ const adminTabs: AdminTab[] = [
   "upload",
 ];
 
-const activityTypeIcon: Record<string, string> = {
-  upload: "📄",
-  course: "📚",
-  university: "🏛",
+const tabIcons: Record<AdminTab, React.ReactNode> = {
+  overview: <TrendingUp className="h-4 w-4" />,
+  universities: <Building2 className="h-4 w-4" />,
+  courses: <BookOpen className="h-4 w-4" />,
+  resources: <FolderOpen className="h-4 w-4" />,
+  upload: <Upload className="h-4 w-4" />,
+};
+
+const activityTypeBadge: Record<
+  string,
+  { icon: React.ReactNode; bg: string; text: string }
+> = {
+  upload: {
+    icon: <FileText className="h-4 w-4" />,
+    bg: "bg-[#899C9A]/20 text-[#F4F7F6] border border-[#899C9A]/40",
+    text: "رفع ملف",
+  },
+  course: {
+    icon: <BookOpen className="h-4 w-4" />,
+    bg: "bg-[#525C79] text-[#F4F7F6] border border-[#6E7C8B]/40",
+    text: "مقرر",
+  },
+  university: {
+    icon: <Building2 className="h-4 w-4" />,
+    bg: "bg-[#AABCAF]/20 text-[#F4F7F6] border border-[#AABCAF]/40",
+    text: "جامعة",
+  },
 };
 
 export default function AdminDashboard({
@@ -43,10 +81,17 @@ export default function AdminDashboard({
   const [tab, setTab] = useState<AdminTab>("overview");
   const [uploadDrag, setUploadDrag] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-  const tx = t[lang];
+  const tx = t[lang] || t.ar;
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--background)" }}>
+    <div
+      className={`min-h-screen transition-colors duration-200 ${
+        dark
+          ? "bg-[#35425E] text-[#F4F7F6]"
+          : "bg-slate-50 text-slate-900"
+      }`}
+      dir={lang === "ar" ? "rtl" : "ltr"}
+    >
       <Navbar
         dark={dark}
         lang={lang}
@@ -56,75 +101,72 @@ export default function AdminDashboard({
         currentPage="admin"
       />
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px" }}>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div style={{ marginBottom: 28 }}>
-          <h1
-            style={{
-              fontFamily: "Outfit, sans-serif",
-              fontWeight: 800,
-              fontSize: 26,
-              color: "var(--foreground)",
-              marginBottom: 4,
-            }}
-          >
-            {tx.admin.title}
-          </h1>
-          <p style={{ fontSize: 14, color: "var(--muted-foreground)" }}>
-            {tx.admin.subtitle}
-          </p>
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-md shadow-[#35425E]/40 border border-[#899C9A]/40">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <h1 className="font-['Outfit'] text-2xl font-black tracking-tight text-[#F4F7F6] sm:text-3xl">
+                {tx.admin.title}
+              </h1>
+            </div>
+            <p className="mt-1 text-sm font-semibold text-[#AABCAF]">
+              {tx.admin.subtitle}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setTab("upload")}
+              className="flex items-center gap-2 rounded-xl bg-[#899C9A] px-4 py-2.5 text-sm font-bold text-[#1D263B] shadow-md shadow-[#35425E]/40 transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer"
+            >
+              <Upload className="h-4 w-4" />
+              <span>{tx.admin.uploadResource}</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab bar */}
-        <div
-          style={{
-            display: "flex",
-            gap: 4,
-            padding: "4px",
-            borderRadius: 10,
-            backgroundColor: "var(--muted)",
-            marginBottom: 28,
-            overflowX: "auto",
-          }}
-        >
-          {adminTabs.map((key, i) => (
-            <button
-              key={key}
-              onClick={() => setTab(key)}
-              style={{
-                padding: "8px 14px",
-                borderRadius: 7,
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                fontWeight: 600,
-                backgroundColor: tab === key ? "var(--card)" : "transparent",
-                color:
-                  tab === key ? "var(--foreground)" : "var(--muted-foreground)",
-                boxShadow: tab === key ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
-                transition: "all 0.15s",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {tx.admin.tabs[i]}
-            </button>
-          ))}
+        <div className="mb-8 flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-1.5 backdrop-blur-xl shadow-md">
+          {adminTabs.map((key, i) => {
+            const isActive = tab === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? "bg-[#35425E] text-[#F4F7F6] shadow-sm border border-[#899C9A]/50"
+                    : "text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
+                }`}
+              >
+                {tabIcons[key]}
+                <span>{tx.admin.tabs[i]}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {tab === "overview" && <OverviewTab tx={tx} lang={lang} />}
-        {tab === "universities" && <UniversitiesTab tx={tx} lang={lang} />}
-        {tab === "courses" && <CoursesTab tx={tx} lang={lang} />}
-        {tab === "resources" && <ResourcesTab tx={tx} lang={lang} />}
-        {tab === "upload" && (
-          <UploadTab
-            tx={tx}
-            lang={lang}
-            drag={uploadDrag}
-            setDrag={setUploadDrag}
-            files={uploadedFiles}
-            setFiles={setUploadedFiles}
-          />
-        )}
+        {/* Tab Content Views */}
+        <div className="fade-in">
+          {tab === "overview" && <OverviewTab tx={tx} lang={lang} />}
+          {tab === "universities" && <UniversitiesTab tx={tx} lang={lang} />}
+          {tab === "courses" && <CoursesTab tx={tx} lang={lang} />}
+          {tab === "resources" && <ResourcesTab tx={tx} lang={lang} />}
+          {tab === "upload" && (
+            <UploadTab
+              tx={tx}
+              lang={lang}
+              drag={uploadDrag}
+              setDrag={setUploadDrag}
+              files={uploadedFiles}
+              setFiles={setUploadedFiles}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -135,42 +177,42 @@ function StatCard({
   value,
   label,
   color,
+  subtext,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   value: string;
   label: string;
   color: string;
+  subtext?: string;
 }) {
   return (
-    <div
-      style={{
-        backgroundColor: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: 12,
-        padding: "20px",
-        borderTop: `3px solid ${color}`,
-      }}
-    >
-      <div style={{ fontSize: 24, marginBottom: 10 }}>{icon}</div>
+    <div className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#899C9A] hover:bg-[#525C79] hover:shadow-xl">
       <div
-        style={{
-          fontFamily: "Outfit, sans-serif",
-          fontWeight: 800,
-          fontSize: 26,
-          color: "var(--foreground)",
-          marginBottom: 2,
-        }}
-      >
-        {value}
+        className="absolute top-0 right-0 left-0 h-1.5"
+        style={{ backgroundColor: color }}
+      />
+      <div className="flex items-start justify-between">
+        <div
+          className="flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 shadow-sm"
+          style={{ backgroundColor: `${color}25`, color }}
+        >
+          {icon}
+        </div>
+        {subtext && (
+          <span className="flex items-center gap-1 rounded-full bg-[#899C9A]/20 px-2.5 py-0.5 text-[11px] font-bold text-[#F4F7F6] border border-[#899C9A]/40">
+            <TrendingUp className="h-3 w-3 text-[#899C9A]" />
+            {subtext}
+          </span>
+        )}
       </div>
-      <div
-        style={{
-          fontSize: 13,
-          color: "var(--muted-foreground)",
-          fontWeight: 500,
-        }}
-      >
-        {label}
+
+      <div className="mt-4">
+        <div className="font-['Outfit'] text-2xl font-black tracking-tight text-[#F4F7F6] sm:text-3xl">
+          {value}
+        </div>
+        <div className="mt-1 text-xs font-semibold text-[#AABCAF]">
+          {label}
+        </div>
       </div>
     </div>
   );
@@ -178,148 +220,113 @@ function StatCard({
 
 function OverviewTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 340px",
-        gap: 24,
-        alignItems: "start",
-      }}
-    >
-      <div>
-        <div
-          className="stagger-children"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 16,
-            marginBottom: 24,
-          }}
-        >
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {/* Main Column */}
+      <div className="space-y-6 lg:col-span-2">
+        {/* Stat Cards Grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard
-            icon="🏛"
+            icon={<Building2 className="h-6 w-6" />}
             value="24"
             label={tx.admin.totalUniversities}
-            color="#1e4fcc"
+            color="#899C9A"
+            subtext="+2 جامعات"
           />
           <StatCard
-            icon="📚"
+            icon={<BookOpen className="h-6 w-6" />}
             value="3,400"
             label={tx.admin.totalCourses}
-            color="#7c3aed"
+            color="#AABCAF"
+            subtext="+14 مقرر"
           />
           <StatCard
-            icon="📄"
+            icon={<FileText className="h-6 w-6" />}
             value="87,200"
             label={tx.admin.totalResources}
-            color="#059669"
+            color="#899C9A"
+            subtext="+120 ملف"
           />
           <StatCard
-            icon="🎓"
+            icon={<Users className="h-6 w-6" />}
             value="220,000"
             label={tx.admin.totalStudents}
-            color="#d97706"
+            color="#AABCAF"
+            subtext="+8.4%"
           />
         </div>
 
-        {/* Quick actions */}
-        <div
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: 20,
-            marginBottom: 24,
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "Outfit, sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              color: "var(--foreground)",
-              marginBottom: 16,
-            }}
-          >
+        {/* Quick Actions */}
+        <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-lg backdrop-blur-xl">
+          <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6]">
             {tx.admin.quickActions}
           </h3>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <p className="mt-0.5 text-xs font-medium text-[#AABCAF]">
+            روابط وإجراءات سريعة لتسهيل إدارة المنصة
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: tx.admin.addUniversity, icon: "🏛", color: "#1e4fcc" },
-              { label: tx.admin.addCourse, icon: "📚", color: "#7c3aed" },
-              { label: tx.admin.uploadResource, icon: "📤", color: "#059669" },
-              { label: tx.admin.manageFiles, icon: "🗂", color: "#d97706" },
+              {
+                label: tx.admin.addUniversity,
+                icon: <Building2 className="h-5 w-5" />,
+                color: "#899C9A",
+              },
+              {
+                label: tx.admin.addCourse,
+                icon: <BookOpen className="h-5 w-5" />,
+                color: "#AABCAF",
+              },
+              {
+                label: tx.admin.uploadResource,
+                icon: <Upload className="h-5 w-5" />,
+                color: "#899C9A",
+              },
+              {
+                label: tx.admin.manageFiles,
+                icon: <FileSpreadsheet className="h-5 w-5" />,
+                color: "#AABCAF",
+              },
             ].map((action) => (
               <button
                 key={action.label}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 7,
-                  padding: "8px 14px",
-                  borderRadius: 8,
-                  border: "1.5px solid var(--border)",
-                  backgroundColor: "transparent",
-                  cursor: "pointer",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "var(--foreground)",
-                  transition: "all 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = action.color;
-                  e.currentTarget.style.color = action.color;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.color = "var(--foreground)";
-                }}
+                className="group flex flex-col items-center justify-center gap-2 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/70 p-4 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[#899C9A] hover:bg-[#35425E] active:scale-95 cursor-pointer shadow-sm"
               >
-                <span>{action.icon}</span> {action.label}
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
+                  style={{
+                    backgroundColor: `${action.color}25`,
+                    color: action.color,
+                  }}
+                >
+                  {action.icon}
+                </div>
+                <span className="text-xs font-bold text-[#F4F7F6] group-hover:text-[#AABCAF]">
+                  {action.label}
+                </span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* File management table */}
-        <div
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              padding: "16px 20px",
-              borderBottom: "1px solid var(--border)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <h3
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontWeight: 700,
-                fontSize: 15,
-                color: "var(--foreground)",
-              }}
-            >
-              {tx.admin.manageFiles}
-            </h3>
-            <span
-              style={{
-                fontSize: 11,
-                color: "var(--muted-foreground)",
-                fontFamily: "JetBrains Mono, monospace",
-              }}
-            >
+        {/* File Management Table */}
+        <div className="overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 shadow-lg backdrop-blur-xl">
+          <div className="flex items-center justify-between border-b border-[#6E7C8B]/40 px-6 py-4">
+            <div>
+              <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6]">
+                {tx.admin.manageFiles}
+              </h3>
+              <p className="text-xs font-semibold text-[#AABCAF]">
+                {lang === "ar"
+                  ? "أحدث الملفات المرفوعة على المنصة"
+                  : "Latest files uploaded across courses"}
+              </p>
+            </div>
+            <span className="font-['JetBrains_Mono'] rounded-md bg-[#35425E] px-2.5 py-1 text-xs font-bold text-[#AABCAF] border border-[#6E7C8B]/40">
               {lang === "ar" ? "آخر 5 ملفات" : "Last 5 files"}
             </span>
           </div>
-          <div>
+
+          <div className="divide-y divide-[#6E7C8B]/30">
             {courses
               .slice(0, 3)
               .flatMap((c) => c.resources.lectures.slice(0, 2))
@@ -327,66 +334,24 @@ function OverviewTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
               .map((f, i) => (
                 <div
                   key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "11px 20px",
-                    borderBottom: "1px solid var(--border)",
-                    gap: 12,
-                  }}
+                  className="flex items-center justify-between gap-4 px-6 py-3.5 transition-colors hover:bg-white/[0.04]"
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      minWidth: 0,
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>📄</span>
-                    <span
-                      style={{
-                        fontSize: 13,
-                        color: "var(--foreground)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/30">
+                      <FileText className="h-4 w-4" />
+                    </div>
+                    <span className="truncate text-sm font-bold text-[#F4F7F6]">
                       {f.name}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: 11,
-                        color: "var(--muted-foreground)",
-                        fontFamily: "JetBrains Mono, monospace",
-                      }}
-                    >
+
+                  <div className="flex shrink-0 items-center gap-3">
+                    <span className="font-['JetBrains_Mono'] text-xs font-semibold text-[#AABCAF]">
                       {f.size}
                     </span>
-                    <button
-                      style={{
-                        padding: "4px 10px",
-                        borderRadius: 6,
-                        border: "1px solid var(--border)",
-                        backgroundColor: "transparent",
-                        cursor: "pointer",
-                        fontSize: 11,
-                        color: "#dc2626",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {lang === "ar" ? "حذف" : "Delete"}
+                    <button className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer">
+                      <Trash2 className="h-3 w-3" />
+                      <span>{lang === "ar" ? "حذف" : "Delete"}</span>
                     </button>
                   </div>
                 </div>
@@ -395,92 +360,49 @@ function OverviewTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
         </div>
       </div>
 
-      {/* Activity feed */}
-      <div
-        style={{
-          backgroundColor: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: 12,
-        }}
-      >
-        <div
-          style={{
-            padding: "16px 20px",
-            borderBottom: "1px solid var(--border)",
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "Outfit, sans-serif",
-              fontWeight: 700,
-              fontSize: 15,
-              color: "var(--foreground)",
-            }}
-          >
-            {tx.admin.recentActivity}
-          </h3>
+      {/* Side Column: Recent Activity Feed */}
+      <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 shadow-lg backdrop-blur-xl">
+        <div className="border-b border-[#6E7C8B]/40 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6]">
+              {tx.admin.recentActivity}
+            </h3>
+            <span className="flex items-center gap-1 text-[11px] font-bold text-[#899C9A]">
+              <span className="h-2 w-2 rounded-full bg-[#899C9A] animate-pulse" />
+              {lang === "ar" ? "مباشر" : "Live"}
+            </span>
+          </div>
         </div>
-        <div
-          style={{
-            padding: 16,
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-          }}
-        >
-          {recentActivity.map((item, i) => (
-            <div
-              key={i}
-              style={{ display: "flex", gap: 12, alignItems: "flex-start" }}
-            >
+
+        <div className="space-y-4 p-5">
+          {recentActivity.map((item, i) => {
+            const badge = activityTypeBadge[item.type] || activityTypeBadge.upload;
+            return (
               <div
-                style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 8,
-                  backgroundColor: "var(--muted)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 16,
-                  flexShrink: 0,
-                }}
+                key={i}
+                className="flex items-start gap-3 rounded-xl border border-[#6E7C8B]/30 bg-[#35425E]/60 p-3 transition-all hover:bg-[#35425E]"
               >
-                {activityTypeIcon[item.type]}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
                 <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: "var(--foreground)",
-                    marginBottom: 2,
-                  }}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${badge.bg}`}
                 >
-                  {item.user}
+                  {badge.icon}
                 </div>
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: "var(--muted-foreground)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {item.action}
-                </div>
-                <div
-                  style={{
-                    fontSize: 10,
-                    color: "var(--muted-foreground)",
-                    marginTop: 4,
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
-                >
-                  {lang === "ar" ? item.timeAr : item.time}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate text-xs font-bold text-[#F4F7F6]">
+                      {item.user}
+                    </span>
+                    <span className="font-['JetBrains_Mono'] shrink-0 text-[10px] font-medium text-[#AABCAF]">
+                      {lang === "ar" ? item.timeAr : item.time}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs font-medium text-[#AABCAF] leading-relaxed">
+                    {item.action}
+                  </p>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -490,123 +412,49 @@ function OverviewTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
 function UniversitiesTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 16,
-        }}
-      >
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "8px 16px",
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "var(--primary)",
-            color: "var(--primary-foreground)",
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 600,
-          }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          {tx.admin.addUniversity}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-[#F4F7F6]">
+            {lang === "ar" ? "إدارة الجامعات" : "Manage Universities"}
+          </h2>
+          <p className="text-xs font-semibold text-[#AABCAF]">
+            {lang === "ar"
+              ? "عرض وتعديل بيانات الجامعات الشريكة"
+              : "View and manage partner university records"}
+          </p>
+        </div>
+
+        <button className="flex items-center gap-2 rounded-xl bg-[#899C9A] px-4 py-2.5 text-sm font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer">
+          <Plus className="h-4 w-4" />
+          <span>{tx.admin.addUniversity}</span>
         </button>
       </div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: 16,
-        }}
-      >
+
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {universities.map((u) => (
           <div
             key={u.id}
-            style={{
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: "20px",
-            }}
+            className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#899C9A] hover:bg-[#525C79] hover:shadow-xl"
           >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
-                marginBottom: 12,
-              }}
-            >
-              <div
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 10,
-                  backgroundColor: "var(--secondary)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 22,
-                }}
-              >
+            <div className="flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/30 font-mono text-xl">
                 🏛
               </div>
-              <span
-                style={{
-                  fontSize: 10,
-                  padding: "3px 8px",
-                  borderRadius: 99,
-                  backgroundColor: "var(--muted)",
-                  color: "var(--muted-foreground)",
-                  fontFamily: "JetBrains Mono, monospace",
-                }}
-              >
+              <span className="font-['JetBrains_Mono'] rounded-full bg-[#35425E] px-2.5 py-1 text-[11px] font-bold text-[#AABCAF] border border-[#6E7C8B]/40">
                 ID-{u.id.toString().padStart(3, "0")}
               </span>
             </div>
-            <h3
-              style={{
-                fontFamily: "Outfit, sans-serif",
-                fontWeight: 700,
-                fontSize: 15,
-                color: "var(--foreground)",
-                marginBottom: 4,
-              }}
-            >
-              {lang === "ar" ? u.nameAr : u.name}
-            </h3>
-            <p
-              style={{
-                fontSize: 12,
-                color: "var(--muted-foreground)",
-                marginBottom: 16,
-              }}
-            >
-              {u.location}
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 8,
-                fontSize: 12,
-                textAlign: "center",
-              }}
-            >
+
+            <div className="mt-4">
+              <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6] group-hover:text-[#AABCAF] transition-colors">
+                {lang === "ar" ? u.nameAr : u.name}
+              </h3>
+              <p className="mt-0.5 text-xs font-semibold text-[#AABCAF]">
+                {u.location}
+              </p>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2 text-center">
               {[
                 { val: u.colleges, lbl: lang === "ar" ? "كلية" : "Colleges" },
                 { val: u.courses, lbl: lang === "ar" ? "مقرر" : "Courses" },
@@ -617,59 +465,26 @@ function UniversitiesTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
               ].map((stat) => (
                 <div
                   key={stat.lbl}
-                  style={{
-                    backgroundColor: "var(--muted)",
-                    borderRadius: 7,
-                    padding: "8px 4px",
-                  }}
+                  className="rounded-xl border border-[#6E7C8B]/30 bg-[#35425E]/70 p-2.5"
                 >
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      color: "var(--foreground)",
-                      fontFamily: "Outfit, sans-serif",
-                    }}
-                  >
+                  <div className="font-['Outfit'] text-sm font-extrabold text-[#F4F7F6]">
                     {stat.val}
                   </div>
-                  <div
-                    style={{ color: "var(--muted-foreground)", fontSize: 10 }}
-                  >
+                  <div className="mt-0.5 text-[10px] font-semibold text-[#AABCAF]">
                     {stat.lbl}
                   </div>
                 </div>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-              <button
-                style={{
-                  flex: 1,
-                  padding: "6px",
-                  borderRadius: 7,
-                  border: "1px solid var(--border)",
-                  backgroundColor: "transparent",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "var(--foreground)",
-                }}
-              >
-                {lang === "ar" ? "تعديل" : "Edit"}
+
+            <div className="mt-5 flex gap-2 pt-3 border-t border-[#6E7C8B]/30">
+              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/80 py-2 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#35425E] hover:border-[#899C9A] cursor-pointer">
+                <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
+                <span>{lang === "ar" ? "تعديل" : "Edit"}</span>
               </button>
-              <button
-                style={{
-                  flex: 1,
-                  padding: "6px",
-                  borderRadius: 7,
-                  border: "1px solid #fee2e2",
-                  backgroundColor: "#fee2e2",
-                  cursor: "pointer",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "#dc2626",
-                }}
-              >
-                {lang === "ar" ? "حذف" : "Delete"}
+              <button className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/15 py-2 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer">
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>{lang === "ar" ? "حذف" : "Delete"}</span>
               </button>
             </div>
           </div>
@@ -682,174 +497,93 @@ function UniversitiesTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
 function CoursesTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 16,
-        }}
-      >
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "8px 16px",
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "var(--primary)",
-            color: "var(--primary-foreground)",
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 600,
-          }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          {tx.admin.addCourse}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-[#F4F7F6]">
+            {lang === "ar" ? "إدارة المقررات الدراسية" : "Manage Courses"}
+          </h2>
+          <p className="text-xs font-semibold text-[#AABCAF]">
+            {lang === "ar"
+              ? "عرض تفاصيل المقررات والمحتوى المتاح"
+              : "Overview of courses, instructors, and resource count"}
+          </p>
+        </div>
+
+        <button className="flex items-center gap-2 rounded-xl bg-[#899C9A] px-4 py-2.5 text-sm font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer">
+          <Plus className="h-4 w-4" />
+          <span>{tx.admin.addCourse}</span>
         </button>
       </div>
-      <div
-        style={{
-          backgroundColor: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: 12,
-          overflow: "hidden",
-        }}
-      >
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}
-          >
-            <thead>
-              <tr style={{ backgroundColor: "var(--muted)" }}>
-                {[
-                  lang === "ar" ? "الكود" : "Code",
-                  lang === "ar" ? "اسم المقرر" : "Course Name",
-                  lang === "ar" ? "الأستاذ" : "Instructor",
-                  lang === "ar" ? "المستوى" : "Level",
-                  lang === "ar" ? "الموارد" : "Resources",
-                  "",
-                ].map((h, i) => (
-                  <th
-                    key={i}
-                    style={{
-                      padding: "12px 16px",
-                      textAlign: lang === "ar" ? "right" : "left",
-                      fontWeight: 600,
-                      color: "var(--muted-foreground)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
+
+      <div className="overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 shadow-lg backdrop-blur-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-right text-sm">
+            <thead className="border-b border-[#6E7C8B]/40 bg-[#35425E]/90 text-xs font-bold text-[#AABCAF] uppercase tracking-wider">
+              <tr>
+                <th className="px-6 py-4">
+                  {lang === "ar" ? "الكود" : "Code"}
+                </th>
+                <th className="px-6 py-4">
+                  {lang === "ar" ? "اسم المقرر" : "Course Name"}
+                </th>
+                <th className="px-6 py-4">
+                  {lang === "ar" ? "الأستاذ" : "Instructor"}
+                </th>
+                <th className="px-6 py-4">
+                  {lang === "ar" ? "المستوى" : "Level"}
+                </th>
+                <th className="px-6 py-4">
+                  {lang === "ar" ? "الموارد" : "Resources"}
+                </th>
+                <th className="px-6 py-4 text-center">
+                  {lang === "ar" ? "الإجراءات" : "Actions"}
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#6E7C8B]/30 font-normal">
               {courses.map((c) => {
                 const info = lang === "ar" ? c.ar : c.en;
                 return (
                   <tr
                     key={c.id}
-                    style={{
-                      borderTop: "1px solid var(--border)",
-                      transition: "background-color 0.1s",
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "var(--muted)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "transparent")
-                    }
+                    className="transition-colors hover:bg-white/[0.04]"
                   >
-                    <td style={{ padding: "12px 16px" }}>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span
+                        className="font-['JetBrains_Mono'] rounded-lg px-2.5 py-1 text-xs font-bold"
                         style={{
-                          fontSize: 11,
-                          fontFamily: "JetBrains Mono, monospace",
+                          backgroundColor: `${c.color}25`,
                           color: c.color,
-                          fontWeight: 700,
-                          backgroundColor: c.color + "15",
-                          padding: "2px 7px",
-                          borderRadius: 4,
+                          border: `1px solid ${c.color}40`,
                         }}
                       >
                         {c.code}
                       </span>
                     </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        fontWeight: 600,
-                        color: "var(--foreground)",
-                      }}
-                    >
+                    <td className="px-6 py-4 font-bold text-[#F4F7F6] whitespace-nowrap">
                       {info.name}
                     </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
+                    <td className="px-6 py-4 text-xs font-semibold text-[#AABCAF] whitespace-nowrap">
                       {info.instructor}
                     </td>
-                    <td
-                      style={{
-                        padding: "12px 16px",
-                        color: "var(--muted-foreground)",
-                        fontFamily: "JetBrains Mono, monospace",
-                        fontSize: 11,
-                      }}
-                    >
+                    <td className="px-6 py-4 font-['JetBrains_Mono'] text-xs font-medium text-[#AABCAF] whitespace-nowrap">
                       {info.level.split("·")[0].trim()}
                     </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span
-                        style={{ fontWeight: 700, color: "var(--foreground)" }}
-                      >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="flex items-center gap-1.5 font-['Outfit'] font-bold text-[#F4F7F6]">
+                        <FileText className="h-3.5 w-3.5 text-[#899C9A]" />
                         {c.resourceCount}
                       </span>
                     </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button
-                          style={{
-                            padding: "4px 10px",
-                            borderRadius: 6,
-                            border: "1px solid var(--border)",
-                            backgroundColor: "transparent",
-                            cursor: "pointer",
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: "var(--foreground)",
-                          }}
-                        >
-                          {lang === "ar" ? "تعديل" : "Edit"}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-2">
+                        <button className="flex items-center gap-1 rounded-lg border border-[#6E7C8B]/40 bg-[#35425E]/80 px-2.5 py-1 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#35425E] hover:border-[#899C9A] cursor-pointer">
+                          <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
+                          <span>{lang === "ar" ? "تعديل" : "Edit"}</span>
                         </button>
-                        <button
-                          style={{
-                            padding: "4px 10px",
-                            borderRadius: 6,
-                            border: "1px solid #fee2e2",
-                            backgroundColor: "#fee2e2",
-                            cursor: "pointer",
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: "#dc2626",
-                          }}
-                        >
-                          {lang === "ar" ? "حذف" : "Delete"}
+                        <button className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer">
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>{lang === "ar" ? "حذف" : "Delete"}</span>
                         </button>
                       </div>
                     </td>
@@ -879,153 +613,71 @@ function ResourcesTab({ tx, lang }: { tx: (typeof t)["en"]; lang: Lang }) {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginBottom: 16,
-        }}
-      >
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "8px 16px",
-            borderRadius: 8,
-            border: "none",
-            backgroundColor: "var(--primary)",
-            color: "var(--primary-foreground)",
-            cursor: "pointer",
-            fontSize: 13,
-            fontWeight: 600,
-          }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          {tx.admin.uploadResource}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-[#F4F7F6]">
+            {lang === "ar" ? "الموارد والملفات الأكاديمية" : "Academic Resources"}
+          </h2>
+          <p className="text-xs font-semibold text-[#AABCAF]">
+            {lang === "ar"
+              ? "قائمة بالملفات والمحاضرات المرفوعة عبر جميع المواد"
+              : "All academic files and slides uploaded to the system"}
+          </p>
+        </div>
+
+        <button className="flex items-center gap-2 rounded-xl bg-[#899C9A] px-4 py-2.5 text-sm font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer">
+          <Upload className="h-4 w-4" />
+          <span>{tx.admin.uploadResource}</span>
         </button>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+
+      <div className="space-y-3">
         {allResources.map((r, i) => (
           <div
             key={i}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              backgroundColor: "var(--card)",
-              border: "1px solid var(--border)",
-              borderRadius: 10,
-              padding: "12px 16px",
-            }}
+            className="flex items-center gap-4 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-4 shadow-md backdrop-blur-xl transition-all duration-200 hover:border-[#899C9A] hover:bg-[#525C79]"
           >
             <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 7,
-                backgroundColor: r.color + "18",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+              style={{ backgroundColor: `${r.color}25`, color: r.color }}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={r.color}
-                strokeWidth="1.8"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
+              <FileText className="h-5 w-5" />
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "var(--foreground)",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }}
-              >
+
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-sm font-bold text-[#F4F7F6]">
                 {r.name}
               </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "var(--muted-foreground)",
-                  marginTop: 2,
-                }}
-              >
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#AABCAF]">
                 <span
-                  style={{
-                    color: r.color,
-                    fontWeight: 600,
-                    fontFamily: "JetBrains Mono, monospace",
-                  }}
+                  className="font-['JetBrains_Mono'] font-bold text-[#F4F7F6]"
                 >
                   {r.code}
                 </span>
-                {" · "}
-                {r.course}
-                {" · "}
-                {r.type}
+                <span>•</span>
+                <span>{r.course}</span>
+                <span>•</span>
+                <span className="rounded-md bg-[#35425E] px-2 py-0.5 text-[10px] font-bold text-[#AABCAF] border border-[#6E7C8B]/40">
+                  {r.type}
+                </span>
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                flexShrink: 0,
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 11,
-                  color: "var(--muted-foreground)",
-                  fontFamily: "JetBrains Mono, monospace",
-                }}
-              >
-                {r.size}
-              </span>
-              <span
-                style={{
-                  fontSize: 11,
-                  color: "var(--muted-foreground)",
-                  fontFamily: "JetBrains Mono, monospace",
-                }}
-              >
-                {r.date}
-              </span>
-              <button
-                style={{
-                  padding: "4px 10px",
-                  borderRadius: 6,
-                  border: "1px solid #fee2e2",
-                  backgroundColor: "#fee2e2",
-                  cursor: "pointer",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: "#dc2626",
-                }}
-              >
-                {lang === "ar" ? "حذف" : "Delete"}
+
+            <div className="flex shrink-0 items-center gap-4">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="font-['JetBrains_Mono'] text-xs font-bold text-[#F4F7F6]">
+                  {r.size}
+                </span>
+                <span className="font-['JetBrains_Mono'] text-[11px] font-medium text-[#AABCAF]">
+                  {r.date}
+                </span>
+              </div>
+
+              <button className="flex items-center gap-1 rounded-xl border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer">
+                <Trash2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">
+                  {lang === "ar" ? "حذف" : "Delete"}
+                </span>
               </button>
             </div>
           </div>
@@ -1058,245 +710,169 @@ function UploadTab({
   };
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto" }}>
-      <div
-        style={{
-          backgroundColor: "var(--card)",
-          border: "1px solid var(--border)",
-          borderRadius: 14,
-          padding: 28,
-          marginBottom: 24,
-        }}
-      >
-        <h3
-          style={{
-            fontFamily: "Outfit, sans-serif",
-            fontWeight: 700,
-            fontSize: 17,
-            color: "var(--foreground)",
-            marginBottom: 20,
-          }}
-        >
-          {tx.admin.uploadResource}
-        </h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    <div className="mx-auto max-w-2xl">
+      <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl sm:p-8">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-md shadow-[#35425E]/40 border border-[#899C9A]/40">
+            <Upload className="h-5 w-5" />
+          </div>
+          <div>
+            <h3 className="font-['Outfit'] text-lg font-bold text-[#F4F7F6]">
+              {tx.admin.uploadResource}
+            </h3>
+            <p className="text-xs font-semibold text-[#AABCAF]">
+              {lang === "ar"
+                ? "ارفع المحاضرات والمذكرات وحدد المقرر المناسب"
+                : "Upload course materials and assign to the target subject"}
+            </p>
+          </div>
+        </div>
+
+        {/* Form Fields */}
+        <div className="space-y-4">
           {[
             {
               label: lang === "ar" ? "الجامعة" : "University",
-              type: "select",
-              options: ["King Abdulaziz University", "King Saud University"],
+              options: ["جامعة القاهرة", "جامعة الإسكندرية", "جامعة عين شمس"],
             },
             {
               label: lang === "ar" ? "القسم" : "Department",
-              type: "select",
-              options: ["Computer Science", "Information Systems"],
+              options: ["علوم الحاسوب (CS)", "تقنية المعلومات (IT)", "الأمن السيبراني (CYS)"],
             },
             {
               label: lang === "ar" ? "المقرر" : "Course",
-              type: "select",
               options: [
-                "CS 301 - Data Structures",
-                "CS 302 - Database Systems",
-                "CS 303 - Operating Systems",
+                "CS 101 - برمجة 1",
+                "CS 201 - هياكل البيانات",
+                "CS 301 - الذكاء الاصطناعي",
               ],
             },
             {
               label: lang === "ar" ? "نوع المورد" : "Resource Type",
-              type: "select",
               options: [
-                "Lecture",
-                "Book / Reference",
-                "Assignment",
-                "Previous Exam",
+                "محاضرة (Lecture Slides)",
+                "كتاب أو مرجع (Book / Reference)",
+                "واجب وتكليف (Assignment)",
+                "امتحان سابق (Previous Exam)",
               ],
             },
           ].map((field) => (
             <div key={field.label}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "var(--muted-foreground)",
-                  marginBottom: 6,
-                }}
-              >
+              <label className="block text-xs font-bold text-[#AABCAF] mb-1.5">
                 {field.label}
               </label>
-              <select
-                style={{
-                  width: "100%",
-                  padding: "9px 12px",
-                  borderRadius: 8,
-                  border: "1.5px solid var(--border)",
-                  backgroundColor: "var(--background)",
-                  color: "var(--foreground)",
-                  fontSize: 14,
-                  cursor: "pointer",
-                  outline: "none",
-                }}
-              >
-                <option value="">
-                  {lang === "ar" ? "اختر..." : "Select..."}
-                </option>
+              <select className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] px-3.5 py-2.5 text-sm text-[#F4F7F6] outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25 cursor-pointer">
+                <option value="">{lang === "ar" ? "اختر..." : "Select..."}</option>
                 {field.options.map((o) => (
-                  <option key={o}>{o}</option>
+                  <option key={o} value={o}>
+                    {o}
+                  </option>
                 ))}
               </select>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Drop zone */}
-      <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDrag(true);
-        }}
-        onDragLeave={() => setDrag(false)}
-        onDrop={handleDrop}
-        style={{
-          border: `2px dashed ${drag ? "var(--primary)" : "var(--border)"}`,
-          borderRadius: 14,
-          padding: "48px 24px",
-          textAlign: "center",
-          backgroundColor: drag ? "var(--secondary)" : "var(--card)",
-          transition: "all 0.2s",
-          cursor: "pointer",
-          marginBottom: 16,
-        }}
-      >
-        <div style={{ fontSize: 36, marginBottom: 12 }}>📤</div>
-        <p
-          style={{
-            fontFamily: "Outfit, sans-serif",
-            fontWeight: 600,
-            fontSize: 16,
-            color: "var(--foreground)",
-            marginBottom: 6,
-          }}
-        >
-          {lang === "ar" ? "اسحب وأفلت الملفات هنا" : "Drag & drop files here"}
-        </p>
-        <p
-          style={{
-            fontSize: 13,
-            color: "var(--muted-foreground)",
-            marginBottom: 20,
-          }}
-        >
-          {lang === "ar" ? "أو اضغط لاختيار ملفات" : "or click to browse files"}
-        </p>
-        <label style={{ cursor: "pointer" }}>
-          <input
-            type="file"
-            multiple
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const newFiles = Array.from(e.target.files ?? []).map(
-                (f) => f.name,
-              );
-              setFiles([...files, ...newFiles]);
-            }}
-          />
-          <span
-            style={{
-              padding: "8px 20px",
-              borderRadius: 8,
-              backgroundColor: "var(--primary)",
-              color: "var(--primary-foreground)",
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            {lang === "ar" ? "اختر ملفات" : "Choose Files"}
-          </span>
-        </label>
-        <p
-          style={{
-            fontSize: 11,
-            color: "var(--muted-foreground)",
-            marginTop: 16,
-            fontFamily: "JetBrains Mono, monospace",
-          }}
-        >
-          PDF, DOCX, PPTX ·{" "}
-          {lang === "ar"
-            ? "الحد الأقصى 50 ميغابايت لكل ملف"
-            : "Max 50MB per file"}
-        </p>
-      </div>
-
-      {files.length > 0 && (
+        {/* Drop Zone */}
         <div
-          style={{
-            backgroundColor: "var(--card)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            overflow: "hidden",
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDrag(true);
           }}
+          onDragLeave={() => setDrag(false)}
+          onDrop={handleDrop}
+          className={`mt-6 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-200 cursor-pointer ${
+            drag
+              ? "border-[#899C9A] bg-[#899C9A]/10 scale-[1.01]"
+              : "border-[#6E7C8B]/40 bg-[#35425E]/60 hover:border-[#899C9A] hover:bg-[#35425E]"
+          }`}
         >
-          {files.map((name, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "10px 16px",
-                borderBottom:
-                  i < files.length - 1 ? "1px solid var(--border)" : "none",
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/30 mb-3">
+            <Upload className="h-7 w-7" />
+          </div>
+          <p className="font-['Outfit'] text-base font-bold text-[#F4F7F6]">
+            {lang === "ar"
+              ? "اسحب وأفلت الملفات هنا"
+              : "Drag & drop your files here"}
+          </p>
+          <p className="mt-1 text-xs font-semibold text-[#AABCAF]">
+            {lang === "ar"
+              ? "أو اضغط لتصفح ملفات جهازك"
+              : "or click the button below to browse"}
+          </p>
+
+          <label className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#899C9A] px-5 py-2.5 text-xs font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer">
+            <Plus className="h-4 w-4" />
+            <span>{lang === "ar" ? "اختر ملفات" : "Choose Files"}</span>
+            <input
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                const newFiles = Array.from(e.target.files ?? []).map(
+                  (f) => f.name,
+                );
+                setFiles([...files, ...newFiles]);
               }}
-            >
-              <span style={{ fontSize: 16 }}>📄</span>
-              <span
-                style={{ flex: 1, fontSize: 13, color: "var(--foreground)" }}
-              >
-                {name}
-              </span>
+            />
+          </label>
+
+          <p className="mt-4 font-['JetBrains_Mono'] text-[11px] font-semibold text-[#AABCAF]">
+            PDF, DOCX, PPTX, ZIP •{" "}
+            {lang === "ar"
+              ? "الحد الأقصى 50 ميغابايت لكل ملف"
+              : "Max 50MB per file"}
+          </p>
+        </div>
+
+        {/* Selected Files List */}
+        {files.length > 0 && (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#35425E] shadow-md">
+            <div className="border-b border-[#6E7C8B]/30 px-4 py-3 text-xs font-bold text-[#AABCAF]">
+              {lang === "ar"
+                ? `الملفات الجاهزة للرفع (${files.length})`
+                : `Files ready to upload (${files.length})`}
+            </div>
+
+            <div className="divide-y divide-[#6E7C8B]/30">
+              {files.map((name, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-white/[0.04]"
+                >
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <FileText className="h-4 w-4 text-[#899C9A] shrink-0" />
+                    <span className="truncate text-xs font-bold text-[#F4F7F6]">
+                      {name}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => setFiles(files.filter((_, j) => j !== i))}
+                    className="rounded-lg p-1 text-red-400 hover:bg-red-500/10 cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-[#6E7C8B]/30 p-3">
               <button
-                onClick={() => setFiles(files.filter((_, j) => j !== i))}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#dc2626",
-                  fontSize: 16,
-                  padding: 4,
+                onClick={() => {
+                  alert(lang === "ar" ? "تم رفع الملفات بنجاح!" : "Files uploaded successfully!");
+                  setFiles([]);
                 }}
+                className="w-full rounded-xl bg-[#899C9A] py-2.5 text-sm font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.01] active:scale-95 cursor-pointer"
               >
-                ×
+                {lang === "ar"
+                  ? `تأكيد ورفع ${files.length} ملف`
+                  : `Confirm & Upload ${files.length} file${files.length > 1 ? "s" : ""}`}
               </button>
             </div>
-          ))}
-          <div
-            style={{
-              padding: "12px 16px",
-              borderTop: "1px solid var(--border)",
-            }}
-          >
-            <button
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: 8,
-                border: "none",
-                backgroundColor: "var(--primary)",
-                color: "var(--primary-foreground)",
-                cursor: "pointer",
-                fontSize: 14,
-                fontWeight: 600,
-              }}
-            >
-              {lang === "ar"
-                ? `رفع ${files.length} ملف`
-                : `Upload ${files.length} file${files.length > 1 ? "s" : ""}`}
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

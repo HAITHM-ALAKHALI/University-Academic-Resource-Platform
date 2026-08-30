@@ -12,7 +12,7 @@ const popularCourses = [
     dept: "علوم حاسوب",
     uni: "جامعة القاهرة",
     files: 47,
-    color: "#3B82F6",
+    color: "#899C9A", // Provence Blue
     icon: "⚙",
   },
   {
@@ -22,7 +22,7 @@ const popularCourses = [
     dept: "علوم حاسوب",
     uni: "جامعة القاهرة",
     files: 32,
-    color: "#8B5CF6",
+    color: "#AABCAF", // Foggy Rain
     icon: "💻",
   },
   {
@@ -32,7 +32,7 @@ const popularCourses = [
     dept: "هندسة",
     uni: "جامعة الإسكندرية",
     files: 28,
-    color: "#06B6D4",
+    color: "#899C9A", // Provence Blue
     icon: "∑",
   },
   {
@@ -42,7 +42,7 @@ const popularCourses = [
     dept: "تقنية معلومات",
     uni: "جامعة القاهرة",
     files: 39,
-    color: "#10B981",
+    color: "#AABCAF", // Foggy Rain
     icon: "🗄",
   },
   {
@@ -52,7 +52,7 @@ const popularCourses = [
     dept: "علوم حاسوب",
     uni: "جامعة الأزهر",
     files: 55,
-    color: "#F59E0B",
+    color: "#899C9A", // Provence Blue
     icon: "🤖",
   },
   {
@@ -62,7 +62,7 @@ const popularCourses = [
     dept: "هندسة",
     uni: "جامعة القاهرة",
     files: 41,
-    color: "#EC4899",
+    color: "#AABCAF", // Foggy Rain
     icon: "🌐",
   },
 ];
@@ -83,50 +83,16 @@ export default function HomeScreen({ navigate }: Props) {
         subtitle="جميع المواد والملفات الدراسية في مكان منظم وسهل الوصول"
       />
       <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-10">
-        {/* Quick Hero Feature Banner */}
-        {/* <div className="relative overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-r from-blue-600/15 via-violet-600/15 to-purple-600/10 p-8 shadow-2xl backdrop-blur-xl">
-          <div className="relative z-10 max-w-2xl text-right">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3.5 py-1 text-xs font-semibold text-blue-300 mb-4">
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>منصة أكاديمية مفتوحة للطلاب</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-              تصفح كل ما تحتاجه لرحلتك الجامعية
-            </h2>
-            <p className="mt-2 text-sm text-slate-300 leading-relaxed">
-              محاضرات، ملخصات، مراجع، ونماذج امتحانات سابقة مصنفة حسب الجامعة والكلية والمستوى الدراسي.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => navigate({ screen: "universities" })}
-                className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition-all hover:bg-blue-500 cursor-pointer border-0"
-              >
-                <span>تصفح الجامعات</span>
-                <ArrowLeft className="h-4 w-4 rtl:rotate-0" />
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate({ screen: "departments" })}
-                className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-200 backdrop-blur transition-all hover:bg-white/10 cursor-pointer"
-              >
-                <Layers className="h-4 w-4" />
-                <span>الأقسام الدراسية</span>
-              </button>
-            </div>
-          </div>
-        </div> */}
-
         {/* 1. Browse by Department */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+            <h3 className="text-lg sm:text-xl font-bold text-[#F4F7F6]">
               تصفح حسب القسم
             </h3>
             <button
               type="button"
               onClick={() => navigate({ screen: "departments" })}
-              className="flex items-center gap-1 text-xs sm:text-sm font-medium text-blue-400 hover:text-blue-300 cursor-pointer border-0 bg-transparent"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#899C9A] hover:text-[#AABCAF] transition-colors cursor-pointer border-0 bg-transparent"
             >
               <span>عرض كل الأقسام</span>
               <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-0" />
@@ -149,36 +115,38 @@ export default function HomeScreen({ navigate }: Props) {
                     },
                   })
                 }
-                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
+                className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 text-center shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#899C9A] hover:shadow-2xl hover:bg-[#525C79] cursor-pointer"
               >
-                 <div
+                <div
                   className="absolute -top-12 -left-12 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40"
                   style={{ background: dept.color }}
                 />
 
                 <div
-                  className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-2xl font-bold transition-transform duration-300 group-hover:scale-110"
+                  className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-2xl font-bold transition-transform duration-300 group-hover:scale-110 shadow-md"
                   style={{
-                    background: `${dept.color}20`,
+                    background: `${dept.color}25`,
                     color: dept.color,
+                    border: `1.5px solid ${dept.color}50`,
                   }}
                 >
                   {dept.icon}
                 </div>
 
-                <h4 className="mb-1 text-base font-bold text-[var(--text-primary)]">
+                <h4 className="mb-1 text-base font-bold text-[#F4F7F6] group-hover:text-[#AABCAF] transition-colors">
                   {dept.name}
                 </h4>
 
                 <div className="flex items-center justify-center gap-2 text-xs">
-                  <span className="text-[var(--text-secondary)]">
+                  <span className="text-[#AABCAF]">
                     {dept.nameEn}
                   </span>
                   <span
-                    className="rounded-full px-2 py-0.5 font-semibold text-[10px]"
+                    className="rounded-full px-2.5 py-0.5 font-bold text-[10px]"
                     style={{
                       color: dept.color,
-                      background: `${dept.color}15`,
+                      background: `${dept.color}20`,
+                      border: `1px solid ${dept.color}40`,
                     }}
                   >
                     {dept.desc}
@@ -193,10 +161,10 @@ export default function HomeScreen({ navigate }: Props) {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-[var(--text-primary)]">
+              <h3 className="text-lg sm:text-xl font-bold text-[#F4F7F6]">
                 المواد الشائعة
               </h3>
-              <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+              <p className="text-xs text-[#AABCAF] mt-0.5 font-medium">
                 أبرز المواد والمقررات الأكثر تحميلاً وتفاعلاً
               </p>
             </div>
@@ -224,29 +192,8 @@ export default function HomeScreen({ navigate }: Props) {
                     },
                   })
                 }
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-[#121a2d] p-5 text-right transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl cursor-pointer"
-                style={{
-                  boxShadow: "0 8px 30px rgba(0, 0, 0, 0.35)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = `${course.color}70`;
-                  e.currentTarget.style.boxShadow = `0 12px 36px ${course.color}25`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor =
-                    "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 30px rgba(0, 0, 0, 0.35)";
-                }}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-5 text-right shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#899C9A] hover:shadow-2xl hover:bg-[#525C79] cursor-pointer"
               >
-                {/* Colorful Top Accent Bar */}
-                <div
-                  className="absolute top-0 right-0 left-0 h-1.5 transition-all duration-300 group-hover:h-2"
-                  style={{
-                    background: ``,
-                  }}
-                />
-
                 {/* Subtle Ambient Background Gradient */}
                 <div
                   className="absolute -top-12 -left-12 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40"
@@ -261,28 +208,24 @@ export default function HomeScreen({ navigate }: Props) {
                       style={{
                         background: `${course.color}25`,
                         color: course.color,
-                        border: `1px solid ${course.color}40`,
+                        border: `1.5px solid ${course.color}45`,
                       }}
                     >
                       {course.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="truncate text-base font-bold text-white transition-colors group-hover:text-blue-300">
+                      <h4 className="truncate text-base font-bold text-[#F4F7F6] transition-colors group-hover:text-[#AABCAF]">
                         {course.name}
                       </h4>
-                      <p className="truncate text-xs font-medium text-slate-400 mt-0.5">
+                      <p className="truncate text-xs font-medium text-[#AABCAF] mt-0.5">
                         {course.nameEn}
                       </p>
                     </div>
                   </div>
 
-                  {/* University & Department Tags */}
+                  {/* Department Tag */}
                   <div className="flex flex-wrap items-center gap-2 mb-4">
-                    {/* <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
-                      <span>🏛️</span>
-                      <span>{course.uni}</span>
-                    </span> */}
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-white/[0.05] border border-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-slate-300">
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-[#35425E]/70 border border-[#6E7C8B]/40 px-2.5 py-1 text-[11px] font-semibold text-[#AABCAF]">
                       <span>📂</span>
                       <span>{course.dept}</span>
                     </span>
@@ -290,13 +233,13 @@ export default function HomeScreen({ navigate }: Props) {
                 </div>
 
                 {/* Bottom Action Footer */}
-                <div className="flex items-center justify-between  pt-1 mt-1">
+                <div className="flex items-center justify-between border-t border-[#6E7C8B]/30 pt-3.5 mt-1">
                   <span
                     className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm"
                     style={{
                       color: course.color,
                       background: `${course.color}20`,
-                      border: `1px solid ${course.color}30`,
+                      border: `1px solid ${course.color}40`,
                     }}
                   >
                     <FileText className="h-3.5 w-3.5" />

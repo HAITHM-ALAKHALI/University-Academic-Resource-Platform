@@ -20,7 +20,7 @@ const collegesData: Record<
       name: "كلية علوم الحاسوب والمعلومات",
       nameEn: "Faculty of Computer Science",
       depts: 4,
-      color: "#3B82F6",
+      color: "#899C9A", // Provence Blue
       icon: "💻",
     },
     {
@@ -28,7 +28,7 @@ const collegesData: Record<
       name: "كلية الهندسة",
       nameEn: "Faculty of Engineering",
       depts: 8,
-      color: "#8B5CF6",
+      color: "#AABCAF", // Foggy Rain
       icon: "⚙",
     },
     {
@@ -36,7 +36,7 @@ const collegesData: Record<
       name: "كلية الطب",
       nameEn: "Faculty of Medicine",
       depts: 12,
-      color: "#EF4444",
+      color: "#899C9A", // Provence Blue
       icon: "⚕",
     },
     {
@@ -44,7 +44,7 @@ const collegesData: Record<
       name: "كلية العلوم",
       nameEn: "Faculty of Science",
       depts: 6,
-      color: "#06B6D4",
+      color: "#AABCAF", // Foggy Rain
       icon: "🔬",
     },
     {
@@ -52,7 +52,7 @@ const collegesData: Record<
       name: "كلية الاقتصاد والعلوم السياسية",
       nameEn: "Faculty of Economics",
       depts: 5,
-      color: "#10B981",
+      color: "#899C9A", // Provence Blue
       icon: "📊",
     },
     {
@@ -60,7 +60,7 @@ const collegesData: Record<
       name: "كلية الآداب",
       nameEn: "Faculty of Arts",
       depts: 7,
-      color: "#F59E0B",
+      color: "#AABCAF", // Foggy Rain
       icon: "📖",
     },
     {
@@ -68,7 +68,7 @@ const collegesData: Record<
       name: "كلية الحقوق",
       nameEn: "Faculty of Law",
       depts: 3,
-      color: "#EC4899",
+      color: "#899C9A",
       icon: "⚖",
     },
     {
@@ -76,7 +76,7 @@ const collegesData: Record<
       name: "كلية التجارة",
       nameEn: "Faculty of Commerce",
       depts: 5,
-      color: "#8B5CF6",
+      color: "#AABCAF",
       icon: "💰",
     },
   ],
@@ -88,12 +88,13 @@ interface Props {
 }
 
 export default function CollegeScreen({ nav, navigate }: Props) {
-  const [search, setSearch] = useState("");
+  const [search] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const uniId = nav.university?.id ?? 1;
   const colleges = (collegesData[uniId] ?? collegesData[1]).filter(
     (c) =>
-      c.name.includes(search) ||
-      c.nameEn.toLowerCase().includes(search.toLowerCase()),
+      c.name.includes(searchTerm || search) ||
+      c.nameEn.toLowerCase().includes((searchTerm || search).toLowerCase()),
   );
 
   return (
@@ -113,12 +114,12 @@ export default function CollegeScreen({ nav, navigate }: Props) {
       <div className="p-6 sm:p-8 max-w-7xl mx-auto">
         {/* Search */}
         <div className="relative mb-8 max-w-md">
-          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] h-4 w-4" />
+          <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[#899C9A] h-4 w-4" />
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="ابحث عن كلية..."
-            className="w-full rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)] py-2.5 pr-11 pl-4 text-sm text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#525C79]/80 py-2.5 pr-11 pl-4 text-sm text-[#F4F7F6] placeholder-[#AABCAF]/70 outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
           />
         </div>
 
@@ -138,7 +139,7 @@ export default function CollegeScreen({ nav, navigate }: Props) {
                   },
                 })
               }
-              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/40 hover:shadow-xl hover:shadow-violet-500/5 cursor-pointer"
+              className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 text-right shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#899C9A] hover:bg-[#525C79] hover:shadow-2xl cursor-pointer"
             >
               <div
                 className="absolute -top-6 -left-6 h-20 w-20 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-20"
@@ -146,29 +147,28 @@ export default function CollegeScreen({ nav, navigate }: Props) {
               />
 
               <div
-                className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-transform duration-300 group-hover:scale-110"
-                style={{ background: `${college.color}25` }}
+                className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-transform duration-300 group-hover:scale-110 shadow-md"
+                style={{
+                  background: `${college.color}25`,
+                  border: `1.5px solid ${college.color}45`,
+                }}
               >
                 {college.icon}
               </div>
 
-              <h3 className="mb-1 text-sm sm:text-base font-bold text-[var(--text-primary)] leading-snug">
+              <h3 className="mb-1 text-sm sm:text-base font-bold text-[#F4F7F6] group-hover:text-[#AABCAF] transition-colors leading-snug">
                 {college.name}
               </h3>
-              <p className="mb-4 text-xs text-[var(--text-secondary)]">
+              <p className="mb-4 text-xs font-semibold text-[#AABCAF]">
                 {college.nameEn}
               </p>
 
-              <span
-                className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold"
-                style={{
-                  color: college.color,
-                  background: `${college.color}15`,
-                }}
-              >
-                <Layers className="h-3 w-3" />
-                <span>{college.depts} قسم</span>
-              </span>
+              <div className="flex items-center justify-between border-t border-[#6E7C8B]/30 pt-3 text-xs text-[#AABCAF]">
+                <span className="flex items-center gap-1 font-semibold text-[#899C9A]">
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>{college.depts} أقسام</span>
+                </span>
+              </div>
             </div>
           ))}
         </div>

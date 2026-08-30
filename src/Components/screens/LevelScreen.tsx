@@ -7,48 +7,48 @@ const levels = [
     id: 1,
     name: "السنة الأولى",
     year: 1,
-    color: "#3B82F6",
+    color: "#899C9A", // Provence Blue
     icon: "①",
     coursesCount: 8,
     semesters: [
-      { id: 1, name: "الترم الأول", courses: 4, files: 124, color: "#3B82F6" },
-      { id: 2, name: "الترم الثاني", courses: 4, files: 118, color: "#60A5FA" },
+      { id: 1, name: "الترم الأول", courses: 4, files: 124, color: "#899C9A" },
+      { id: 2, name: "الترم الثاني", courses: 4, files: 118, color: "#AABCAF" },
     ],
   },
   {
     id: 2,
     name: "السنة الثانية",
     year: 2,
-    color: "#8B5CF6",
+    color: "#AABCAF", // Foggy Rain
     icon: "②",
     coursesCount: 10,
     semesters: [
-      { id: 1, name: "الترم الأول", courses: 5, files: 142, color: "#8B5CF6" },
-      { id: 2, name: "الترم الثاني", courses: 5, files: 136, color: "#A78BFA" },
+      { id: 1, name: "الترم الأول", courses: 5, files: 142, color: "#899C9A" },
+      { id: 2, name: "الترم الثاني", courses: 5, files: 136, color: "#AABCAF" },
     ],
   },
   {
     id: 3,
     name: "السنة الثالثة",
     year: 3,
-    color: "#06B6D4",
+    color: "#899C9A", // Provence Blue
     icon: "③",
     coursesCount: 10,
     semesters: [
-      { id: 1, name: "الترم الأول", courses: 5, files: 155, color: "#06B6D4" },
-      { id: 2, name: "الترم الثاني", courses: 5, files: 148, color: "#22D3EE" },
+      { id: 1, name: "الترم الأول", courses: 5, files: 155, color: "#899C9A" },
+      { id: 2, name: "الترم الثاني", courses: 5, files: 148, color: "#AABCAF" },
     ],
   },
   {
     id: 4,
     name: "السنة الرابعة",
     year: 4,
-    color: "#10B981",
+    color: "#AABCAF", // Foggy Rain
     icon: "④",
     coursesCount: 9,
     semesters: [
-      { id: 1, name: "الترم الأول", courses: 5, files: 160, color: "#10B981" },
-      { id: 2, name: "الترم الثاني", courses: 4, files: 145, color: "#34D399" },
+      { id: 1, name: "الترم الأول", courses: 5, files: 160, color: "#899C9A" },
+      { id: 2, name: "الترم الثاني", courses: 4, files: 145, color: "#AABCAF" },
     ],
   },
 ];
@@ -59,7 +59,7 @@ interface Props {
 }
 
 export default function LevelScreen({ nav, navigate }: Props) {
-  const deptColor = nav.department?.color ?? "#3B82F6";
+  const deptColor = nav.department?.color ?? "#899C9A";
 
   const handleSelectSemester = (
     level: { id: number; name: string },
@@ -89,28 +89,29 @@ export default function LevelScreen({ nav, navigate }: Props) {
       />
       <div className="p-6 sm:p-8 max-w-7xl mx-auto">
         {/* Department Banner Header */}
-        <div className="mb-8 flex items-center gap-5 rounded-2xl border border-blue-500/20 bg-gradient-to-r from-blue-500/10 via-violet-500/10 to-transparent p-6 shadow-lg">
+        <div className="mb-8 flex items-center gap-5 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl">
           <div
             className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl font-mono text-3xl font-bold shadow-md"
             style={{
               background: `${deptColor}25`,
               color: deptColor,
+              border: `1.5px solid ${deptColor}50`,
               boxShadow: `0 4px 20px ${deptColor}20`,
             }}
           >
             {nav.department?.icon ?? "💻"}
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-[var(--text-primary)]">
+            <h2 className="text-xl sm:text-2xl font-black text-[#F4F7F6]">
               {nav.department?.name}
             </h2>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm font-semibold text-[#AABCAF]">
               {nav.department?.nameEn} {nav.college?.name ? `— ${nav.college.name}` : ""}
             </p>
           </div>
         </div>
 
-        <h3 className="mb-4 text-base font-bold text-[var(--text-secondary)]">
+        <h3 className="mb-4 text-base font-bold text-[#F4F7F6]">
           السنوات والأترام الدراسية
         </h3>
 
@@ -119,7 +120,7 @@ export default function LevelScreen({ nav, navigate }: Props) {
           {levels.map((level) => (
             <div
               key={level.id}
-              className="relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 shadow-lg transition-all duration-300 hover:border-white/20"
+              className="relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-[#899C9A] hover:bg-[#525C79]"
             >
               {/* Subtle top accent bar */}
               <div
@@ -135,27 +136,28 @@ export default function LevelScreen({ nav, navigate }: Props) {
                     style={{
                       background: `${level.color}25`,
                       color: level.color,
-                      border: `1px solid ${level.color}35`,
+                      border: `1.5px solid ${level.color}45`,
                     }}
                   >
                     {level.icon}
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-[var(--text-primary)]">
+                    <h4 className="text-lg font-bold text-[#F4F7F6]">
                       {level.name}
                     </h4>
-                    <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] mt-0.5">
-                      <BookOpen className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-[#AABCAF] mt-0.5">
+                      <BookOpen className="h-3.5 w-3.5 text-[#899C9A]" />
                       <span>{level.coursesCount} مواد دراسية</span>
                     </div>
                   </div>
                 </div>
 
                 <span
-                  className="rounded-lg px-2.5 py-1 text-xs font-semibold"
+                  className="rounded-lg px-2.5 py-1 text-xs font-bold"
                   style={{
                     color: level.color,
-                    background: `${level.color}15`,
+                    background: `${level.color}20`,
+                    border: `1px solid ${level.color}40`,
                   }}
                 >
                   المستوى {level.year}
@@ -163,22 +165,22 @@ export default function LevelScreen({ nav, navigate }: Props) {
               </div>
 
               {/* Integrated Semesters Buttons */}
-              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[var(--border-subtle)]">
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#6E7C8B]/30">
                 {level.semesters.map((sem) => (
                   <button
                     key={sem.id}
                     type="button"
                     onClick={() => handleSelectSemester(level, sem)}
-                    className="group/sem flex flex-col items-start justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] p-3.5 text-right transition-all duration-200 hover:border-blue-500/50 hover:bg-blue-500/[0.08] hover:-translate-y-0.5 cursor-pointer shadow-sm"
+                    className="group/sem flex flex-col items-start justify-between rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/60 p-3.5 text-right transition-all duration-200 hover:border-[#899C9A] hover:bg-[#35425E] hover:-translate-y-0.5 cursor-pointer shadow-sm"
                   >
-                    <div className="flex w-full items-center justify-between text-xs font-semibold text-slate-300 group-hover/sem:text-white mb-2">
+                    <div className="flex w-full items-center justify-between text-xs font-bold text-[#F4F7F6] group-hover/sem:text-[#AABCAF] mb-2">
                       <span className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-blue-400" />
+                        <Calendar className="h-3.5 w-3.5 text-[#899C9A]" />
                         <span>{sem.name}</span>
                       </span>
-                      <ArrowLeft className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover/sem:-translate-x-1 group-hover/sem:text-blue-400 rtl:rotate-0" />
+                      <ArrowLeft className="h-3.5 w-3.5 text-[#AABCAF] transition-transform group-hover/sem:-translate-x-1 group-hover/sem:text-[#899C9A] rtl:rotate-0" />
                     </div>
-                    <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                    <div className="flex items-center gap-2 text-[11px] font-medium text-[#AABCAF]">
                       <span>{sem.courses} مواد</span>
                       <span>·</span>
                       <span>{sem.files} ملف</span>

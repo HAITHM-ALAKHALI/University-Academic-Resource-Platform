@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Eye,
   Clock,
+  ArrowRight,
 } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
@@ -148,41 +149,41 @@ const exams = [
   {
     id: 6,
     name: "امتحان نهاية الترم 2021",
-    size: "1.6 MB",
+    size: "2.1 MB",
     year: 2021,
     type: "نهاية",
     withSolution: true,
   },
   {
     id: 7,
-    name: "امتحان منتصف الترم 2021",
-    size: "1.0 MB",
-    year: 2021,
-    type: "منتصف",
+    name: "امتحان تجريبي 1 - محلول",
+    size: "0.9 MB",
+    year: 2024,
+    type: "تجريبي",
     withSolution: true,
   },
   {
     id: 8,
-    name: "امتحان نهاية الترم 2020",
-    size: "1.5 MB",
-    year: 2020,
-    type: "نهاية",
-    withSolution: false,
+    name: "امتحان تجريبي 2 - محلول",
+    size: "1.0 MB",
+    year: 2024,
+    type: "تجريبي",
+    withSolution: true,
   },
   {
     id: 9,
-    name: "امتحان منتصف الترم 2020",
-    size: "1.2 MB",
-    year: 2020,
-    type: "منتصف",
+    name: "بنك الأسئلة الشامل (200 سؤال)",
+    size: "3.5 MB",
+    year: 2024,
+    type: "بنك أسئلة",
     withSolution: true,
   },
   {
     id: 10,
-    name: "امتحان نهاية الترم 2019",
-    size: "1.8 MB",
-    year: 2019,
-    type: "نهاية",
+    name: "ملخص قوانين ونماذج",
+    size: "0.6 MB",
+    year: 2024,
+    type: "ملخص",
     withSolution: true,
   },
 ];
@@ -190,10 +191,10 @@ const exams = [
 const videos = [
   {
     id: 1,
-    name: "شرح المحاضرة الأولى - المقدمة",
-    duration: "45:22",
+    name: "مقدمة إلى لغة البرمجة C - الدرس الأول",
+    duration: "45:30",
     platform: "YouTube",
-    views: "12K",
+    views: "12.4K",
     thumb: "🟥",
   },
   {
@@ -238,7 +239,7 @@ const projects = [
     desc: "نظام لإدارة الكتب والأعضاء والإعارة باستخدام لغة C وهياكل البيانات",
     tech: ["C", "Linked List", "File I/O"],
     grade: "السنة الأولى",
-    color: "#3B82F6",
+    color: "#899C9A",
   },
   {
     id: 2,
@@ -247,7 +248,7 @@ const projects = [
     desc: "حاسبة علمية كاملة تدعم العمليات الحسابية والمثلثية والإحصائية",
     tech: ["C", "Math.h"],
     grade: "السنة الأولى",
-    color: "#8B5CF6",
+    color: "#AABCAF",
   },
   {
     id: 3,
@@ -256,7 +257,7 @@ const projects = [
     desc: "نظام شامل لإدارة بيانات الطلاب مع ميزات البحث والترتيب والتصفية",
     tech: ["C", "Sorting", "Searching", "Files"],
     grade: "السنة الأولى",
-    color: "#06B6D4",
+    color: "#899C9A",
   },
   {
     id: 4,
@@ -265,7 +266,7 @@ const projects = [
     desc: "محاكاة حل المتاهة باستخدام خوارزمية DFS والمصفوفات الثنائية الأبعاد",
     tech: ["C", "2D Arrays", "Recursion"],
     grade: "السنة الأولى",
-    color: "#10B981",
+    color: "#AABCAF",
   },
 ];
 
@@ -276,7 +277,7 @@ const externalResources = [
     url: "programiz.com/c-programming",
     type: "موقع",
     icon: "🌐",
-    color: "#3B82F6",
+    color: "#899C9A",
   },
   {
     id: 2,
@@ -284,7 +285,7 @@ const externalResources = [
     url: "freecodecamp.org",
     type: "دليل",
     icon: "📖",
-    color: "#8B5CF6",
+    color: "#AABCAF",
   },
   {
     id: 3,
@@ -292,7 +293,7 @@ const externalResources = [
     url: "youtube.com",
     type: "فيديو",
     icon: "▶",
-    color: "#EF4444",
+    color: "#899C9A",
   },
   {
     id: 4,
@@ -300,7 +301,7 @@ const externalResources = [
     url: "geeksforgeeks.org/c-programming-language/",
     type: "مقالات",
     icon: "📄",
-    color: "#10B981",
+    color: "#AABCAF",
   },
   {
     id: 5,
@@ -308,7 +309,7 @@ const externalResources = [
     url: "tutorialspoint.com/cprogramming",
     type: "دورة",
     icon: "🎓",
-    color: "#F59E0B",
+    color: "#899C9A",
   },
   {
     id: 6,
@@ -316,7 +317,7 @@ const externalResources = [
     url: "w3schools.com/c",
     type: "مرجع",
     icon: "📚",
-    color: "#06B6D4",
+    color: "#AABCAF",
   },
   {
     id: 7,
@@ -324,7 +325,7 @@ const externalResources = [
     url: "cs50.harvard.edu",
     type: "كورس",
     icon: "🏛",
-    color: "#EC4899",
+    color: "#899C9A",
   },
   {
     id: 8,
@@ -332,7 +333,7 @@ const externalResources = [
     url: "cplusplus.com/reference",
     type: "مرجع",
     icon: "📋",
-    color: "#8B5CF6",
+    color: "#AABCAF",
   },
   {
     id: 9,
@@ -340,7 +341,7 @@ const externalResources = [
     url: "leetcode.com",
     type: "تمارين",
     icon: "💪",
-    color: "#F59E0B",
+    color: "#899C9A",
   },
   {
     id: 10,
@@ -348,7 +349,7 @@ const externalResources = [
     url: "hackerrank.com/domains/c",
     type: "تمارين",
     icon: "🏅",
-    color: "#10B981",
+    color: "#AABCAF",
   },
 ];
 
@@ -376,7 +377,7 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     extra?: React.ReactNode;
   }) {
     return (
-      <div className="group flex items-center justify-between gap-4 rounded-xl border border-transparent p-3.5 transition-all duration-200 hover:border-[var(--border-medium)] hover:bg-white/[0.04] cursor-pointer">
+      <div className="group flex items-center justify-between gap-4 rounded-xl border border-transparent p-3.5 transition-all duration-200 hover:border-[#6E7C8B]/40 hover:bg-white/[0.04] cursor-pointer">
         <div className="flex items-center gap-3.5 min-w-0 flex-1">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition-transform group-hover:scale-105"
@@ -385,10 +386,12 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
             {icon}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="truncate text-sm font-semibold text-[var(--text-primary)]">
+            <h4 className="truncate text-sm font-bold text-[#F4F7F6]">
               {name}
             </h4>
-            <p className="mt-0.5 text-xs text-[var(--text-muted)]">{meta}</p>
+            <p className="mt-0.5 text-xs font-semibold text-[#AABCAF]">
+              {meta}
+            </p>
           </div>
         </div>
 
@@ -396,9 +399,9 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
           {extra}
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400 transition-colors hover:bg-blue-500/20 hover:text-blue-300 cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#899C9A]/30 bg-[#899C9A]/15 text-[#F4F7F6] transition-colors hover:bg-[#899C9A]/30 cursor-pointer"
           >
-            <Download className="h-4 w-4" />
+            <Download className="h-4 w-4 text-[#899C9A]" />
           </button>
         </div>
       </div>
@@ -409,18 +412,15 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     switch (activeTab) {
       case "lectures":
         return (
-          <div className="space-y-2">
-            <div className="mb-4 text-xs text-[var(--text-secondary)]">
-              {lectures.length} محاضرة متاحة
-            </div>
-            {lectures.map((f) => (
+          <div className="divide-y divide-[#6E7C8B]/30">
+            {lectures.map((l) => (
               <FileRow
-                key={f.id}
-                icon="PDF"
-                iconBg="rgba(239,68,68,0.15)"
-                iconColor="#EF4444"
-                name={f.name}
-                meta={`${f.date} · ${f.size}`}
+                key={l.id}
+                icon="📄"
+                iconBg="rgba(137, 156, 154, 0.2)"
+                iconColor="#899C9A"
+                name={l.name}
+                meta={`${l.size} · ${l.date}`}
               />
             ))}
           </div>
@@ -428,34 +428,36 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "books":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {books.map((b) => (
               <div
                 key={b.id}
-                className="group flex gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-blue-500/30 hover:shadow-lg cursor-pointer"
+                className="flex items-start gap-4 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/70 p-4 shadow-sm transition-all hover:border-[#899C9A] hover:bg-[#35425E]"
               >
-                <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/10 text-3xl shadow-md">
+                <div className="flex h-14 w-12 shrink-0 items-center justify-center rounded-lg bg-[#525C79] text-2xl shadow">
                   {b.cover}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-[var(--text-primary)] leading-snug">
+                  <h4 className="truncate text-sm font-bold text-[#F4F7F6]">
                     {b.title}
                   </h4>
-                  <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                  <p className="text-xs font-semibold text-[#AABCAF] mt-0.5">
                     {b.author}
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-[var(--text-muted)]">
-                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
-                      الطبعة {b.edition}
-                    </span>
-                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
-                      {b.pages} صفحة
-                    </span>
-                    <span className="rounded-md bg-white/[0.04] px-2 py-0.5">
-                      {b.year}
-                    </span>
+                  <div className="mt-2 flex items-center gap-2 text-[11px] text-[#AABCAF]">
+                    <span>الطبعة {b.edition}</span>
+                    <span>·</span>
+                    <span>{b.pages} صفحة</span>
+                    <span>·</span>
+                    <span>{b.year}</span>
                   </div>
                 </div>
+                <button
+                  type="button"
+                  className="rounded-lg border border-[#899C9A]/40 bg-[#899C9A]/15 p-2 text-[#899C9A] hover:bg-[#899C9A]/30 transition-colors cursor-pointer"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
               </div>
             ))}
           </div>
@@ -463,25 +465,22 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "exams":
         return (
-          <div className="space-y-2">
-            <div className="mb-4 text-xs text-[var(--text-secondary)]">
-              {exams.length} امتحان سابق
-            </div>
+          <div className="divide-y divide-[#6E7C8B]/30">
             {exams.map((e) => (
               <FileRow
                 key={e.id}
-                icon="PDF"
-                iconBg="rgba(6,182,212,0.15)"
-                iconColor="#06B6D4"
+                icon="📋"
+                iconBg="rgba(170, 188, 175, 0.2)"
+                iconColor="#AABCAF"
                 name={e.name}
-                meta={`${e.year} · امتحان ${e.type} · ${e.size}`}
+                meta={`${e.size} · ${e.year} · ${e.type}`}
                 extra={
-                  e.withSolution ? (
-                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">
-                      <CheckCircle2 className="h-3 w-3" />
+                  e.withSolution && (
+                    <span className="flex items-center gap-1 rounded-md bg-[#899C9A]/20 px-2 py-0.5 text-[10px] font-bold text-[#F4F7F6] border border-[#899C9A]/40">
+                      <CheckCircle2 className="h-3 w-3 text-[#899C9A]" />
                       <span>مع الحل</span>
                     </span>
-                  ) : undefined
+                  )
                 }
               />
             ))}
@@ -490,28 +489,41 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "videos":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="divide-y divide-[#6E7C8B]/30">
             {videos.map((v) => (
               <div
                 key={v.id}
-                className="group overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-red-500/30 hover:shadow-lg cursor-pointer"
+                className="flex items-center justify-between gap-4 p-3.5 transition-colors hover:bg-white/[0.04] rounded-xl cursor-pointer"
               >
-                <div className="mb-3 flex h-32 w-full items-center justify-center rounded-xl bg-gradient-to-tr from-red-600/20 via-orange-500/10 to-transparent text-4xl text-red-500 shadow-inner">
-                  <Video className="h-10 w-10" />
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/20 text-red-400 text-sm">
+                    <Video className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate text-sm font-bold text-[#F4F7F6]">
+                      {v.name}
+                    </h4>
+                    <div className="mt-0.5 flex items-center gap-2 text-xs font-semibold text-[#AABCAF]">
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {v.duration}
+                      </span>
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <Eye className="h-3 w-3" />
+                        {v.views}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <h4 className="text-sm font-bold text-[var(--text-primary)] leading-snug">
-                  {v.name}
-                </h4>
-                <div className="mt-3 flex items-center justify-between text-xs text-[var(--text-muted)]">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
-                    <span>{v.duration}</span>
-                  </span>
-                  <span className="flex items-center gap-1 text-amber-400 font-semibold">
-                    <Eye className="h-3.5 w-3.5" />
-                    <span>{v.views}</span>
-                  </span>
-                </div>
+
+                <a
+                  href="#"
+                  className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/25 transition-colors"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>مشاهدة</span>
+                </a>
               </div>
             ))}
           </div>
@@ -519,64 +531,50 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "projects":
         return (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {projects.map((p) => (
               <div
                 key={p.id}
-                className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 transition-all duration-200 hover:border-blue-500/30 hover:shadow-xl cursor-pointer"
+                className="rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/70 p-4 shadow-sm transition-all hover:border-[#899C9A] hover:bg-[#35425E]"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
                     <div
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold"
-                      style={{
-                        background: `${p.color}20`,
-                        color: p.color,
-                      }}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg"
+                      style={{ background: `${p.color}25`, color: p.color }}
                     >
-                      <Code2 className="h-6 w-6" />
+                      <Code2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-3">
-                        <h4 className="text-base font-bold text-[var(--text-primary)]">
-                          {p.name}
-                        </h4>
-                        <span
-                          className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
-                            p.level === "مبتدئ"
-                              ? "bg-emerald-500/15 text-emerald-400"
-                              : p.level === "متوسط"
-                                ? "bg-amber-500/15 text-amber-400"
-                                : "bg-red-500/15 text-red-400"
-                          }`}
-                        >
-                          {p.level}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-xs text-[var(--text-secondary)] leading-relaxed">
-                        {p.desc}
-                      </p>
+                      <h4 className="text-sm font-bold text-[#F4F7F6]">
+                        {p.name}
+                      </h4>
+                      <span className="text-[11px] font-semibold text-[#AABCAF]">
+                        {p.grade}
+                      </span>
                     </div>
                   </div>
-
-                  <button
-                    type="button"
-                    className="flex items-center gap-1.5 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-500/20 cursor-pointer"
+                  <span
+                    className="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                    style={{
+                      background: `${p.color}20`,
+                      color: p.color,
+                      border: `1px solid ${p.color}40`,
+                    }}
                   >
-                    <Download className="h-3.5 w-3.5" />
-                    <span>تحميل</span>
-                  </button>
+                    {p.level}
+                  </span>
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
+                <p className="mt-3 text-xs font-medium text-[#AABCAF] leading-relaxed">
+                  {p.desc}
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-1.5 pt-2 border-t border-[#6E7C8B]/30">
                   {p.tech.map((t) => (
                     <span
                       key={t}
-                      className="rounded-md px-2.5 py-0.5 text-xs font-semibold"
-                      style={{
-                        background: `${p.color}15`,
-                        color: p.color,
-                      }}
+                      className="rounded bg-[#525C79] px-2 py-0.5 font-['JetBrains_Mono'] text-[10px] font-bold text-[#F4F7F6]"
                     >
                       {t}
                     </span>
@@ -589,45 +587,33 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       case "external":
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {externalResources.map((r) => (
-              <div
-                key={r.id}
-                className="group flex items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-200 hover:border-blue-500/30 hover:shadow-lg cursor-pointer"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {externalResources.map((res) => (
+              <a
+                key={res.id}
+                href={`https://${res.url}`}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center justify-between gap-3 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/70 p-3.5 transition-all hover:border-[#899C9A] hover:bg-[#35425E] hover:-translate-y-0.5 no-underline"
               >
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg font-bold"
-                    style={{
-                      background: `${r.color}20`,
-                      color: r.color,
-                    }}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base"
+                    style={{ background: `${res.color}25` }}
                   >
-                    {r.icon}
+                    {res.icon}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="truncate text-sm font-bold text-[var(--text-primary)]">
-                      {r.title}
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate text-xs font-bold text-[#F4F7F6] group-hover:text-[#AABCAF]">
+                      {res.title}
                     </h4>
-                    <div className="mt-1 flex items-center gap-2 text-xs">
-                      <span
-                        className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
-                        style={{
-                          color: r.color,
-                          background: `${r.color}15`,
-                        }}
-                      >
-                        {r.type}
-                      </span>
-                      <span className="truncate text-[var(--text-muted)]">
-                        {r.url}
-                      </span>
-                    </div>
+                    <p className="truncate text-[11px] font-medium text-[#AABCAF]">
+                      {res.url}
+                    </p>
                   </div>
                 </div>
-
-                <ExternalLink className="h-4 w-4 shrink-0 text-[var(--text-muted)] transition-transform group-hover:translate-x-0.5" />
-              </div>
+                <ExternalLink className="h-4 w-4 shrink-0 text-[#899C9A] transition-transform group-hover:translate-x-[-2px]" />
+              </a>
             ))}
           </div>
         );
@@ -639,10 +625,22 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
   const breadcrumbsList = [
     { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
-    {
-      label: "التخصصات",
-      onClick: () => navigate({ screen: "departments" }),
-    },
+    ...(nav.university?.name
+      ? [
+          {
+            label: nav.university.name,
+            onClick: () => navigate({ ...nav, screen: "colleges" as const }),
+          },
+        ]
+      : []),
+    ...(nav.college?.name
+      ? [
+          {
+            label: nav.college.name,
+            onClick: () => navigate({ ...nav, screen: "departments" as const }),
+          },
+        ]
+      : []),
     ...(nav.department?.name
       ? [
           {
@@ -670,6 +668,16 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     ...(nav.course?.name ? [{ label: nav.course.name }] : []),
   ];
 
+  const handleGoBack = () => {
+    if (nav.semester || nav.level) {
+      navigate({ ...nav, screen: "courses" });
+    } else if (nav.department) {
+      navigate({ ...nav, screen: "levels" });
+    } else {
+      navigate({ screen: "home" });
+    }
+  };
+
   const subtitleText = [nav.course?.nameEn, nav.semester?.name]
     .filter(Boolean)
     .join(" · ");
@@ -684,7 +692,7 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
       <div className="mx-auto flex max-w-7xl flex-col md:flex-row gap-6 p-6 sm:p-8">
         {/* Tab Sidebar */}
-        <aside className="w-full md:w-56 shrink-0 rounded-2xl border border-[var(--border-subtle)] bg-[rgba(10,15,30,0.5)] p-2.5 backdrop-blur-xl h-fit">
+        <aside className="w-full md:w-56 shrink-0 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-2.5 backdrop-blur-xl h-fit shadow-lg">
           <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -693,10 +701,10 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-medium transition-all cursor-pointer border-0 ${
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-bold transition-all cursor-pointer border-0 ${
                     isActive
-                      ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
-                      : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]"
+                      ? "bg-[#35425E] text-[#F4F7F6] shadow-sm border border-[#899C9A]/50"
+                      : "bg-transparent text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -706,8 +714,8 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                   <span
                     className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
                       isActive
-                        ? "bg-blue-500/20 text-blue-300"
-                        : "bg-white/[0.05] text-[var(--text-muted)]"
+                        ? "bg-[#899C9A] text-[#1D263B]"
+                        : "bg-[#35425E] text-[#AABCAF] border border-[#6E7C8B]/30"
                     }`}
                   >
                     {tab.count}
@@ -722,10 +730,10 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
         <main className="flex-1 min-w-0">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-[var(--text-primary)]">
+              <h2 className="text-lg font-bold text-[#F4F7F6]">
                 {tabs.find((t) => t.id === activeTab)?.label}
               </h2>
-              <p className="text-xs text-[var(--text-secondary)]">
+              <p className="text-xs font-semibold text-[#AABCAF]">
                 {nav.course?.name}
               </p>
             </div>
@@ -733,15 +741,24 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
-                className="flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] bg-white/[0.05] px-3.5 py-2 text-xs font-semibold text-[var(--text-secondary)] transition-all hover:bg-white/[0.08] hover:text-white cursor-pointer"
+                onClick={handleGoBack}
+                className="flex items-center gap-1.5 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/80 px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-all hover:bg-[#35425E] hover:border-[#899C9A] cursor-pointer shadow-sm"
               >
-                <Download className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5 text-[#899C9A]" />
+                <span>العودة للمواد</span>
+              </button>
+
+              <button
+                type="button"
+                className="flex items-center gap-1.5 rounded-xl border border-[#899C9A]/40 bg-[#525C79] px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-all hover:bg-[#5D6989] hover:border-[#899C9A] cursor-pointer shadow-sm"
+              >
+                <Download className="h-3.5 w-3.5 text-[#899C9A]" />
                 <span>تحميل الكل</span>
               </button>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 shadow-xl">
+          <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl">
             {renderContent()}
           </div>
         </main>

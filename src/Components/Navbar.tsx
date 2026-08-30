@@ -33,8 +33,8 @@ export default function Navbar({
     <header
       className={`sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-200 ${
         dark
-          ? "border-[var(--border-subtle)] bg-[rgba(10,15,30,0.85)] text-white"
-          : "border-slate-200 bg-white/85 text-slate-900"
+          ? "border-[#6E7C8B]/40 bg-[#35425E]/90 text-[#F4F7F6]"
+          : "border-slate-300 bg-white/90 text-slate-900"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
@@ -44,28 +44,28 @@ export default function Navbar({
           onClick={() => handleNav("landing")}
           className="flex items-center gap-3 bg-transparent border-0 p-0 text-right cursor-pointer"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/30">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-md shadow-[#35425E]/40 border border-[#899C9A]/40">
             <GraduationCap className="h-6 w-6" />
           </div>
           <div className="flex flex-col">
-            <span className="font-['Outfit'] text-lg font-extrabold tracking-tight">
+            <span className="font-['Outfit'] text-lg font-extrabold tracking-tight text-[#F4F7F6]">
               دراستي
             </span>
-            <span className="text-[10px] font-medium text-slate-400">
+            <span className="text-[10px] font-semibold text-[#899C9A]">
               {tx.hero.badge || "Academic Platform"}
             </span>
           </div>
         </button>
 
         {/* Links */}
-        <nav className="flex items-center gap-1.5">
+        <nav className="flex items-center gap-1.5 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/70 p-1">
           <button
             type="button"
             onClick={() => handleNav("landing")}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+            className={`rounded-xl px-4 py-1.5 text-sm font-bold transition-all border-0 cursor-pointer ${
               currentPage === "landing"
-                ? "bg-blue-500/15 text-blue-400 font-semibold"
-                : "bg-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-[#899C9A]/30 text-[#F4F7F6] border border-[#899C9A]/50 shadow-sm"
+                : "bg-transparent text-[#AABCAF] hover:text-[#F4F7F6] hover:bg-white/[0.06]"
             }`}
           >
             {tx.nav?.home || "الرئيسية"}
@@ -73,10 +73,10 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => handleNav("course")}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+            className={`rounded-xl px-4 py-1.5 text-sm font-bold transition-all border-0 cursor-pointer ${
               currentPage === "course"
-                ? "bg-blue-500/15 text-blue-400 font-semibold"
-                : "bg-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-[#899C9A]/30 text-[#F4F7F6] border border-[#899C9A]/50 shadow-sm"
+                : "bg-transparent text-[#AABCAF] hover:text-[#F4F7F6] hover:bg-white/[0.06]"
             }`}
           >
             {tx.nav?.courses || "المواد"}
@@ -84,10 +84,10 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => handleNav("admin")}
-            className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors border-0 cursor-pointer ${
+            className={`rounded-xl px-4 py-1.5 text-sm font-bold transition-all border-0 cursor-pointer ${
               currentPage === "admin"
-                ? "bg-blue-500/15 text-blue-400 font-semibold"
-                : "bg-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-[#899C9A]/30 text-[#F4F7F6] border border-[#899C9A]/50 shadow-sm"
+                : "bg-transparent text-[#AABCAF] hover:text-[#F4F7F6] hover:bg-white/[0.06]"
             }`}
           >
             {tx.nav?.admin || "لوحة التحكم"}
@@ -100,13 +100,13 @@ export default function Navbar({
           <button
             type="button"
             onClick={() => setLang(lang === "ar" ? "en" : "ar")}
-            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
               dark
-                ? "border-[var(--border-subtle)] bg-white/5 text-white hover:bg-white/10"
+                ? "border-[#6E7C8B]/40 bg-[#525C79] text-[#F4F7F6] hover:border-[#899C9A]"
                 : "border-slate-300 bg-slate-100 text-slate-900 hover:bg-slate-200"
             }`}
           >
-            <Globe className="h-3.5 w-3.5" />
+            <Globe className="h-3.5 w-3.5 text-[#899C9A]" />
             <span>{lang === "ar" ? "English" : "العربية"}</span>
           </button>
 
@@ -115,13 +115,13 @@ export default function Navbar({
             type="button"
             onClick={() => setDark(!dark)}
             title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
+            className={`flex h-8 w-8 items-center justify-center rounded-xl border transition-colors cursor-pointer ${
               dark
-                ? "border-[var(--border-subtle)] bg-white/5 text-amber-300 hover:bg-white/10"
+                ? "border-[#6E7C8B]/40 bg-[#525C79] text-[#AABCAF] hover:border-[#899C9A]"
                 : "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
-            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {dark ? <Sun className="h-4 w-4 text-[#899C9A]" /> : <Moon className="h-4 w-4" />}
           </button>
         </div>
       </div>

@@ -3,8 +3,8 @@ import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
 
 const semesters = [
-  { id: 1, name: "الترم الأول", courses: 6, files: 124, color: "#3B82F6" },
-  { id: 2, name: "الترم الثاني", courses: 6, files: 118, color: "#8B5CF6" },
+  { id: 1, name: "الترم الأول", courses: 6, files: 124, color: "#899C9A" },
+  { id: 2, name: "الترم الثاني", courses: 6, files: 118, color: "#AABCAF" },
 ];
 
 interface Props {
@@ -43,20 +43,21 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   semester: { id: sem.id, name: sem.name },
                 })
               }
-              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-8 text-center transition-all duration-300 hover:-translate-y-1.5 hover:border-blue-500/40 hover:shadow-2xl cursor-pointer"
+              className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-8 text-center shadow-xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#899C9A] hover:bg-[#525C79] hover:shadow-2xl cursor-pointer"
             >
               <div
                 className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110 shadow-lg"
                 style={{
-                  background: `${sem.color}20`,
+                  background: `${sem.color}25`,
                   color: sem.color,
-                  boxShadow: `0 4px 20px ${sem.color}15`,
+                  border: `1.5px solid ${sem.color}45`,
+                  boxShadow: `0 4px 20px ${sem.color}20`,
                 }}
               >
                 <Calendar className="h-7 w-7" />
               </div>
 
-              <h3 className="mb-3 text-xl font-extrabold text-[var(--text-primary)]">
+              <h3 className="mb-3 text-xl font-extrabold text-[#F4F7F6]">
                 {sem.name}
               </h3>
 
@@ -68,9 +69,9 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   >
                     {sem.courses}
                   </div>
-                  <div className="text-xs text-[var(--text-muted)]">مادة</div>
+                  <div className="text-xs font-semibold text-[#AABCAF]">مادة</div>
                 </div>
-                <div className="h-8 w-px bg-[var(--border-subtle)]" />
+                <div className="h-8 w-px bg-[#6E7C8B]/30" />
                 <div>
                   <div
                     className="text-2xl font-black"
@@ -78,15 +79,15 @@ export default function SemesterScreen({ nav, navigate }: Props) {
                   >
                     {sem.files}
                   </div>
-                  <div className="text-xs text-[var(--text-muted)]">ملف</div>
+                  <div className="text-xs font-semibold text-[#AABCAF]">ملف</div>
                 </div>
               </div>
 
               <button
                 type="button"
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer border-0 shadow-lg"
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-bold text-[#1D263B] transition-all hover:scale-[1.02] active:scale-95 cursor-pointer border-0 shadow-md"
                 style={{
-                  background: `linear-gradient(135deg, ${sem.color}, ${sem.color}dd)`,
+                  background: sem.color,
                   boxShadow: `0 4px 16px ${sem.color}35`,
                 }}
               >

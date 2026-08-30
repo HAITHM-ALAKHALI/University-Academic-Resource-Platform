@@ -156,7 +156,7 @@ export const courses = [
   {
     id: 'cs301',
     code: 'CS 301',
-    color: '#1e4fcc',
+    color: '#899C9A',
     en: {
       name: 'Data Structures & Algorithms',
       instructor: 'Dr. Sarah Mitchell',
@@ -202,7 +202,7 @@ export const courses = [
   {
     id: 'cs302',
     code: 'CS 302',
-    color: '#7c3aed',
+    color: '#AABCAF',
     en: {
       name: 'Database Systems',
       instructor: 'Prof. James Chen',
@@ -243,7 +243,7 @@ export const courses = [
   {
     id: 'cs303',
     code: 'CS 303',
-    color: '#059669',
+    color: '#899C9A',
     en: {
       name: 'Operating Systems',
       instructor: 'Dr. Layla Al-Hassan',
@@ -287,7 +287,7 @@ export const courses = [
   {
     id: 'cs401',
     code: 'CS 401',
-    color: '#dc2626',
+    color: '#525C79',
     en: {
       name: 'Computer Networks',
       instructor: 'Prof. Omar Khalid',
@@ -308,7 +308,7 @@ export const courses = [
   {
     id: 'cs402',
     code: 'CS 402',
-    color: '#d97706',
+    color: '#6E7C8B',
     en: {
       name: 'Software Engineering',
       instructor: 'Dr. Nora Petersen',
@@ -329,7 +329,7 @@ export const courses = [
   {
     id: 'cs201',
     code: 'CS 201',
-    color: '#0891b2',
+    color: '#AABCAF',
     en: {
       name: 'Discrete Mathematics',
       instructor: 'Dr. Ahmed Al-Rashid',

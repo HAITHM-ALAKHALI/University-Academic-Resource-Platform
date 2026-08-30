@@ -8,7 +8,7 @@ const coursesData = [
     name: "برمجة 1",
     nameEn: "Programming 1",
     files: 32,
-    color: "#3B82F6",
+    color: "#899C9A", // Provence Blue
     icon: "💻",
     rating: 4.8,
   },
@@ -17,7 +17,7 @@ const coursesData = [
     name: "رياضيات",
     nameEn: "Mathematics",
     files: 28,
-    color: "#8B5CF6",
+    color: "#AABCAF", // Foggy Rain
     icon: "∑",
     rating: 4.5,
   },
@@ -26,7 +26,7 @@ const coursesData = [
     name: "إنجليزي",
     nameEn: "English",
     files: 18,
-    color: "#06B6D4",
+    color: "#899C9A", // Provence Blue
     icon: "En",
     rating: 4.2,
   },
@@ -35,7 +35,7 @@ const coursesData = [
     name: "مهارات الحاسوب",
     nameEn: "Computer Skills",
     files: 22,
-    color: "#F59E0B",
+    color: "#AABCAF", // Foggy Rain
     icon: "🖥",
     rating: 4.6,
   },
@@ -44,7 +44,7 @@ const coursesData = [
     name: "المنطق الرقمي",
     nameEn: "Digital Logic",
     files: 25,
-    color: "#EC4899",
+    color: "#899C9A", // Provence Blue
     icon: "⊕",
     rating: 4.3,
   },
@@ -53,7 +53,7 @@ const coursesData = [
     name: "فيزياء",
     nameEn: "Physics",
     files: 20,
-    color: "#10B981",
+    color: "#AABCAF", // Foggy Rain
     icon: "⚛",
     rating: 4.4,
   },
@@ -125,7 +125,7 @@ export default function CoursesScreen({ nav, navigate }: Props) {
                   },
                 })
               }
-              className="group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-6 text-right transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-xl cursor-pointer"
+              className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 text-right shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-[#899C9A] hover:shadow-2xl hover:bg-[#525C79] cursor-pointer"
             >
               <div
                 className="absolute -top-6 -left-6 h-24 w-24 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-20"
@@ -134,34 +134,40 @@ export default function CoursesScreen({ nav, navigate }: Props) {
 
               <div className="flex items-start gap-4">
                 <div
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl font-mono text-xl font-bold transition-transform duration-300 group-hover:scale-110 shadow-md"
                   style={{
-                    background: `${course.color}22`,
+                    background: `${course.color}25`,
                     color: course.color,
+                    border: `1.5px solid ${course.color}45`,
                   }}
                 >
                   {course.icon}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-base font-bold text-[var(--text-primary)]">
+                  <h3 className="text-base font-bold text-[#F4F7F6] group-hover:text-[#AABCAF] transition-colors">
                     {course.name}
                   </h3>
-                  <p className="text-xs text-[var(--text-secondary)]">
+                  <p className="text-xs font-semibold text-[#AABCAF]">
                     {course.nameEn}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-between">
+              <div className="mt-5 flex items-center justify-between border-t border-[#6E7C8B]/30 pt-3.5">
                 <span
-                  className="flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-semibold"
+                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold shadow-sm"
                   style={{
                     color: course.color,
-                    background: `${course.color}15`,
+                    background: `${course.color}20`,
+                    border: `1px solid ${course.color}40`,
                   }}
                 >
-                  <FileText className="h-3 w-3" />
-                  <span>{course.files} ملف</span>
+                  <FileText className="h-3.5 w-3.5" />
+                  <span>{course.files} ملف دراسي</span>
+                </span>
+
+                <span className="text-xs font-bold text-[#899C9A]">
+                  ★ {course.rating}
                 </span>
               </div>
             </div>

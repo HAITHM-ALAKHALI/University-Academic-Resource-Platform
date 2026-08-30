@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   GraduationCap,
   LayoutGrid,
-  Building2,
   Layers,
   Info,
   SlidersHorizontal,
@@ -26,7 +25,6 @@ export default function StudentNavbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   const isHomeActive = nav.screen === "home";
-  const isUniversitiesActive = nav.screen === "universities";
   const isDepartmentsActive = nav.screen === "departments";
 
   const handleNavigate = (targetScreen: NavState["screen"]) => {
@@ -37,9 +35,9 @@ export default function StudentNavbar({
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full border-b border-[var(--border-subtle)] bg-[rgba(10,15,30,0.85)] backdrop-blur-xl shadow-lg transition-all"
+        className="sticky top-0 z-50 w-full border-b border-[#6E7C8B]/40 bg-[#35425E]/90 backdrop-blur-xl shadow-lg transition-all"
         style={{
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.3)",
+          boxShadow: "0 4px 30px rgba(42, 53, 78, 0.4)",
         }}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -47,56 +45,43 @@ export default function StudentNavbar({
           <button
             type="button"
             onClick={() => handleNavigate("home")}
-            className="flex items-center gap-3 rounded-xl bg-transparent border-0 p-1 text-right transition-transform hover:scale-[1.02] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="flex items-center gap-3 rounded-xl bg-transparent border-0 p-1 text-right transition-transform hover:scale-[1.02] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#899C9A]"
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-violet-600 text-white shadow-md shadow-blue-500/25">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-md shadow-[#35425E]/50 border border-[#899C9A]/40">
               <GraduationCap className="h-6 w-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-['Outfit'] text-lg font-extrabold tracking-tight text-[var(--text-primary)]">
+              <span className="font-['Outfit'] text-lg font-extrabold tracking-tight text-[#F4F7F6]">
                 دراستي
               </span>
-              <span className="text-[10px] font-semibold text-blue-400">
+              <span className="text-[10px] font-semibold text-[#899C9A]">
                 بوابة الموارد الأكاديمية
               </span>
             </div>
           </button>
 
           {/* Desktop Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-1.5 rounded-2xl border border-[var(--border-subtle)] bg-white/[0.03] p-1">
+          <nav className="hidden md:flex items-center gap-1.5 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/70 p-1 shadow-inner">
             <button
               type="button"
               onClick={() => handleNavigate("home")}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 cursor-pointer border-0 ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer border-0 ${
                 isHomeActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
+                  ? "bg-[#899C9A]/30 text-[#F4F7F6] shadow-sm border border-[#899C9A]/50"
+                  : "bg-transparent text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
               }`}
             >
               <LayoutGrid className="h-4 w-4" />
               <span>الرئيسية</span>
             </button>
 
-            {/* <button
-              type="button"
-              onClick={() => handleNavigate("universities")}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 cursor-pointer border-0 ${
-                isUniversitiesActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              <Building2 className="h-4 w-4" />
-              <span>الجامعات</span>
-            </button> */}
-
             <button
               type="button"
               onClick={() => handleNavigate("departments")}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 cursor-pointer border-0 ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 cursor-pointer border-0 ${
                 isDepartmentsActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold shadow-sm"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
+                  ? "bg-[#899C9A]/30 text-[#F4F7F6] shadow-sm border border-[#899C9A]/50"
+                  : "bg-transparent text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
               }`}
             >
               <Layers className="h-4 w-4" />
@@ -106,7 +91,7 @@ export default function StudentNavbar({
             <button
               type="button"
               onClick={() => setShowAbout(true)}
-              className="flex items-center gap-2 rounded-xl bg-transparent border-0 px-4 py-2 text-sm font-medium text-[var(--text-secondary)] transition-all duration-200 hover:bg-white/[0.05] hover:text-[var(--text-primary)] cursor-pointer"
+              className="flex items-center gap-2 rounded-xl bg-transparent border-0 px-4 py-2 text-sm font-semibold text-[#AABCAF] transition-all duration-200 hover:bg-white/[0.06] hover:text-[#F4F7F6] cursor-pointer"
             >
               <Info className="h-4 w-4" />
               <span>عن المنصة</span>
@@ -118,9 +103,9 @@ export default function StudentNavbar({
             <button
               type="button"
               onClick={onSwitchAdmin}
-              className="flex items-center gap-2 rounded-xl border border-violet-500/30 bg-gradient-to-r from-violet-500/15 to-blue-500/10 px-3.5 py-2 text-xs sm:text-sm font-semibold text-violet-300 shadow-md shadow-violet-500/10 transition-all duration-200 hover:border-violet-500/50 hover:from-violet-500/25 hover:to-blue-500/20 hover:text-white cursor-pointer active:scale-95"
+              className="flex items-center gap-2 rounded-xl border border-[#899C9A]/40 bg-[#525C79] px-3.5 py-2 text-xs sm:text-sm font-bold text-[#F4F7F6] shadow-md shadow-[#35425E]/40 transition-all duration-200 hover:border-[#899C9A] hover:bg-[#5D6989] hover:scale-[1.02] cursor-pointer active:scale-95"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className="h-4 w-4 text-[#899C9A]" />
               <span>لوحة المشرف</span>
             </button>
 
@@ -129,7 +114,7 @@ export default function StudentNavbar({
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="القائمة"
-              className="flex md:hidden h-9 w-9 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-white/[0.05] text-[var(--text-primary)] transition-colors hover:bg-white/[0.1] cursor-pointer"
+              className="flex md:hidden h-9 w-9 items-center justify-center rounded-xl border border-[#6E7C8B]/40 bg-white/[0.05] text-[#F4F7F6] transition-colors hover:bg-white/[0.1] cursor-pointer"
             >
               {mobileMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -142,14 +127,14 @@ export default function StudentNavbar({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="border-t border-[var(--border-subtle)] bg-[rgba(10,15,30,0.98)] px-4 py-3 md:hidden flex flex-col gap-1.5 animate-fadeIn">
+          <div className="border-t border-[#6E7C8B]/40 bg-[#35425E] px-4 py-3 md:hidden flex flex-col gap-1.5 animate-fadeIn">
             <button
               type="button"
               onClick={() => handleNavigate("home")}
-              className={`flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-right text-sm font-medium transition-colors border-0 cursor-pointer ${
+              className={`flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-right text-sm font-semibold transition-colors border-0 cursor-pointer ${
                 isHomeActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
+                  ? "bg-[#899C9A]/30 text-[#F4F7F6]"
+                  : "bg-transparent text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
               }`}
             >
               <LayoutGrid className="h-4 w-4" />
@@ -158,24 +143,11 @@ export default function StudentNavbar({
 
             <button
               type="button"
-              onClick={() => handleNavigate("universities")}
-              className={`flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-right text-sm font-medium transition-colors border-0 cursor-pointer ${
-                isUniversitiesActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
-              }`}
-            >
-              <Building2 className="h-4 w-4" />
-              <span>الجامعات</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => handleNavigate("departments")}
-              className={`flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-right text-sm font-medium transition-colors border-0 cursor-pointer ${
+              className={`flex w-full items-center gap-3 rounded-lg px-3.5 py-2.5 text-right text-sm font-semibold transition-colors border-0 cursor-pointer ${
                 isDepartmentsActive
-                  ? "bg-blue-500/15 text-blue-400 font-semibold"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
+                  ? "bg-[#899C9A]/30 text-[#F4F7F6]"
+                  : "bg-transparent text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6]"
               }`}
             >
               <Layers className="h-4 w-4" />
@@ -188,7 +160,7 @@ export default function StudentNavbar({
                 setShowAbout(true);
                 setMobileMenuOpen(false);
               }}
-              className="flex w-full items-center gap-3 rounded-lg bg-transparent border-0 px-3.5 py-2.5 text-right text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/[0.05] hover:text-[var(--text-primary)] cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-lg bg-transparent border-0 px-3.5 py-2.5 text-right text-sm font-semibold text-[#AABCAF] hover:bg-white/[0.06] hover:text-[#F4F7F6] cursor-pointer"
             >
               <Info className="h-4 w-4" />
               <span>عن المنصة</span>
@@ -200,76 +172,49 @@ export default function StudentNavbar({
       {/* About Modal Dialog */}
       {showAbout && (
         <div
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setShowAbout(false)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md animate-fadeIn"
+          onClick={() => setShowAbout(false)}
         >
           <div
+            className="w-full max-w-lg rounded-2xl border border-[#6E7C8B]/50 bg-[#525C79] p-6 shadow-2xl transition-all text-right"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg rounded-2xl border border-[var(--border-medium)] bg-[var(--bg-surface)] p-6 shadow-2xl transition-all text-right"
           >
-            <div className="mb-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-violet-600 text-white shadow-lg shadow-blue-500/30">
-                  <GraduationCap className="h-6 w-6" />
+            <div className="flex items-center justify-between border-b border-[#6E7C8B]/30 pb-4 mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-sm">
+                  <GraduationCap className="h-5 w-5" />
                 </div>
-                <div>
-                  <h3 className="m-0 text-lg font-bold text-[var(--text-primary)]">
-                    منصة دراستي الأكاديمية
-                  </h3>
-                  <p className="m-0 text-xs font-medium text-blue-400">
-                    بوابة الموارد والمناهج الجامعية
-                  </p>
-                </div>
+                <h3 className="text-lg font-bold text-[#F4F7F6]">
+                  عن منصة دراستي
+                </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAbout(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-white/[0.05] text-[var(--text-secondary)] transition-colors hover:bg-white/[0.1] hover:text-[var(--text-primary)] cursor-pointer"
+                className="rounded-lg p-1.5 text-[#AABCAF] hover:bg-white/[0.08] hover:text-white transition-colors cursor-pointer border-0 bg-transparent"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <p className="mb-6 text-sm leading-relaxed text-[var(--text-secondary)]">
-              منصة دراستي هي بيئة تعليمية أكاديمية متكاملة مصممة خصيصاً للطلاب
-              والأكاديميين لتسهيل تصفح، مشاركة، وتحميل المناهج الدراسية،
-              المحاضرات، المراجع، ونماذج الاختبارات بأسلوب عصري وسلس.
-            </p>
-
-            <div className="mb-6 grid grid-cols-3 gap-3">
-              <div className="rounded-xl border border-[var(--border-subtle)] bg-white/[0.02] p-3 text-center">
-                <div className="text-xl font-extrabold text-blue-400">+12</div>
-                <div className="mt-1 text-[11px] text-[var(--text-muted)]">
-                  جامعة معتمدة
-                </div>
-              </div>
-              <div className="rounded-xl border border-[var(--border-subtle)] bg-white/[0.02] p-3 text-center">
-                <div className="text-xl font-extrabold text-violet-400">
-                  +500
-                </div>
-                <div className="mt-1 text-[11px] text-[var(--text-muted)]">
-                  مادة دراسية
-                </div>
-              </div>
-              <div className="rounded-xl border border-[var(--border-subtle)] bg-white/[0.02] p-3 text-center">
-                <div className="text-xl font-extrabold text-emerald-400">
-                  +4,000
-                </div>
-                <div className="mt-1 text-[11px] text-[var(--text-muted)]">
-                  ملف ومحاضرة
-                </div>
-              </div>
+            <div className="space-y-3 text-sm text-[#AABCAF] leading-relaxed">
+              <p>
+                <strong className="text-[#F4F7F6]">دراستي</strong> هي منصة أكاديمية شاملة صُممت خصيصاً لمساعدة طلاب الجامعات في الوصول السريع والمنظم إلى كافة المقررات الدراسية، المحاضرات، الكتب والمراجع، الواجبات، ونماذج الامتحانات السابقة.
+              </p>
+              <p>
+                تعتمد المنصة هيكلية واضحة تنقلك من الجامعة إلى الكلية، فالقسم، ثم المستوى والفصل الدراسي وصولاً إلى المادة المطلوبة بضغطة زر واحدة.
+              </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setShowAbout(false)}
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition-opacity hover:opacity-90 cursor-pointer border-0"
-            >
-              إغلاق
-            </button>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowAbout(false)}
+                className="rounded-xl bg-[#899C9A] px-5 py-2 text-sm font-bold text-[#1D263B] shadow-md transition-all hover:opacity-90 cursor-pointer border-0"
+              >
+                إغلاق
+              </button>
+            </div>
           </div>
         </div>
       )}
