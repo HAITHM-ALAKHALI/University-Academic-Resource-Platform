@@ -130,14 +130,13 @@ export default function TopBar({ breadcrumbs, title, subtitle }: Props) {
   return (
     <div
       style={{
-        padding: "14px 28px",
+        padding: "16px 32px",
         borderBottom: "1px solid var(--border-subtle)",
-        background: "rgba(10,15,30,0.88)",
-        backdropFilter: "blur(20px) saturate(1.2)",
-        WebkitBackdropFilter: "blur(20px) saturate(1.2)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
+        background: "rgba(10,15,30,0.5)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        position: "relative",
+        zIndex: 40,
       }}
       onClick={() => {
         setShowNotifs(false);

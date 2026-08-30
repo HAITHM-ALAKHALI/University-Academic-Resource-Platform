@@ -276,7 +276,8 @@ export default function HomeScreen({ navigate }: Props) {
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.boxShadow = "none";
-                      e.currentTarget.style.borderColor = "var(--border-subtle)";
+                      e.currentTarget.style.borderColor =
+                        "var(--border-subtle)";
                     }}
                   >
                     <div
