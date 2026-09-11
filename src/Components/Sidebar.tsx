@@ -23,20 +23,20 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
       position: 'fixed', top: 0, right: 0,
       width: collapsed ? 72 : 260,
       height: '100vh',
-      background: 'rgba(53, 66, 94, 0.96)',
-      borderLeft: '1px solid rgba(110, 124, 139, 0.35)',
+      background: 'rgba(36, 45, 66, 0.95)',
+      borderLeft: '1px solid rgba(255, 255, 255, 0.06)',
       backdropFilter: 'blur(24px) saturate(1.2)',
       WebkitBackdropFilter: 'blur(24px) saturate(1.2)',
       display: 'flex', flexDirection: 'column',
       transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       zIndex: 100, overflow: 'hidden',
-      boxShadow: '-4px 0 32px rgba(42, 53, 78, 0.4)',
+      boxShadow: '-4px 0 32px rgba(20, 26, 38, 0.5)',
     }}>
 
       {/* Logo */}
       <div style={{
         padding: collapsed ? '18px 0' : '18px 20px',
-        borderBottom: '1px solid rgba(110, 124, 139, 0.35)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
         display: 'flex', alignItems: 'center',
         justifyContent: collapsed ? 'center' : 'space-between', gap: 10,
         transition: 'padding 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -45,10 +45,11 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #525C79, #899C9A)',
+              background: 'linear-gradient(135deg, #323D59, #3B4868)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 18, flexShrink: 0,
-              boxShadow: '0 4px 12px rgba(53, 66, 94, 0.4)',
+              boxShadow: '0 4px 12px rgba(20, 26, 38, 0.4)',
+              border: '1px solid rgba(255, 255, 255, 0.07)',
             }}>🎓</div>
             <div>
               <div style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 16, color: '#F4F7F6', letterSpacing: '-0.02em' }}>دراستي</div>
@@ -59,13 +60,14 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
         {collapsed && (
           <div style={{
             width: 36, height: 36, borderRadius: 10,
-            background: 'linear-gradient(135deg, #525C79, #899C9A)',
+            background: 'linear-gradient(135deg, #323D59, #3B4868)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18,
-            boxShadow: '0 4px 12px rgba(53, 66, 94, 0.4)',
+            boxShadow: '0 4px 12px rgba(20, 26, 38, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.07)',
           }}>🎓</div>
         )}
         <button onClick={onToggle} style={{
-          background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(110, 124, 139, 0.4)',
+          background: '#323D59', border: '1px solid rgba(255, 255, 255, 0.07)',
           borderRadius: 8, cursor: 'pointer', color: '#AABCAF',
           fontSize: 16, width: 28, height: 28,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -113,15 +115,15 @@ export default function Sidebar({ nav, navigate, collapsed, onToggle, onSwitchAd
 
       {/* Switch to Admin */}
       {!collapsed && (
-        <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(110, 124, 139, 0.35)' }}>
+        <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
           <button onClick={onSwitchAdmin} style={{
-            width: '100%', background: 'rgba(82,92,121,0.6)', border: '1px solid rgba(137,156,154,0.35)',
+            width: '100%', background: '#323D59', border: '1px solid rgba(255, 255, 255, 0.07)',
             borderRadius: 10, padding: '9px 14px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 8, color: '#F4F7F6',
             transition: 'all 0.2s ease',
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(82,92,121,0.9)'; e.currentTarget.style.borderColor = '#899C9A' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(82,92,121,0.6)'; e.currentTarget.style.borderColor = 'rgba(137,156,154,0.35)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#3B4868'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#323D59'; }}
           >
             <span style={{ fontSize: 15 }}>⚙</span>
             <span style={{ fontSize: 12, fontWeight: 600 }}>لوحة المشرف</span>

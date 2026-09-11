@@ -143,7 +143,7 @@ const notifications = [
     text: "تحديث النظام: الإصدار 2.4.1 متاح",
     time: "3 ساعات",
     icon: <RotateCcw className="h-4 w-4" />,
-    color: "bg-[#525C79]/40 text-[#AABCAF] border border-[#6E7C8B]/40",
+    color: "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]",
     read: true,
   },
   {
@@ -175,15 +175,15 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
 
   return (
     <div
-      className="flex min-h-screen bg-[#35425E] text-[#F4F7F6] font-['Noto_Sans_Arabic',sans-serif]"
+      className="flex min-h-screen bg-[#242D42] text-[#F4F7F6] font-['Noto_Sans_Arabic',sans-serif]"
       dir="rtl"
       onClick={() => setShowNotifs(false)}
     >
       {/* Admin Sidebar */}
-      <aside className="fixed top-0 right-0 z-40 flex h-screen w-64 flex-col border-l border-[#6E7C8B]/40 bg-[#35425E]/95 shadow-2xl backdrop-blur-2xl">
+      <aside className="fixed top-0 right-0 z-40 flex h-screen w-64 flex-col border-l border-white/[0.06] bg-[#242D42]/95 shadow-2xl backdrop-blur-2xl">
         {/* Brand Header */}
-        <div className="flex items-center gap-3 border-b border-[#6E7C8B]/40 px-6 py-5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#525C79] via-[#35425E] to-[#899C9A] text-[#F4F7F6] shadow-md shadow-[#35425E]/50 border border-[#899C9A]/40">
+        <div className="flex items-center gap-3 border-b border-white/[0.06] px-6 py-5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#323D59] via-[#242D42] to-[#3B4868] text-[#F4F7F6] shadow-md border border-white/[0.07]">
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
@@ -206,8 +206,8 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                 onClick={() => setView(item.id)}
                 className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all duration-150 cursor-pointer ${
                   isActive
-                    ? "bg-[#525C79] text-[#F4F7F6] shadow-md border-r-2 border-[#899C9A]"
-                    : "text-[#AABCAF] hover:bg-[#525C79]/60 hover:text-[#F4F7F6]"
+                    ? "bg-[#3B4868] text-[#F4F7F6] shadow-md border-r-2 border-[#899C9A]"
+                    : "text-[#AABCAF] hover:bg-[#323D59] hover:text-[#F4F7F6]"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                     className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
                       isActive
                         ? "bg-[#899C9A] text-[#1D263B]"
-                        : "bg-[#525C79] text-[#AABCAF] border border-[#6E7C8B]/40"
+                        : "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]"
                     }`}
                   >
                     {item.badge}
@@ -236,10 +236,10 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
         </nav>
 
         {/* Return to Student Button */}
-        <div className="border-t border-[#6E7C8B]/40 p-4">
+        <div className="border-t border-white/[0.06] p-4">
           <button
             onClick={onSwitchStudent}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#899C9A]/40 bg-[#525C79]/60 px-4 py-2.5 text-xs font-bold text-[#F4F7F6] transition-all duration-200 hover:bg-[#525C79] hover:border-[#899C9A] cursor-pointer"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.07] bg-[#323D59] px-4 py-2.5 text-xs font-bold text-[#F4F7F6] transition-all duration-200 hover:bg-[#3B4868] hover:border-white/20 cursor-pointer"
           >
             <ArrowRight className="h-4 w-4 text-[#899C9A]" />
             <span>العودة لواجهة الطالب</span>
@@ -248,10 +248,10 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="mr-64 flex-1 overflow-x-hidden min-h-screen bg-[#35425E]">
+      <main className="mr-64 flex-1 overflow-x-hidden min-h-screen bg-[#242D42]">
         {/* Sticky Top Bar */}
         <header
-          className="sticky top-0 z-30 flex items-center justify-between border-b border-[#6E7C8B]/40 bg-[#35425E]/90 px-8 py-4 backdrop-blur-xl"
+          className="sticky top-0 z-30 flex items-center justify-between border-b border-white/[0.06] bg-[#242D42]/85 px-8 py-4 backdrop-blur-md"
           onClick={(e) => e.stopPropagation()}
         >
           <div>
@@ -268,7 +268,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
             <div className="relative">
               <button
                 onClick={() => setShowNotifs(!showNotifs)}
-                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#6E7C8B]/40 bg-[#525C79]/80 text-[#F4F7F6] transition-colors hover:border-[#899C9A] hover:bg-[#525C79] cursor-pointer"
+                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-[#323D59] text-[#F4F7F6] transition-colors hover:border-white/20 hover:bg-[#3B4868] cursor-pointer"
               >
                 <Bell className="h-4 w-4" />
                 {unreadCount > 0 && (
@@ -280,8 +280,8 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
 
               {/* Notification Dropdown Panel */}
               {showNotifs && (
-                <div className="notif-dropdown absolute top-12 left-0 z-50 w-80 overflow-hidden rounded-2xl border border-[#6E7C8B]/50 bg-[#525C79] shadow-2xl backdrop-blur-2xl">
-                  <div className="flex items-center justify-between border-b border-[#6E7C8B]/30 px-4 py-3">
+                <div className="notif-dropdown absolute top-12 left-0 z-50 w-80 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#323D59] shadow-2xl backdrop-blur-2xl">
+                  <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
                     <span className="text-xs font-bold text-[#F4F7F6]">
                       الإشعارات ({unreadCount})
                     </span>
@@ -293,7 +293,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                     </button>
                   </div>
 
-                  <div className="max-h-80 divide-y divide-[#6E7C8B]/30 overflow-y-auto">
+                  <div className="max-h-80 divide-y divide-white/[0.06] overflow-y-auto">
                     {notifList.map((n) => (
                       <div
                         key={n.id}
@@ -508,7 +508,7 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
           <button
             key={a.label}
             onClick={() => setView(a.view)}
-            className="group flex items-center gap-3 rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-4 shadow-lg backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-[#899C9A] hover:bg-[#525C79] cursor-pointer"
+            className="group flex items-center gap-3 rounded-2xl border border-white/[0.07] bg-[#323D59] p-4 shadow-lg backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-[#3B4868] cursor-pointer"
           >
             <div
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110"
@@ -529,7 +529,7 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
           <div
             key={s.label}
             onClick={() => setView(s.view)}
-            className="group relative overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-4 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#899C9A] hover:bg-[#525C79] hover:shadow-xl cursor-pointer"
+            className="group relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#323D59] p-4 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-[#3B4868] hover:shadow-xl cursor-pointer"
           >
             <div
               className="flex h-10 w-10 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110"
@@ -557,12 +557,12 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
       {/* Activity & Course Performance Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent Activity (2 cols) */}
-        <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl lg:col-span-2">
+        <div className="rounded-2xl border border-white/[0.07] bg-[#323D59] p-6 shadow-xl backdrop-blur-xl lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6]">
               آخر الأنشطة والعمليات
             </h3>
-            <span className="rounded-md bg-[#35425E] px-2.5 py-1 text-[11px] font-bold text-[#AABCAF] border border-[#6E7C8B]/40">
+            <span className="rounded-md bg-[#242D42] px-2.5 py-1 text-[11px] font-bold text-[#AABCAF] border border-white/[0.07]">
               اليوم
             </span>
           </div>
@@ -571,7 +571,7 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
             {activity.map((a, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 rounded-xl border border-[#6E7C8B]/30 bg-[#35425E]/60 p-3 transition-colors hover:bg-[#35425E]"
+                className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3 transition-colors hover:bg-[#3B4868]"
               >
                 <div
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${a.color}`}
@@ -597,7 +597,7 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
         {/* Top Courses & Storage Meter (1 col) */}
         <div className="space-y-6">
           {/* Top Courses */}
-          <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl">
+          <div className="rounded-2xl border border-white/[0.07] bg-[#323D59] p-6 shadow-xl backdrop-blur-xl">
             <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6] mb-4">
               أكثر المواد تحميلاً
             </h3>
@@ -626,7 +626,7 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
                     </span>
                   </div>
 
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#35425E]">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#242D42]">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
@@ -640,14 +640,14 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
             </div>
 
             {/* Storage Meter */}
-            <div className="mt-6 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/70 p-4">
+            <div className="mt-6 rounded-xl border border-white/[0.07] bg-white/[0.03] p-4">
               <div className="mb-2 flex items-center justify-between text-xs font-bold">
                 <span className="text-[#AABCAF]">المساحة المستخدمة</span>
                 <span className="text-[#899C9A] font-['JetBrains_Mono']">
                   42.6 GB / 100 GB
                 </span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-[#525C79]">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[#242D42]">
                 <div className="h-full w-[42.6%] rounded-full bg-gradient-to-r from-[#899C9A] to-[#AABCAF]" />
               </div>
               <div className="mt-2 text-[10px] text-[#AABCAF] font-medium">
@@ -926,17 +926,17 @@ function AdminTableView({
 
   const roleColors: Record<string, string> = {
     طالب: "bg-[#899C9A]/20 text-[#AABCAF] border border-[#899C9A]/30",
-    أستاذ: "bg-[#525C79] text-[#F4F7F6] border border-[#6E7C8B]/40",
+    أستاذ: "bg-[#323D59] text-[#F4F7F6] border border-white/[0.07]",
     مشرف: "bg-[#AABCAF]/20 text-[#F4F7F6] border border-[#AABCAF]/30",
     "Super Admin": "bg-[#899C9A] text-[#1D263B] font-bold",
   };
 
   const typeColors: Record<string, string> = {
     PDF: "bg-[#899C9A]/20 text-[#F4F7F6] border border-[#899C9A]/40",
-    DOCX: "bg-[#525C79] text-[#AABCAF] border border-[#6E7C8B]/40",
+    DOCX: "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]",
     XLSX: "bg-[#AABCAF]/20 text-[#F4F7F6] border border-[#AABCAF]/40",
     MP4: "bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/40",
-    ZIP: "bg-[#525C79] text-[#F4F7F6] border border-[#6E7C8B]/40",
+    ZIP: "bg-[#323D59] text-[#F4F7F6] border border-white/[0.07]",
   };
 
   const filtered = data.rows.filter((row) =>
@@ -965,16 +965,16 @@ function AdminTableView({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={`بحث في ${adminNav.find((n) => n.id === view)?.label}...`}
-              className="w-72 rounded-xl border border-[#6E7C8B]/40 bg-[#525C79]/80 pr-10 pl-4 py-2 text-xs text-[#F4F7F6] placeholder-[#AABCAF]/70 outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
+              className="w-72 rounded-xl border border-white/[0.07] bg-[#323D59] pr-10 pl-4 py-2 text-xs text-[#F4F7F6] placeholder-[#AABCAF]/70 outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
             />
           </div>
 
-          <button className="flex items-center gap-1.5 rounded-xl border border-[#6E7C8B]/40 bg-[#525C79]/80 px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#525C79] cursor-pointer">
+          <button className="flex items-center gap-1.5 rounded-xl border border-white/[0.07] bg-[#323D59] px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#3B4868] cursor-pointer">
             <Download className="h-3.5 w-3.5 text-[#899C9A]" />
             <span>تصدير CSV</span>
           </button>
 
-          <button className="flex items-center gap-1.5 rounded-xl border border-[#6E7C8B]/40 bg-[#525C79]/80 px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#525C79] cursor-pointer">
+          <button className="flex items-center gap-1.5 rounded-xl border border-white/[0.07] bg-[#323D59] px-3.5 py-2 text-xs font-bold text-[#F4F7F6] transition-colors hover:bg-[#3B4868] cursor-pointer">
             <Filter className="h-3.5 w-3.5 text-[#899C9A]" />
             <span>فلتر</span>
           </button>
@@ -1000,17 +1000,17 @@ function AdminTableView({
       </div>
 
       {/* Table Container */}
-      <div className="overflow-hidden rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 shadow-xl backdrop-blur-xl">
+      <div className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#323D59] shadow-xl backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-sm">
-            <thead className="border-b border-[#6E7C8B]/40 bg-[#35425E]/90 text-xs font-bold text-[#AABCAF] uppercase tracking-wider">
+            <thead className="border-b border-white/[0.06] bg-[#242D42]/90 text-xs font-bold text-[#AABCAF] uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-4 w-12 text-center">
                   <input
                     type="checkbox"
                     checked={allChecked}
                     onChange={toggleAll}
-                    className="h-4 w-4 rounded border-[#6E7C8B] bg-[#35425E] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
+                    className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
                   />
                 </th>
                 {data.headers.map((h, i) => (
@@ -1020,7 +1020,7 @@ function AdminTableView({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#6E7C8B]/30">
+            <tbody className="divide-y divide-white/[0.06]">
               {filtered.map((row, ri) => (
                 <tr
                   key={ri}
@@ -1038,7 +1038,7 @@ function AdminTableView({
                         else s.add(ri);
                         setSelected(s);
                       }}
-                      className="h-4 w-4 rounded border-[#6E7C8B] bg-[#35425E] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
+                      className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
                     />
                   </td>
                   {row.map((cell, ci) => (
@@ -1050,7 +1050,7 @@ function AdminTableView({
                         <div className="flex items-center gap-2">
                           <button
                             onClick={onEdit}
-                            className="flex items-center gap-1 rounded-lg border border-[#6E7C8B]/40 bg-[#35425E]/80 px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:text-white cursor-pointer"
+                            className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
                           >
                             <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
                             <span>تعديل</span>
@@ -1069,7 +1069,7 @@ function AdminTableView({
                         </span>
                       ) : roleColors[cell] ? (
                         <span
-                          className={`inline-block rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
+                          className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
                         >
                           {cell}
                         </span>
@@ -1106,13 +1106,13 @@ function AdminTableView({
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between border-t border-[#6E7C8B]/40 px-6 py-4">
+        <div className="flex items-center justify-between border-t border-white/[0.06] px-6 py-4">
           <span className="text-xs font-semibold text-[#AABCAF]">
             عرض {filtered.length} من أصل {data.rows.length} عنصر
           </span>
 
           <div className="flex items-center gap-1">
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#6E7C8B]/40 bg-[#35425E] text-[#AABCAF] hover:text-white cursor-pointer">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.07] bg-[#323D59] text-[#AABCAF] hover:bg-[#3B4868] hover:text-white cursor-pointer">
               <ChevronRight className="h-4 w-4" />
             </button>
             {[1, 2, 3].map((p) => (
@@ -1121,13 +1121,13 @@ function AdminTableView({
                 className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                   p === 1
                     ? "bg-[#899C9A] text-[#1D263B] shadow-sm"
-                    : "border border-[#6E7C8B]/40 bg-[#35425E] text-[#AABCAF] hover:text-white"
+                    : "border border-white/[0.07] bg-[#323D59] text-[#AABCAF] hover:bg-[#3B4868] hover:text-white"
                 }`}
               >
                 {p}
               </button>
             ))}
-            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#6E7C8B]/40 bg-[#35425E] text-[#AABCAF] hover:text-white cursor-pointer">
+            <button className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/[0.07] bg-[#323D59] text-[#AABCAF] hover:bg-[#3B4868] hover:text-white cursor-pointer">
               <ChevronLeft className="h-4 w-4" />
             </button>
           </div>
@@ -1176,7 +1176,7 @@ function AdminSettingsView() {
   }) => {
     const [state, setState] = useState(on);
     return (
-      <div className="flex items-center justify-between border-b border-[#6E7C8B]/30 py-4">
+      <div className="flex items-center justify-between border-b border-white/[0.06] py-4">
         <div>
           <div className="text-xs font-bold text-[#F4F7F6]">{label}</div>
           {desc && (
@@ -1188,7 +1188,7 @@ function AdminSettingsView() {
         <button
           onClick={() => setState(!state)}
           className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 cursor-pointer ${
-            state ? "bg-[#899C9A]" : "bg-[#35425E]"
+            state ? "bg-[#899C9A]" : "bg-[#242D42]"
           }`}
         >
           <span
@@ -1217,7 +1217,7 @@ function AdminSettingsView() {
       <input
         defaultValue={value}
         type={type}
-        className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/80 px-4 py-2.5 text-xs text-[#F4F7F6] outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
+        className="w-full rounded-xl border border-white/[0.07] bg-[#242D42] px-4 py-2.5 text-xs text-[#F4F7F6] outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
       />
     </div>
   );
@@ -1225,15 +1225,15 @@ function AdminSettingsView() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 fade-in">
       {/* Settings Navigation */}
-      <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-3 shadow-xl backdrop-blur-xl h-fit">
+      <div className="rounded-2xl border border-white/[0.07] bg-[#323D59] p-3 shadow-xl backdrop-blur-xl h-fit">
         {sections.map((s) => (
           <button
             key={s.id}
             onClick={() => setActiveSection(s.id)}
             className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold transition-all duration-150 cursor-pointer ${
               activeSection === s.id
-                ? "bg-[#35425E] text-[#F4F7F6] shadow-md border-r-2 border-[#899C9A]"
-                : "text-[#AABCAF] hover:bg-[#35425E]/50 hover:text-[#F4F7F6]"
+                ? "bg-[#3B4868] text-[#F4F7F6] shadow-md border-r-2 border-[#899C9A]"
+                : "text-[#AABCAF] hover:bg-white/[0.04] hover:text-[#F4F7F6]"
             }`}
           >
             <span
@@ -1249,7 +1249,7 @@ function AdminSettingsView() {
       </div>
 
       {/* Settings Content */}
-      <div className="rounded-2xl border border-[#6E7C8B]/40 bg-[#525C79]/85 p-6 shadow-xl backdrop-blur-xl lg:col-span-3">
+      <div className="rounded-2xl border border-white/[0.07] bg-[#323D59] p-6 shadow-xl backdrop-blur-xl lg:col-span-3">
         {activeSection === "general" && (
           <div>
             <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6] mb-4">
@@ -1320,14 +1320,14 @@ function AdminSettingsView() {
             <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6] mb-4">
               إدارة التخزين
             </h3>
-            <div className="mb-6 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E]/80 p-5">
+            <div className="mb-6 rounded-xl border border-white/[0.07] bg-white/[0.03] p-5">
               <div className="mb-2 flex items-center justify-between text-xs font-bold">
                 <span className="text-[#AABCAF]">المساحة المستهلكة</span>
                 <span className="text-[#899C9A] font-['JetBrains_Mono']">
                   42.6 GB / 100 GB
                 </span>
               </div>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#525C79]">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-[#242D42]">
                 <div className="h-full w-[42.6%] rounded-full bg-gradient-to-r from-[#899C9A] to-[#AABCAF]" />
               </div>
             </div>
@@ -1360,7 +1360,7 @@ function AdminSettingsView() {
             <h3 className="font-['Outfit'] text-base font-bold text-[#F4F7F6] mb-4">
               النسخ الاحتياطي والاستعادة
             </h3>
-            <div className="mb-5 flex items-center gap-3 rounded-xl border border-[#899C9A]/40 bg-[#35425E]/80 p-4">
+            <div className="mb-5 flex items-center gap-3 rounded-xl border border-[#899C9A]/40 bg-white/[0.03] p-4">
               <CheckCircle2 className="h-5 w-5 text-[#899C9A] shrink-0" />
               <div>
                 <div className="text-xs font-bold text-[#F4F7F6]">
@@ -1379,11 +1379,11 @@ function AdminSettingsView() {
           </div>
         )}
 
-        <div className="mt-8 flex gap-3 border-t border-[#6E7C8B]/40 pt-5">
+        <div className="mt-8 flex gap-3 border-t border-white/[0.06] pt-5">
           <button className="rounded-xl bg-[#899C9A] px-6 py-2.5 text-xs font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer">
             حفظ التغييرات
           </button>
-          <button className="rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] px-5 py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:text-white cursor-pointer">
+          <button className="rounded-xl border border-white/[0.07] bg-[#242D42] px-5 py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:bg-[#3B4868] hover:text-white cursor-pointer">
             إلغاء
           </button>
         </div>
@@ -1498,8 +1498,8 @@ function AdminDialogModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md fade-in"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-lg rounded-2xl border border-[#6E7C8B]/50 bg-[#525C79] p-6 shadow-2xl backdrop-blur-2xl">
-        <div className="mb-6 flex items-center justify-between border-b border-[#6E7C8B]/40 pb-4">
+      <div className="w-full max-w-lg rounded-2xl border border-white/[0.07] bg-[#323D59] p-6 shadow-2xl backdrop-blur-2xl">
+        <div className="mb-6 flex items-center justify-between border-b border-white/[0.06] pb-4">
           <div>
             <h2 className="font-['Outfit'] text-lg font-bold text-[#F4F7F6]">
               {type === "add" ? `إضافة ${label} جديد` : `تعديل ${label}`}
@@ -1526,30 +1526,30 @@ function AdminDialogModal({
                 {field.label}
               </label>
               {field.type === "select" ? (
-                <select className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25 cursor-pointer">
+                <select className="w-full rounded-xl border border-white/[0.07] bg-[#242D42] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25 cursor-pointer">
                   <option value="">{field.placeholder}</option>
                 </select>
               ) : field.type === "textarea" ? (
                 <textarea
                   rows={3}
                   placeholder={field.placeholder}
-                  className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25 resize-none"
+                  className="w-full rounded-xl border border-white/[0.07] bg-[#242D42] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25 resize-none"
                 />
               ) : (
                 <input
                   type={field.type}
                   placeholder={field.placeholder}
-                  className="w-full rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
+                  className="w-full rounded-xl border border-white/[0.07] bg-[#242D42] px-3.5 py-2 text-xs text-[#F4F7F6] outline-none focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
                 />
               )}
             </div>
           ))}
         </div>
 
-        <div className="mt-6 flex gap-3 border-t border-[#6E7C8B]/40 pt-4">
+        <div className="mt-6 flex gap-3 border-t border-white/[0.06] pt-4">
           <button
             onClick={onClose}
-            className="flex-1 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:text-white cursor-pointer"
+            className="flex-1 rounded-xl border border-white/[0.07] bg-[#242D42] py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:bg-[#3B4868] hover:text-white cursor-pointer"
           >
             إلغاء
           </button>
@@ -1581,7 +1581,7 @@ function DeleteConfirmModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md fade-in"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-sm rounded-2xl border border-red-500/40 bg-[#525C79] p-6 text-center shadow-2xl backdrop-blur-2xl">
+      <div className="w-full max-w-sm rounded-2xl border border-red-500/40 bg-[#323D59] p-6 text-center shadow-2xl backdrop-blur-2xl">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/20 text-red-300 border border-red-500/30">
           <Trash2 className="h-7 w-7" />
         </div>
@@ -1598,7 +1598,7 @@ function DeleteConfirmModal({
         <div className="mt-6 flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 rounded-xl border border-[#6E7C8B]/40 bg-[#35425E] py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:text-white cursor-pointer"
+            className="flex-1 rounded-xl border border-white/[0.07] bg-[#242D42] py-2.5 text-xs font-bold text-[#AABCAF] transition-colors hover:bg-[#3B4868] hover:text-white cursor-pointer"
           >
             إلغاء
           </button>

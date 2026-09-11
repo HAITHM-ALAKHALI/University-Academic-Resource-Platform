@@ -287,7 +287,7 @@ export const courses = [
   {
     id: 'cs401',
     code: 'CS 401',
-    color: '#525C79',
+    color: '#899C9A',
     en: {
       name: 'Computer Networks',
       instructor: 'Prof. Omar Khalid',
@@ -308,7 +308,7 @@ export const courses = [
   {
     id: 'cs402',
     code: 'CS 402',
-    color: '#6E7C8B',
+    color: '#AABCAF',
     en: {
       name: 'Software Engineering',
       instructor: 'Dr. Nora Petersen',

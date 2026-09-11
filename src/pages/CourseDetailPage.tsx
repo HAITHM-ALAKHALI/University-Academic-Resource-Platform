@@ -405,16 +405,18 @@ export default function CourseDetailPage({
                         gap: 12,
                         padding: "12px 14px",
                         borderRadius: 10,
-                        border: "1px solid var(--border)",
-                        backgroundColor: "var(--background)",
-                        transition: "border-color 0.15s",
+                        border: "1px solid rgba(255, 255, 255, 0.07)",
+                        backgroundColor: "rgba(255, 255, 255, 0.03)",
+                        transition: "border-color 0.15s, background-color 0.15s",
                       }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.borderColor = "var(--primary)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.borderColor = "var(--border)")
-                      }
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                        e.currentTarget.style.backgroundColor = "#3B4868";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.07)";
+                        e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.03)";
+                      }}
                     >
                       <PdfIcon color={course.color} />
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -478,21 +480,25 @@ export default function CourseDetailPage({
                     gap: 10,
                     padding: "10px 12px",
                     borderRadius: 10,
-                    border: `1px solid ${isActive ? "var(--primary)" : "var(--border)"}`,
+                    border: `1px solid ${isActive ? "var(--primary)" : "rgba(255, 255, 255, 0.07)"}`,
                     backgroundColor: isActive
-                      ? "var(--secondary)"
-                      : "var(--card)",
+                      ? "rgba(125, 164, 159, 0.18)"
+                      : "#323D59",
                     cursor: "pointer",
                     textAlign: lang === "ar" ? "right" : "left",
                     transition: "all 0.15s",
                   }}
                   onMouseEnter={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.borderColor = "var(--primary)";
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = "#3B4868";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.borderColor = "var(--border)";
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = "#323D59";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.07)";
+                    }
                   }}
                 >
                   <div

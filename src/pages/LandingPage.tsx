@@ -173,17 +173,39 @@ export default function LandingPage({ dark, lang, setDark, setLang, setPage, ope
       </section>
 
       {/* Features */}
-      <section style={{ padding: '0 24px 80px', backgroundColor: 'var(--card)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', paddingTop: 64, paddingBottom: 64 }}>
+      <section style={{ padding: '0 24px 80px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <h2 style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 'clamp(24px, 3vw, 36px)', color: 'var(--foreground)', marginBottom: 10, whiteSpace: 'pre-line' }}>
               {tx.features.title}
             </h2>
             <p style={{ fontSize: 15, color: 'var(--muted-foreground)' }}>{tx.features.subtitle}</p>
           </div>
-          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 24 }}>
+          <div className="stagger-children" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20 }}>
             {tx.features.items.map((item, i) => (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  backgroundColor: '#323D59',
+                  border: '1px solid rgba(255, 255, 255, 0.07)',
+                  borderRadius: 14,
+                  padding: '24px 20px',
+                  transition: 'background-color 0.15s, border-color 0.15s, transform 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#3B4868';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#323D59';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
+                  e.currentTarget.style.transform = 'none';
+                }}
+              >
                 <div style={{
                   width: 44, height: 44, borderRadius: 10,
                   backgroundColor: 'var(--secondary)', color: 'var(--primary)',
@@ -253,13 +275,23 @@ function CourseCard({ course, lang, tx, openCourse }: {
   const info = lang === 'ar' ? course.ar : course.en
   return (
     <div style={{
-      backgroundColor: 'var(--card)', border: '1px solid var(--border)',
+      backgroundColor: '#323D59', border: '1px solid rgba(255, 255, 255, 0.07)',
       borderRadius: 14, overflow: 'hidden',
-      transition: 'transform 0.15s, box-shadow 0.15s',
+      transition: 'transform 0.15s, box-shadow 0.15s, background-color 0.15s, border-color 0.15s',
       cursor: 'pointer',
     }}
-      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)' }}
-      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'none'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none' }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)';
+        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#3B4868';
+        (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        (e.currentTarget as HTMLDivElement).style.boxShadow = '0 12px 32px rgba(0,0,0,0.25)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLDivElement).style.transform = 'none';
+        (e.currentTarget as HTMLDivElement).style.backgroundColor = '#323D59';
+        (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255, 255, 255, 0.07)';
+        (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
+      }}
     >
       <div style={{ height: 5, backgroundColor: course.color }} />
       <div style={{ padding: '20px 20px 16px' }}>
