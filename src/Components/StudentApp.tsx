@@ -10,6 +10,8 @@ const SemesterScreen = lazy(() => import("./screens/SemesterScreen"));
 const CoursesScreen = lazy(() => import("./screens/CoursesScreen"));
 const CourseDetailScreen = lazy(() => import("./screens/CourseDetailScreen"));
 
+import type { Doctor } from "../types/academic";
+
 export type NavState = {
   screen:
     | "home"
@@ -32,6 +34,8 @@ export type NavState = {
   level?: { id: number; name: string };
   semester?: { id: number; name: string };
   course?: { id: number; name: string; nameEn: string; color: string };
+  doctorId?: string;
+  doctor?: Doctor;
 };
 
 interface StudentAppProps {

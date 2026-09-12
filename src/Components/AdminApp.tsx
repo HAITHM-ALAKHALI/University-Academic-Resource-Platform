@@ -30,6 +30,9 @@ import {
   TrendingUp,
   ArrowRight,
 } from "lucide-react";
+import DoctorsManagementView from "./admin/DoctorsManagementView";
+import { initialDoctors, initialCourses } from "../data/academicData";
+import type { Doctor, AcademicCourse } from "../types/academic";
 
 type AdminView =
   | "dashboard"
@@ -39,6 +42,7 @@ type AdminView =
   | "levels"
   | "semesters"
   | "courses"
+  | "doctors"
   | "files"
   | "users"
   | "settings";
@@ -63,12 +67,12 @@ const adminNav: NavItem[] = [
   //   icon: <Building2 className="h-4 w-4" />,
   //   badge: 0,
   // },
-  {
-    id: "colleges",
-    label: "الكليات",
-    icon: <School className="h-4 w-4" />,
-    badge: 0,
-  },
+  // {
+  //   id: "colleges",
+  //   label: "الكليات",
+  //   icon: <School className="h-4 w-4" />,
+  //   badge: 0,
+  // },
   {
     id: "departments",
     label: "الأقسام",
@@ -92,6 +96,12 @@ const adminNav: NavItem[] = [
     label: "المواد",
     icon: <BookOpen className="h-4 w-4" />,
     badge: 3,
+  },
+  {
+    id: "doctors",
+    label: "إدارة الدكاترة",
+    icon: <Users className="h-4 w-4" />,
+    badge: 0,
   },
   {
     id: "files",
@@ -168,6 +178,84 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
   const [notifList, setNotifList] = useState(notifications);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  const [doctorsList, setDoctorsList] = useState<Doctor[]>(initialDoctors);
+  const [coursesList, setCoursesList] = useState<AcademicCourse[]>(initialCourses);
+
+  const handleAddDoctor = (newDoc: Doctor) => {
+    setDoctorsList((prev) => [newDoc, ...prev]);
+  };
+
+  const handleEditDoctor = (updatedDoc: Doctor) => {
+    setDoctorsList((prev) =>
+      prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d))
+    );
+  };
+
+  const handleDeleteDoctor = (docId: string) => {
+    setDoctorsList((prev) => prev.filter((d) => d.id !== docId));
+    setCoursesList((prev) =>
+      prev.map((c) => ({
+        ...c,
+        doctorIds: c.doctorIds?.filter((id) => id !== docId) || [],
+      }))
+    );
+  };
+
+  const handleAssignCourse = (doctorId: string, courseId: number) => {
+    setDoctorsList((prev) =>
+      prev.map((d) => {
+        if (d.id === doctorId) {
+          const exists = d.assignedCourseIds?.includes(courseId);
+          return {
+            ...d,
+            assignedCourseIds: exists
+              ? d.assignedCourseIds
+              : [...(d.assignedCourseIds || []), courseId],
+          };
+        }
+        return d;
+      })
+    );
+    setCoursesList((prev) =>
+      prev.map((c) => {
+        if (c.id === courseId) {
+          const exists = c.doctorIds?.includes(doctorId);
+          return {
+            ...c,
+            doctorIds: exists ? c.doctorIds : [...(c.doctorIds || []), doctorId],
+          };
+        }
+        return c;
+      })
+    );
+  };
+
+  const handleUnassignCourse = (doctorId: string, courseId: number) => {
+    setDoctorsList((prev) =>
+      prev.map((d) => {
+        if (d.id === doctorId) {
+          return {
+            ...d,
+            assignedCourseIds:
+              d.assignedCourseIds?.filter((id) => id !== courseId) || [],
+          };
+        }
+        return d;
+      })
+    );
+    setCoursesList((prev) =>
+      prev.map((c) => {
+        if (c.id === courseId) {
+          return {
+            ...c,
+            doctorIds: c.doctorIds?.filter((id) => id !== doctorId) || [],
+          };
+        }
+        return c;
+      })
+    );
+  };
+
   const unreadCount = notifList.filter((n) => !n.read).length;
 
   const markAllRead = () =>
@@ -219,7 +307,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                   <span>{item.label}</span>
                 </div>
 
-                {item.badge > 0 && (
+                {((item.id === "doctors" ? doctorsList.length : item.badge) > 0) && (
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
                       isActive
@@ -227,7 +315,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
                         : "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]"
                     }`}
                   >
-                    {item.badge}
+                    {item.id === "doctors" ? doctorsList.length : item.badge}
                   </span>
                 )}
               </button>
@@ -335,22 +423,40 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
 
         {/* View Content */}
         <div className="p-8">
-          {view === "dashboard" && <AdminDashboardView setView={setView} />}
-          {view === "settings" && <AdminSettingsView />}
-          {view !== "dashboard" && view !== "settings" && (
-            <AdminTableView
-              view={view}
-              onAdd={() => {
-                setDialogType("add");
-                setShowDialog(true);
-              }}
-              onEdit={() => {
-                setDialogType("edit");
-                setShowDialog(true);
-              }}
-              onDelete={(name) => setDeleteConfirm(name)}
+          {view === "dashboard" && (
+            <AdminDashboardView
+              setView={setView}
+              doctorsCount={doctorsList.length}
             />
           )}
+          {view === "settings" && <AdminSettingsView />}
+          {view === "doctors" && (
+            <DoctorsManagementView
+              doctors={doctorsList}
+              courses={coursesList}
+              onAddDoctor={handleAddDoctor}
+              onEditDoctor={handleEditDoctor}
+              onDeleteDoctor={handleDeleteDoctor}
+              onAssignCourse={handleAssignCourse}
+              onUnassignCourse={handleUnassignCourse}
+            />
+          )}
+          {view !== "dashboard" &&
+            view !== "settings" &&
+            view !== "doctors" && (
+              <AdminTableView
+                view={view}
+                onAdd={() => {
+                  setDialogType("add");
+                  setShowDialog(true);
+                }}
+                onEdit={() => {
+                  setDialogType("edit");
+                  setShowDialog(true);
+                }}
+                onDelete={(name) => setDeleteConfirm(name)}
+              />
+            )}
         </div>
       </main>
 
@@ -375,16 +481,14 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
 }
 
 /* ─── 1. Dashboard View ─────────────────────────────────────────────────── */
-function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
+function AdminDashboardView({
+  setView,
+  doctorsCount = 6,
+}: {
+  setView: (v: AdminView) => void;
+  doctorsCount?: number;
+}) {
   const stats = [
-    // {
-    //   label: "الجامعات",
-    //   value: "12",
-    //   icon: <Building2 className="h-5 w-5" />,
-    //   color: "#899C9A",
-    //   trend: "+2",
-    //   view: "universities" as AdminView,
-    // },
     {
       label: "الكليات",
       value: "48",
@@ -410,6 +514,14 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
       view: "courses" as AdminView,
     },
     {
+      label: "الدكاترة",
+      value: String(doctorsCount),
+      icon: <Users className="h-5 w-5" />,
+      color: "#7DA49F",
+      trend: "+3",
+      view: "doctors" as AdminView,
+    },
+    {
       label: "الملفات",
       value: "8.4K",
       icon: <FileText className="h-5 w-5" />,
@@ -428,12 +540,6 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
   ];
 
   const quickActions = [
-    // {
-    //   label: "إضافة جامعة",
-    //   icon: <Building2 className="h-5 w-5" />,
-    //   view: "universities" as AdminView,
-    //   color: "#899C9A",
-    // },
     {
       label: "إضافة كلية",
       icon: <School className="h-5 w-5" />,
@@ -445,6 +551,12 @@ function AdminDashboardView({ setView }: { setView: (v: AdminView) => void }) {
       icon: <BookOpen className="h-5 w-5" />,
       view: "courses" as AdminView,
       color: "#899C9A",
+    },
+    {
+      label: "إدارة الدكاترة",
+      icon: <Users className="h-5 w-5" />,
+      view: "doctors" as AdminView,
+      color: "#7DA49F",
     },
     {
       label: "رفع ملفات",

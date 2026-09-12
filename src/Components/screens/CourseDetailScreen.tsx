@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import { useState, useMemo, memo } from "react";
 import {
   Download,
   ExternalLink,
@@ -7,114 +7,194 @@ import {
   CheckCircle2,
   Eye,
   Clock,
+  ArrowRight,
+  GraduationCap,
+  Mail,
+  Phone,
+  UserCheck,
+  RotateCcw,
+  FileQuestion,
 } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
-
-const tabs = [
-  { id: "lectures", label: "المحاضرات", icon: "📹", count: 12 },
-  { id: "books", label: "الكتب", icon: "📕", count: 4 },
-  { id: "exams", label: "الامتحانات السابقة", icon: "📋", count: 10 },
-  { id: "videos", label: "المقاطع", icon: "🎬", count: 5 },
-  { id: "projects", label: "المشاريع", icon: "🗂", count: 4 },
-  { id: "external", label: "مصادر خارجية", icon: "🌐", count: 10 },
-];
-
-const lectures = [
-  { id: 1, name: "Lecture 1 - Introduction", size: "2.4 MB", date: "2024-01-10" },
-  { id: 2, name: "Lecture 2 - Variables and Data Types", size: "1.9 MB", date: "2024-01-17" },
-  { id: 3, name: "Lecture 3 - Operators", size: "2.1 MB", date: "2024-01-24" },
-  { id: 4, name: "Lecture 4 - Control Structures", size: "2.7 MB", date: "2024-01-31" },
-  { id: 5, name: "Lecture 5 - Functions", size: "2.3 MB", date: "2024-02-07" },
-  { id: 6, name: "Lecture 6 - Arrays", size: "2.9 MB", date: "2024-02-14" },
-  { id: 7, name: "Lecture 7 - Pointers", size: "3.1 MB", date: "2024-02-21" },
-  { id: 8, name: "Lecture 8 - Structs and Unions", size: "2.5 MB", date: "2024-02-28" },
-  { id: 9, name: "Lecture 9 - File I/O", size: "1.8 MB", date: "2024-03-06" },
-  { id: 10, name: "Lecture 10 - Memory Management", size: "3.3 MB", date: "2024-03-13" },
-  { id: 11, name: "Lecture 11 - Error Handling", size: "2.0 MB", date: "2024-03-20" },
-  { id: 12, name: "Lecture 12 - Review", size: "1.6 MB", date: "2024-03-27" },
-];
-
-const books = [
-  { id: 1, title: "The C Programming Language", author: "Kernighan & Ritchie", edition: "2nd", pages: 272, cover: "📘", year: 2016 },
-  { id: 2, title: "C Programming: A Modern Approach", author: "K.N. King", edition: "2nd", pages: 832, cover: "📗", year: 2008 },
-  { id: 3, title: "Programming in C", author: "Stephen Kochan", edition: "4th", pages: 540, cover: "📙", year: 2014 },
-  { id: 4, title: "C How to Program", author: "Deitel & Deitel", edition: "8th", pages: 928, cover: "📒", year: 2015 },
-];
-
-const exams = [
-  { id: 1, name: "امتحان منتصف الترم 2024", size: "1.4 MB", year: 2024, type: "منتصف", withSolution: false },
-  { id: 2, name: "امتحان نهاية الترم 2023", size: "1.9 MB", year: 2023, type: "نهاية", withSolution: true },
-  { id: 3, name: "امتحان منتصف الترم 2023", size: "1.3 MB", year: 2023, type: "منتصف", withSolution: true },
-  { id: 4, name: "امتحان نهاية الترم 2022", size: "1.7 MB", year: 2022, type: "نهاية", withSolution: true },
-  { id: 5, name: "امتحان منتصف الترم 2022", size: "1.1 MB", year: 2022, type: "منتصف", withSolution: false },
-  { id: 6, name: "امتحان نهاية الترم 2021", size: "2.1 MB", year: 2021, type: "نهاية", withSolution: true },
-  { id: 7, name: "امتحان تجريبي 1 - محلول", size: "0.9 MB", year: 2024, type: "تجريبي", withSolution: true },
-  { id: 8, name: "امتحان تجريبي 2 - محلول", size: "1.0 MB", year: 2024, type: "تجريبي", withSolution: true },
-  { id: 9, name: "بنك الأسئلة الشامل (200 سؤال)", size: "3.5 MB", year: 2024, type: "بنك أسئلة", withSolution: true },
-  { id: 10, name: "ملخص قوانين ونماذج", size: "0.6 MB", year: 2024, type: "ملخص", withSolution: true },
-];
-
-const videos = [
-  { id: 1, name: "مقدمة إلى لغة البرمجة C - الدرس الأول", duration: "45:30", platform: "YouTube", views: "12.4K", thumb: "🟥" },
-  { id: 2, name: "شرح المحاضرة الثانية - المتغيرات", duration: "52:10", platform: "YouTube", views: "9.8K", thumb: "🟥" },
-  { id: 3, name: "حل تمارين على الدوال", duration: "38:45", platform: "YouTube", views: "7.2K", thumb: "🟥" },
-  { id: 4, name: "شرح المصفوفات بالتفصيل", duration: "61:30", platform: "YouTube", views: "15K", thumb: "🟥" },
-  { id: 5, name: "مراجعة شاملة قبل الامتحان", duration: "90:00", platform: "YouTube", views: "22K", thumb: "🟥" },
-];
-
-const projects = [
-  { id: 1, name: "مشروع إدارة المكتبة", level: "متوسط", desc: "نظام لإدارة الكتب والأعضاء والإعارة باستخدام لغة C وهياكل البيانات", tech: ["C", "Linked List", "File I/O"], grade: "السنة الأولى", color: "#6B8EC7" },
-  { id: 2, name: "تطبيق الحاسبة العلمية", level: "مبتدئ", desc: "حاسبة علمية كاملة تدعم العمليات الحسابية والمثلثية والإحصائية", tech: ["C", "Math.h"], grade: "السنة الأولى", color: "#5BAA8E" },
-  { id: 3, name: "لعبة إدارة الطلاب", level: "متقدم", desc: "نظام شامل لإدارة بيانات الطلاب مع ميزات البحث والترتيب والتصفية", tech: ["C", "Sorting", "Searching", "Files"], grade: "السنة الأولى", color: "#8B7EC0" },
-  { id: 4, name: "محاكي المتاهة", level: "متقدم", desc: "محاكاة حل المتاهة باستخدام خوارزمية DFS والمصفوفات الثنائية الأبعاد", tech: ["C", "2D Arrays", "Recursion"], grade: "السنة الأولى", color: "#C9A855" },
-];
-
-const externalResources = [
-  { id: 1, title: "Learn C Programming — Programiz", url: "programiz.com/c-programming", type: "موقع", icon: "🌐", color: "#6B8EC7" },
-  { id: 2, title: "The C Beginner's Handbook", url: "freecodecamp.org", type: "دليل", icon: "📖", color: "#5BAA8E" },
-  { id: 3, title: "C Programming for Beginners — YouTube", url: "youtube.com", type: "فيديو", icon: "▶", color: "#C07A9B" },
-  { id: 4, title: "GeeksForGeeks — C Language", url: "geeksforgeeks.org/c-programming-language/", type: "مقالات", icon: "📄", color: "#5BA8B5" },
-  { id: 5, title: "TutorialsPoint — C", url: "tutorialspoint.com/cprogramming", type: "دورة", icon: "🎓", color: "#8B7EC0" },
-  { id: 6, title: "W3Schools — C Tutorial", url: "w3schools.com/c", type: "مرجع", icon: "📚", color: "#C9A855" },
-  { id: 7, title: "CS50 Harvard — C Week", url: "cs50.harvard.edu", type: "كورس", icon: "🏛", color: "#7DA49F" },
-  { id: 8, title: "Cplusplus.com — C Reference", url: "cplusplus.com/reference", type: "مرجع", icon: "📋", color: "#B08D6A" },
-  { id: 9, title: "LeetCode — C Practice", url: "leetcode.com", type: "تمارين", icon: "💪", color: "#6B8EC7" },
-  { id: 10, title: "HackerRank — C Language", url: "hackerrank.com/domains/c", type: "تمارين", icon: "🏅", color: "#5BA8B5" },
-];
+import {
+  initialCourses,
+  initialDoctors,
+  initialCourseResources,
+} from "../../data/academicData";
+import type { ResourceType } from "../../types/academic";
 
 interface Props {
   nav: NavState;
   navigate: (s: NavState) => void;
 }
 
-export default function CourseDetailScreen({ nav, navigate }: Props) {
-  const [activeTab, setActiveTab] = useState("lectures");
+const tabDefs: { id: ResourceType; label: string; icon: string }[] = [
+  { id: "lectures", label: "المحاضرات", icon: "📄" },
+  { id: "books", label: "الكتب والمراجع", icon: "📕" },
+  { id: "exams", label: "الامتحانات السابقة", icon: "📋" },
+  { id: "videos", label: "المقاطع والشروحات", icon: "🎬" },
+  { id: "projects", label: "المشاريع والواجبات", icon: "🗂" },
+  { id: "external", label: "مصادر خارجية", icon: "🌐" },
+];
 
+export default function CourseDetailScreen({ nav, navigate }: Props) {
+  const [activeTab, setActiveTab] = useState<ResourceType>("lectures");
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string | undefined>(
+    nav.doctorId
+  );
+
+  // Identify course
+  const currentCourseId = nav.course?.id || 1;
+  const currentCourse = useMemo(() => {
+    return (
+      initialCourses.find((c) => c.id === currentCourseId) || {
+        id: currentCourseId,
+        name: nav.course?.name || "برمجة 1",
+        nameEn: nav.course?.nameEn || "Programming 1",
+        color: nav.course?.color || "#6B8EC7",
+        code: "CS 101",
+        rating: 4.8,
+        files: 32,
+        doctorIds: ["doc-1", "doc-2"],
+        department: "علوم حاسوب",
+        level: "السنة الأولى",
+        semester: "الترم الأول",
+      }
+    );
+  }, [currentCourseId, nav.course]);
+
+  // Find all doctors teaching this course
+  const courseDoctors = useMemo(() => {
+    return initialDoctors.filter(
+      (doc) =>
+        currentCourse.doctorIds?.includes(doc.id) ||
+        doc.assignedCourseIds?.includes(currentCourse.id)
+    );
+  }, [currentCourse]);
+
+  // Current active doctor (if any)
+  const activeDoctor = useMemo(() => {
+    if (!selectedDoctorId) return undefined;
+    return initialDoctors.find((d) => d.id === selectedDoctorId);
+  }, [selectedDoctorId]);
+
+  // All resources for this course
+  const courseAllResources = useMemo(() => {
+    return initialCourseResources.filter((r) => r.courseId === currentCourse.id);
+  }, [currentCourse.id]);
+
+  // Filtered resources based on selected doctor
+  const displayedResources = useMemo(() => {
+    if (!selectedDoctorId) {
+      return courseAllResources;
+    }
+    return courseAllResources.filter((r) => r.doctorId === selectedDoctorId);
+  }, [courseAllResources, selectedDoctorId]);
+
+  // Resources for the current active tab
+  const tabResources = useMemo(() => {
+    return displayedResources.filter((r) => r.type === activeTab);
+  }, [displayedResources, activeTab]);
+
+  // Calculate dynamic tab counts
+  const tabCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    tabDefs.forEach((t) => {
+      counts[t.id] = displayedResources.filter((r) => r.type === t.id).length;
+    });
+    return counts;
+  }, [displayedResources]);
+
+  const breadcrumbsList = [
+    { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
+    ...(nav.department?.name
+      ? [
+          {
+            label: nav.department.name,
+            onClick: () => navigate({ ...nav, screen: "levels" as const }),
+          },
+        ]
+      : []),
+    ...(nav.semester?.name
+      ? [
+          {
+            label: nav.semester.name,
+            onClick: () => navigate({ ...nav, screen: "courses" as const }),
+          },
+        ]
+      : []),
+    {
+      label: nav.course?.name || currentCourse.name,
+      onClick: () => setSelectedDoctorId(undefined),
+    },
+    ...(activeDoctor ? [{ label: activeDoctor.name }] : []),
+  ];
+
+  const subtitleText = [
+    currentCourse.nameEn,
+    currentCourse.code,
+    currentCourse.department,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  // File row component
   const FileRow = memo(function FileRow({
-    icon, iconBg, iconColor, name, meta, extra,
+    icon,
+    iconBg,
+    iconColor,
+    name,
+    meta,
+    doctorName,
+    extra,
   }: {
-    icon: string; iconBg: string; iconColor: string; name: string; meta: string; extra?: React.ReactNode;
+    icon: string;
+    iconBg: string;
+    iconColor: string;
+    name: string;
+    meta: string;
+    doctorName?: string;
+    extra?: React.ReactNode;
   }) {
     return (
-      <div className="group flex items-center justify-between gap-4 rounded-xl border border-transparent p-3.5 transition-all duration-200 hover:border-white/[0.06] hover:bg-white/[0.03] cursor-pointer">
+      <div className="group flex items-center justify-between gap-4 rounded-xl border border-transparent p-3.5 transition-all duration-200 hover:border-white/[0.08] hover:bg-white/[0.04] cursor-pointer">
         <div className="flex items-center gap-3.5 min-w-0 flex-1">
           <div
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition-transform group-hover:scale-105"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold transition-transform group-hover:scale-105 shadow-sm"
             style={{ background: iconBg, color: iconColor }}
           >
             {icon}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="truncate text-sm font-bold text-[#F8FAFC]">{name}</h4>
-            <p className="mt-0.5 text-xs font-semibold text-[#A5B4BF]">{meta}</p>
+            <h4 className="truncate text-sm font-bold text-[#F8FAFC] group-hover:text-[#9DBFB8] transition-colors">
+              {name}
+            </h4>
+            <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs font-semibold text-[#A5B4BF]">
+              <span>{meta}</span>
+              {doctorName && (
+                <>
+                  <span>·</span>
+                  <span className="flex items-center gap-1 text-[#7DA49F]">
+                    <GraduationCap className="h-3 w-3" />
+                    <span>{doctorName}</span>
+                  </span>
+                </>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+
+        <div className="flex items-center gap-2.5">
           {extra}
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#7DA49F]/25 bg-[#7DA49F]/10 text-[#F8FAFC] transition-colors hover:bg-[#7DA49F]/20 cursor-pointer"
+            title="تحميل الملف"
+            onClick={(e) => {
+              e.stopPropagation();
+              alert(`جاري تحميل: ${name}`);
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#7DA49F]/30 bg-[#7DA49F]/10 text-[#F8FAFC] transition-all hover:bg-[#7DA49F]/25 hover:border-[#7DA49F]/50 active:scale-95 cursor-pointer"
           >
             <Download className="h-4 w-4 text-[#7DA49F]" />
           </button>
@@ -124,73 +204,174 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
   });
 
   const renderContent = () => {
+    if (tabResources.length === 0) {
+      return (
+        <div className="py-12 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] text-[#A5B4BF] border border-white/[0.06]">
+            <FileQuestion className="h-6 w-6" />
+          </div>
+          <h3 className="text-sm font-bold text-[#F8FAFC]">
+            لا توجد ملفات في هذا القسم
+            {activeDoctor ? ` لـ ${activeDoctor.name}` : ""}
+          </h3>
+          <p className="mt-1 text-xs text-[#A5B4BF] max-w-sm mx-auto">
+            {activeDoctor
+              ? `لم يقم ${activeDoctor.name} برفع ملفات في هذا التصنيف بعد، يمكنك تصفح مصادر باقي المدرسين.`
+              : "لم يتم رفع ملفات في هذا التصنيف بعد للمقرر الدراسي."}
+          </p>
+          {activeDoctor && (
+            <button
+              type="button"
+              onClick={() => setSelectedDoctorId(undefined)}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#7DA49F]/40 bg-[#7DA49F]/15 px-4 py-2 text-xs font-bold text-[#F8FAFC] transition-all hover:bg-[#7DA49F]/25 cursor-pointer"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-[#7DA49F]" />
+              <span>عرض جميع ملفات المادة</span>
+            </button>
+          )}
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case "lectures":
         return (
           <div className="divide-y divide-white/[0.06]">
-            {lectures.map((l) => (
-              <FileRow key={l.id} icon="📄" iconBg="rgba(125, 164, 159, 0.12)" iconColor="#7DA49F" name={l.name} meta={`${l.size} · ${l.date}`} />
-            ))}
+            {tabResources.map((item) => {
+              const doc = initialDoctors.find((d) => d.id === item.doctorId);
+              return (
+                <FileRow
+                  key={item.id}
+                  icon="📄"
+                  iconBg="rgba(125, 164, 159, 0.12)"
+                  iconColor="#7DA49F"
+                  name={item.name}
+                  meta={`${item.size || "2.5 MB"} · ${item.date || "2024-01-15"}`}
+                  doctorName={!activeDoctor ? doc?.name : undefined}
+                />
+              );
+            })}
           </div>
         );
 
       case "books":
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {books.map((b) => (
-              <div key={b.id} className="flex items-start gap-4 rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-sm transition-all hover:border-white/[0.15] hover:bg-[#3B4868]">
-                <div className="flex h-14 w-12 shrink-0 items-center justify-center rounded-lg bg-[#323D59] text-2xl shadow">{b.cover}</div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="truncate text-sm font-bold text-[#F8FAFC]">{b.title}</h4>
-                  <p className="text-xs font-semibold text-[#A5B4BF] mt-0.5">{b.author}</p>
-                  <div className="mt-2 flex items-center gap-2 text-[11px] text-[#7A8A9B]">
-                    <span>الطبعة {b.edition}</span><span>·</span><span>{b.pages} صفحة</span><span>·</span><span>{b.year}</span>
+            {tabResources.map((b) => {
+              const doc = initialDoctors.find((d) => d.id === b.doctorId);
+              return (
+                <div
+                  key={b.id}
+                  className="flex items-start gap-4 rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-sm transition-all hover:border-white/[0.15] hover:bg-[#3B4868]"
+                >
+                  <div className="flex h-14 w-12 shrink-0 items-center justify-center rounded-lg bg-[#242D42] text-2xl shadow border border-white/[0.06]">
+                    {b.cover || "📘"}
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="truncate text-sm font-bold text-[#F8FAFC]">
+                      {b.name}
+                    </h4>
+                    <p className="text-xs font-semibold text-[#A5B4BF] mt-0.5">
+                      {b.author || "مرجع أكاديمي"}
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[#7A8A9B]">
+                      {b.edition && <span>الطبعة {b.edition}</span>}
+                      {b.pages && <span>· {b.pages} صفحة</span>}
+                      {b.size && <span>· {b.size}</span>}
+                      {!activeDoctor && doc && (
+                        <span className="text-[#7DA49F] font-bold">
+                          · {doc.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    title="تحميل الكتاب"
+                    onClick={() => alert(`جاري تحميل: ${b.name}`)}
+                    className="rounded-lg border border-[#7DA49F]/25 bg-[#7DA49F]/10 p-2 text-[#7DA49F] hover:bg-[#7DA49F]/20 transition-colors cursor-pointer shrink-0"
+                  >
+                    <Download className="h-4 w-4" />
+                  </button>
                 </div>
-                <button type="button" className="rounded-lg border border-[#7DA49F]/25 bg-[#7DA49F]/10 p-2 text-[#7DA49F] hover:bg-[#7DA49F]/20 transition-colors cursor-pointer">
-                  <Download className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         );
 
       case "exams":
         return (
           <div className="divide-y divide-white/[0.06]">
-            {exams.map((e) => (
-              <FileRow key={e.id} icon="📋" iconBg="rgba(139, 126, 192, 0.12)" iconColor="#8B7EC0" name={e.name} meta={`${e.size} · ${e.year} · ${e.type}`}
-                extra={e.withSolution && (
-                  <span className="flex items-center gap-1 rounded-md bg-[#5BAA8E]/15 px-2 py-0.5 text-[10px] font-bold text-[#F8FAFC] border border-[#5BAA8E]/25">
-                    <CheckCircle2 className="h-3 w-3 text-[#5BAA8E]" /><span>مع الحل</span>
-                  </span>
-                )}
-              />
-            ))}
+            {tabResources.map((e) => {
+              const doc = initialDoctors.find((d) => d.id === e.doctorId);
+              return (
+                <FileRow
+                  key={e.id}
+                  icon="📋"
+                  iconBg="rgba(139, 126, 192, 0.12)"
+                  iconColor="#8B7EC0"
+                  name={e.name}
+                  meta={`${e.size || "1.5 MB"} · سنة ${e.year || 2024} · ${
+                    e.examType || "امتحان"
+                  }`}
+                  doctorName={!activeDoctor ? doc?.name : undefined}
+                  extra={
+                    e.withSolution && (
+                      <span className="flex items-center gap-1 rounded-md bg-[#5BAA8E]/15 px-2 py-0.5 text-[10px] font-bold text-[#9DBFB8] border border-[#5BAA8E]/30">
+                        <CheckCircle2 className="h-3 w-3 text-[#5BAA8E]" />
+                        <span>مع الحل</span>
+                      </span>
+                    )
+                  }
+                />
+              );
+            })}
           </div>
         );
 
       case "videos":
         return (
           <div className="divide-y divide-white/[0.06]">
-            {videos.map((v) => (
-              <div key={v.id} className="flex items-center justify-between gap-4 p-3.5 transition-colors hover:bg-white/[0.03] rounded-xl cursor-pointer">
+            {tabResources.map((v) => (
+              <div
+                key={v.id}
+                className="flex items-center justify-between gap-4 p-3.5 transition-colors hover:bg-white/[0.03] rounded-xl cursor-pointer"
+              >
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/12 text-red-400 text-sm">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/15 text-red-400 text-sm border border-red-500/25">
                     <Video className="h-5 w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="truncate text-sm font-bold text-[#F8FAFC]">{v.name}</h4>
+                    <h4 className="truncate text-sm font-bold text-[#F8FAFC]">
+                      {v.name}
+                    </h4>
                     <div className="mt-0.5 flex items-center gap-2 text-xs font-semibold text-[#A5B4BF]">
-                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{v.duration}</span>
-                      <span>·</span>
-                      <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{v.views}</span>
+                      {v.duration && (
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {v.duration}
+                        </span>
+                      )}
+                      {v.views && (
+                        <>
+                          <span>·</span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="h-3 w-3" />
+                            {v.views}
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-                <a href="#" className="flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/18 transition-colors">
-                  <ExternalLink className="h-3.5 w-3.5" /><span>مشاهدة</span>
-                </a>
+                <button
+                  type="button"
+                  onClick={() => alert(`فتح المقطع: ${v.name}`)}
+                  className="flex items-center gap-1 rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/20 transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>مشاهدة</span>
+                </button>
               </div>
             ))}
           </div>
@@ -199,30 +380,43 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
       case "projects":
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {projects.map((p) => (
-              <div key={p.id} className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-sm transition-all hover:border-white/[0.15] hover:bg-[#3B4868]">
+            {tabResources.map((p) => (
+              <div
+                key={p.id}
+                className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 shadow-sm transition-all hover:border-white/[0.15] hover:bg-[#3B4868]"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg" style={{ background: `${p.color}18`, color: p.color }}>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6B8EC7]/15 text-[#6B8EC7] border border-[#6B8EC7]/30">
                       <Code2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-[#F8FAFC]">{p.name}</h4>
-                      <span className="text-[11px] font-semibold text-[#A5B4BF]">{p.grade}</span>
+                      <h4 className="text-sm font-bold text-[#F8FAFC]">
+                        {p.name}
+                      </h4>
+                      <span className="text-[11px] font-semibold text-[#A5B4BF]">
+                        {p.grade || "مشروع فصلي"}
+                      </span>
                     </div>
                   </div>
-                  <span className="rounded-md px-2 py-0.5 text-[10px] font-bold" style={{ background: `${p.color}15`, color: p.color, border: `1px solid ${p.color}25` }}>
-                    {p.level}
-                  </span>
                 </div>
-                <p className="mt-3 text-xs font-medium text-[#A5B4BF] leading-relaxed">{p.desc}</p>
-                <div className="mt-3 flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.06]">
-                  {p.tech.map((t) => (
-                    <span key={t} className="rounded bg-[#323D59] px-2 py-0.5 font-['JetBrains_Mono'] text-[10px] font-bold text-[#A5B4BF] border border-white/[0.06]">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                {p.desc && (
+                  <p className="mt-3 text-xs font-medium text-[#A5B4BF] leading-relaxed">
+                    {p.desc}
+                  </p>
+                )}
+                {p.tech && (
+                  <div className="mt-3 flex flex-wrap gap-1.5 pt-2 border-t border-white/[0.06]">
+                    {p.tech.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded bg-[#242D42] px-2 py-0.5 font-['JetBrains_Mono'] text-[10px] font-bold text-[#A5B4BF] border border-white/[0.06]"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -231,21 +425,39 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
       case "external":
         return (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {externalResources.map((res) => (
-              <a key={res.id} href={`https://${res.url}`} target="_blank" rel="noreferrer"
-                className="group flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 transition-all hover:border-white/[0.15] hover:bg-[#3B4868] hover:-translate-y-0.5 no-underline"
+            {[
+              {
+                id: 1,
+                title: "Learn Programming — GeeksForGeeks",
+                url: "geeksforgeeks.org",
+                icon: "🌐",
+              },
+              {
+                id: 2,
+                title: "Tutorials & References — W3Schools",
+                url: "w3schools.com",
+                icon: "📚",
+              },
+            ].map((res) => (
+              <div
+                key={res.id}
+                className="group flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 transition-all hover:border-white/[0.15] hover:bg-[#3B4868] cursor-pointer"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-base" style={{ background: `${res.color}18` }}>
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#7DA49F]/15 text-[#7DA49F]">
                     {res.icon}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h4 className="truncate text-xs font-bold text-[#F8FAFC] group-hover:text-[#9DBFB8]">{res.title}</h4>
-                    <p className="truncate text-[11px] font-medium text-[#7A8A9B]">{res.url}</p>
+                    <h4 className="truncate text-xs font-bold text-[#F8FAFC]">
+                      {res.title}
+                    </h4>
+                    <p className="truncate text-[11px] font-medium text-[#7A8A9B]">
+                      {res.url}
+                    </p>
                   </div>
                 </div>
-                <ExternalLink className="h-4 w-4 shrink-0 text-[#7DA49F] transition-transform group-hover:translate-x-[-2px]" />
-              </a>
+                <ExternalLink className="h-4 w-4 shrink-0 text-[#7DA49F]" />
+              </div>
             ))}
           </div>
         );
@@ -255,41 +467,159 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
     }
   };
 
-  const breadcrumbsList = [
-    { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
-    ...(nav.university?.name ? [{ label: nav.university.name, onClick: () => navigate({ ...nav, screen: "colleges" as const }) }] : []),
-    ...(nav.college?.name ? [{ label: nav.college.name, onClick: () => navigate({ ...nav, screen: "departments" as const }) }] : []),
-    ...(nav.department?.name ? [{ label: nav.department.name, onClick: () => navigate({ ...nav, screen: "levels" as const }) }] : []),
-    ...(nav.level?.name ? [{ label: nav.level.name, onClick: () => navigate({ ...nav, screen: "levels" as const }) }] : []),
-    ...(nav.semester?.name ? [{ label: nav.semester.name, onClick: () => navigate({ ...nav, screen: "courses" as const }) }] : []),
-    ...(nav.course?.name ? [{ label: nav.course.name }] : []),
-  ];
-
-  const subtitleText = [nav.course?.nameEn, nav.semester?.name].filter(Boolean).join(" · ");
-
   return (
     <div className="w-full">
       <TopBar breadcrumbs={breadcrumbsList} />
 
       <div className="mx-auto max-w-7xl p-6 sm:p-8 space-y-6">
-        {/* Course Title Header on Base Canvas */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black text-[#F8FAFC]">
-            {nav.course?.name}
-          </h1>
-          <p className="text-sm font-medium text-[#A5B4BF]">
-            {subtitleText}
-          </p>
+        {/* Navigation & Header Actions: Back to Courses Button */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <button
+            type="button"
+            onClick={() => navigate({ ...nav, screen: "courses" })}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-[#323D59] px-4 py-2 text-xs sm:text-sm font-bold text-[#F8FAFC] shadow-sm transition-all hover:bg-[#3B4868] hover:border-white/20 active:scale-95 cursor-pointer"
+          >
+            <ArrowRight className="h-4 w-4 text-[#7DA49F]" />
+            <span>العودة للمواد الدراسية</span>
+          </button>
+
+          {/* Quick Doctor Switcher Chips Header */}
+          {courseDoctors.length > 0 && (
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-xs font-bold text-[#A5B4BF] ml-1">
+                تصفية حسب الدكتور:
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedDoctorId(undefined)}
+                className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                  !selectedDoctorId
+                    ? "bg-[#7DA49F] text-[#1E2638] shadow-sm"
+                    : "bg-[#323D59] text-[#A5B4BF] hover:bg-[#3B4868] hover:text-[#F8FAFC] border border-white/[0.06]"
+                }`}
+              >
+                جميع المحاضرين
+              </button>
+              {courseDoctors.map((doc) => {
+                const isSelected = selectedDoctorId === doc.id;
+                return (
+                  <button
+                    key={doc.id}
+                    type="button"
+                    onClick={() => setSelectedDoctorId(doc.id)}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? "bg-[#7DA49F] text-[#1E2638] shadow-sm font-extrabold"
+                        : "bg-[#323D59] text-[#A5B4BF] hover:bg-[#3B4868] hover:text-[#F8FAFC] border border-white/[0.06]"
+                    }`}
+                  >
+                    <span>{doc.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
+        {/* Course Title Header */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-[#F8FAFC]">
+              {nav.course?.name || currentCourse.name}
+            </h1>
+            {currentCourse.code && (
+              <span className="font-['JetBrains_Mono'] rounded-lg bg-[#7DA49F]/15 px-2.5 py-0.5 text-xs font-bold text-[#7DA49F] border border-[#7DA49F]/25">
+                {currentCourse.code}
+              </span>
+            )}
+          </div>
+          <p className="text-sm font-medium text-[#A5B4BF]">{subtitleText}</p>
+        </div>
+
+        {/* ACTIVE DOCTOR INDICATOR BANNER */}
+        {activeDoctor ? (
+          <div className="relative overflow-hidden rounded-2xl border border-[#7DA49F]/35 bg-gradient-to-r from-[#323D59] via-[#323D59]/90 to-[#242D42] p-5 shadow-xl">
+            <div className="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-[#7DA49F]/10 blur-2xl pointer-events-none" />
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                {/* Doctor Avatar Badge */}
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#7DA49F]/30 to-[#9DBFB8]/20 text-[#F8FAFC] border border-[#7DA49F]/40 shadow-inner">
+                  <span className="text-lg font-black text-[#7DA49F]">
+                    {activeDoctor.name.replace("د. ", "").charAt(0)}
+                  </span>
+                </div>
+
+                {/* Doctor Info */}
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="rounded-md bg-[#7DA49F]/20 px-2 py-0.5 text-[10px] font-bold text-[#9DBFB8] border border-[#7DA49F]/30">
+                      مدرس المادة
+                    </span>
+                    <span className="text-xs font-bold text-[#A5B4BF]">
+                      {activeDoctor.academicTitle} · قسم {activeDoctor.department}
+                    </span>
+                  </div>
+
+                  <h2 className="text-lg sm:text-xl font-black text-[#F8FAFC] mt-0.5">
+                    تدريس: {activeDoctor.name}
+                  </h2>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-[#A5B4BF]">
+                    <span className="flex items-center gap-1.5 font-['JetBrains_Mono']">
+                      <Mail className="h-3.5 w-3.5 text-[#7DA49F]" />
+                      <span>{activeDoctor.email}</span>
+                    </span>
+                    <span>·</span>
+                    <span className="flex items-center gap-1.5 font-['JetBrains_Mono']" dir="ltr">
+                      <Phone className="h-3.5 w-3.5 text-[#7DA49F]" />
+                      <span>{activeDoctor.phone}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset Filter Button */}
+              <div className="shrink-0 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedDoctorId(undefined)}
+                  className="flex items-center gap-2 rounded-xl border border-white/[0.1] bg-[#242D42]/80 px-3.5 py-2 text-xs font-bold text-[#A5B4BF] transition-all hover:bg-white/[0.08] hover:text-[#F8FAFC] cursor-pointer"
+                >
+                  <RotateCcw className="h-3.5 w-3.5 text-[#7DA49F]" />
+                  <span>إلغاء التصفية (عرض الكل)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between rounded-2xl border border-white/[0.07] bg-[#323D59]/60 px-5 py-3 text-xs">
+            <div className="flex items-center gap-2 text-[#A5B4BF]">
+              <UserCheck className="h-4 w-4 text-[#7DA49F]" />
+              <span>
+                يتم حالياً عرض <strong>جميع الموارد والملفات</strong> لكافة
+                مدرسي المادة ({courseDoctors.map((d) => d.name).join("، ")}).
+              </span>
+            </div>
+            <span className="text-[11px] font-bold text-[#7DA49F]">
+              اختر دكتوراً من الأعلى لعرض ملفاته الخاصة
+            </span>
+          </div>
+        )}
+
+        {/* Tabbed Navigation and File Lists */}
         <div className="flex flex-col md:flex-row gap-6">
           {/* Tab Sidebar */}
-          <aside className="w-full md:w-56 shrink-0 rounded-2xl border border-white/[0.07] bg-[#323D59] p-2.5 h-fit shadow-lg">
+          <aside className="w-full md:w-60 shrink-0 rounded-2xl border border-white/[0.07] bg-[#323D59] p-2.5 h-fit shadow-lg">
             <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-              {tabs.map((tab) => {
+              {tabDefs.map((tab) => {
                 const isActive = activeTab === tab.id;
+                const count = tabCounts[tab.id] || 0;
                 return (
-                  <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
                     className={`flex w-full items-center justify-between gap-3 rounded-xl px-3.5 py-2.5 text-right text-xs sm:text-sm font-bold transition-all cursor-pointer border-0 ${
                       isActive
                         ? "bg-[#3B4868] text-[#F8FAFC] shadow-sm border border-[#7DA49F]/40"
@@ -297,12 +627,17 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
-                      <span>{tab.icon}</span><span>{tab.label}</span>
+                      <span>{tab.icon}</span>
+                      <span>{tab.label}</span>
                     </div>
-                    <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
-                      isActive ? "bg-[#7DA49F] text-[#1E2638]" : "bg-white/[0.06] text-[#A5B4BF] border border-white/[0.06]"
-                    }`}>
-                      {tab.count}
+                    <span
+                      className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${
+                        isActive
+                          ? "bg-[#7DA49F] text-[#1E2638]"
+                          : "bg-white/[0.06] text-[#A5B4BF] border border-white/[0.06]"
+                      }`}
+                    >
+                      {count}
                     </span>
                   </button>
                 );
@@ -312,14 +647,26 @@ export default function CourseDetailScreen({ nav, navigate }: Props) {
 
           {/* Content Area */}
           <main className="flex-1 min-w-0">
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-bold text-[#F8FAFC]">{tabs.find((t) => t.id === activeTab)?.label}</h2>
-                <p className="text-xs font-semibold text-[#A5B4BF]">{nav.course?.name}</p>
+                <h2 className="text-lg font-bold text-[#F8FAFC]">
+                  {tabDefs.find((t) => t.id === activeTab)?.label}
+                </h2>
+                <p className="text-xs font-semibold text-[#A5B4BF]">
+                  {activeDoctor
+                    ? `الملفات الخاصة بـ ${activeDoctor.name}`
+                    : `جميع ملفات ${nav.course?.name || currentCourse.name}`}
+                </p>
               </div>
+
               <div className="flex items-center gap-2.5">
-                <button type="button" className="flex items-center gap-1.5 rounded-xl border border-[#7DA49F]/30 bg-[#323D59] px-3.5 py-2 text-xs font-bold text-[#F8FAFC] transition-all hover:bg-[#3B4868] hover:border-[#7DA49F]/50 cursor-pointer shadow-sm">
-                  <Download className="h-3.5 w-3.5 text-[#7DA49F]" /><span>تحميل الكل</span>
+                <button
+                  type="button"
+                  onClick={() => alert("جاري تجهيز حزمة الملفات للتحميل...")}
+                  className="flex items-center gap-1.5 rounded-xl border border-[#7DA49F]/30 bg-[#323D59] px-3.5 py-2 text-xs font-bold text-[#F8FAFC] transition-all hover:bg-[#3B4868] hover:border-[#7DA49F]/50 cursor-pointer shadow-sm active:scale-95"
+                >
+                  <Download className="h-3.5 w-3.5 text-[#7DA49F]" />
+                  <span>تحميل كل ملفات هذا القسم</span>
                 </button>
               </div>
             </div>
