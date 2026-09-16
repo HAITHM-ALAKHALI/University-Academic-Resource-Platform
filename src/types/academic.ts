@@ -20,6 +20,41 @@ export interface Doctor {
   rating?: number;
 }
 
+export interface AcademicDepartment {
+  id: number;
+  name: string;
+  nameEn: string;
+  color: string;
+  icon: string;
+  desc?: string;
+}
+
+export interface SemesterInfo {
+  id: number;
+  name: string;
+  courses: number;
+  files: number;
+  color: string;
+}
+
+export interface AcademicLevel {
+  id: number;
+  name: string;
+  year: number;
+  color: string;
+  icon: string;
+  coursesCount: number;
+  semesters: SemesterInfo[];
+}
+
+export interface AcademicSemester {
+  id: number;
+  name: string;
+  courses: number;
+  files: number;
+  color: string;
+}
+
 export interface AcademicCourse {
   id: number;
   code: string;
@@ -52,7 +87,6 @@ export interface CourseResource {
   name: string;
   size?: string;
   date?: string;
-  // Specific attributes
   author?: string;
   pages?: number;
   edition?: string;

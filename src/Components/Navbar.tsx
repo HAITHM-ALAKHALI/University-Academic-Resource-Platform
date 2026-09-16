@@ -10,6 +10,7 @@ export interface NavbarProps {
   setDark: Dispatch<SetStateAction<boolean>>;
   setLang: Dispatch<SetStateAction<Lang>>;
   setPage?: Dispatch<SetStateAction<Page>>;
+  onSwitchAdmin?: () => void; // إضافة خيار لتشغيل دالة التبديل إن وجدت
   currentPage?: string;
 }
 
@@ -19,6 +20,7 @@ export default function Navbar({
   setDark,
   setLang,
   setPage,
+  onSwitchAdmin,
   currentPage = "landing",
 }: NavbarProps) {
   const tx = t[lang] || t.ar;
@@ -26,6 +28,15 @@ export default function Navbar({
   const handleNav = (targetPage: Page) => {
     if (setPage) {
       setPage(targetPage);
+    }
+  };
+
+  const handleAdminClick = () => {
+    if (onSwitchAdmin) {
+      onSwitchAdmin();
+    } else if (setPage) {
+      // توجيه المستخدم إلى صفحة تسجيل الدخول بدلاً من اللوحة مباشرة
+      setPage("login");
     }
   };
 
@@ -91,11 +102,13 @@ export default function Navbar({
           >
             {tx.nav?.courses || "المواد"}
           </button>
+
+          {/* زر لوحة المشرف: يفتح صفحة تسجيل الدخول login */}
           <button
             type="button"
-            onClick={() => handleNav("admin")}
+            onClick={handleAdminClick}
             className={`rounded-xl px-4 py-1.5 text-sm font-bold transition-all border-0 cursor-pointer ${
-              currentPage === "admin"
+              currentPage === "login" || currentPage === "admin"
                 ? "bg-[#7DA49F]/20 text-[#F8FAFC] border border-[#7DA49F]/35 shadow-sm"
                 : "bg-transparent text-[#A5B4BF] hover:text-[#F8FAFC] hover:bg-white/[0.05]"
             }`}
@@ -131,7 +144,11 @@ export default function Navbar({
                 : "border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
-            {dark ? <Sun className="h-4 w-4 text-[#7DA49F]" /> : <Moon className="h-4 w-4" />}
+            {dark ? (
+              <Sun className="h-4 w-4 text-[#7DA49F]" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

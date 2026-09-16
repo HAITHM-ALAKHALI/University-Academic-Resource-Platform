@@ -254,7 +254,7 @@ export default function DoctorFormModal({
             {/* Email */}
             <div>
               <label className="block text-xs font-bold text-[#A5B4BF] mb-1.5">
-                البريد الإلكتروني الجامعي <span className="text-red-400">*</span>
+                البريد الإلكتروني الأكاديمي <span className="text-red-400">*</span>
               </label>
               <input
                 type="email"

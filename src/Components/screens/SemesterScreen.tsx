@@ -1,11 +1,7 @@
 import { Calendar, ArrowLeft } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
-
-const semesters = [
-  { id: 1, name: "الترم الأول", courses: 6, files: 124, color: "#6B8EC7" },
-  { id: 2, name: "الترم الثاني", courses: 6, files: 118, color: "#8B7EC0" },
-];
+import { semestersData } from "../../constants/academicData";
 
 interface Props {
   nav: NavState;
@@ -35,7 +31,7 @@ export default function SemesterScreen({ nav, navigate }: Props) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {semesters.map((sem) => (
+          {semestersData.map((sem) => (
             <div
               key={sem.id}
               onClick={() =>

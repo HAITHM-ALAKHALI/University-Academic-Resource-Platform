@@ -318,7 +318,7 @@ export const initialCourseResources: CourseResource[] = [
     courseId: 1,
     doctorId: "doc-1",
     type: "projects",
-    name: "مشروع إدارة المكتبة الجامعية باستخدام C وهياكل البيانات",
+    name: "مشروع إدارة المكتبة الأكاديمية باستخدام C وهياكل البيانات",
     grade: "مشروع فصلي",
     desc: "نظام كامل لإدارة الكتب والإعارة مع التخزين في ملفات نصية ومصفوفات ديناميكية.",
     tech: ["C", "File I/O", "Pointers", "Structs"],

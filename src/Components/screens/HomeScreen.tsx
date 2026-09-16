@@ -2,78 +2,18 @@ import { useMemo } from "react";
 import { ArrowLeft, FileText } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
-import { departments } from "./DepartmentScreen";
-
-const popularCourses = [
-  {
-    id: 1,
-    name: "هياكل البيانات",
-    nameEn: "Data Structures",
-    dept: "علوم حاسوب",
-    uni: "جامعة القاهرة",
-    files: 47,
-    color: "#6B8EC7", // Soft Blue
-    icon: "⚙",
-  },
-  {
-    id: 2,
-    name: "برمجة 1",
-    nameEn: "Programming 1",
-    dept: "علوم حاسوب",
-    uni: "جامعة القاهرة",
-    files: 32,
-    color: "#5BA8B5", // Soft Cyan
-    icon: "💻",
-  },
-  {
-    id: 3,
-    name: "رياضيات",
-    nameEn: "Mathematics",
-    dept: "هندسة",
-    uni: "جامعة الإسكندرية",
-    files: 28,
-    color: "#C9A855", // Soft Amber
-    icon: "∑",
-  },
-  {
-    id: 4,
-    name: "قواعد البيانات",
-    nameEn: "Database Systems",
-    dept: "تقنية معلومات",
-    uni: "جامعة القاهرة",
-    files: 39,
-    color: "#5BAA8E", // Soft Emerald
-    icon: "🗄",
-  },
-  {
-    id: 5,
-    name: "الذكاء الاصطناعي",
-    nameEn: "Artificial Intelligence",
-    dept: "علوم حاسوب",
-    uni: "جامعة الأزهر",
-    files: 55,
-    color: "#8B7EC0", // Soft Violet
-    icon: "🤖",
-  },
-  {
-    id: 6,
-    name: "شبكات الحاسوب",
-    nameEn: "Computer Networks",
-    dept: "هندسة",
-    uni: "جامعة القاهرة",
-    files: 41,
-    color: "#C07A9B", // Soft Rose
-    icon: "🌐",
-  },
-];
+import {
+  departmentsData,
+  popularCoursesData,
+} from "../../constants/academicData";
 
 interface Props {
   navigate: (s: NavState) => void;
 }
 
 export default function HomeScreen({ navigate }: Props) {
-  const deptList = useMemo(() => departments, []);
-  const courseList = useMemo(() => popularCourses, []);
+  const deptList = useMemo(() => departmentsData, []);
+  const courseList = useMemo(() => popularCoursesData, []);
 
   return (
     <div className="w-full">
@@ -144,9 +84,7 @@ export default function HomeScreen({ navigate }: Props) {
                 </h4>
 
                 <div className="flex items-center justify-center gap-2 text-xs">
-                  <span className="text-[#A5B4BF]">
-                    {dept.nameEn}
-                  </span>
+                  <span className="text-[#A5B4BF]">{dept.nameEn}</span>
                   <span
                     className="rounded-full px-2.5 py-0.5 font-bold text-[10px]"
                     style={{

@@ -2,66 +2,18 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import type { NavState } from "../StudentApp";
 import TopBar from "../TopBar";
+import { departmentsData } from "../../constants/academicData";
 
-export const departments = [
-  {
-    id: 1,
-    name: "علوم حاسوب",
-    nameEn: "CS",
-    color: "#6B8EC7", // Soft Blue
-    icon: "</>",
-    desc: "Computer Science",
-  },
-  {
-    id: 2,
-    name: "تقنية معلومات",
-    nameEn: "IT",
-    color: "#5BA8B5", // Soft Cyan
-    icon: "🖥",
-    desc: "Information Technology",
-  },
-  {
-    id: 3,
-    name: "أمن سيبراني",
-    nameEn: "CYS",
-    color: "#5BAA8E", // Soft Emerald
-    icon: "🔐",
-    desc: "Cyber Security",
-  },
-  {
-    id: 4,
-    name: "ذكاء اصطناعي",
-    nameEn: "AI",
-    color: "#8B7EC0", // Soft Violet
-    icon: "🤖",
-    desc: "Artificial Intelligence",
-  },
-  {
-    id: 5,
-    name: "نظم معلومات",
-    nameEn: "IS",
-    color: "#C9A855", // Soft Amber
-    icon: "🗄",
-    desc: "Information Systems",
-  },
-  {
-    id: 6,
-    name: "علم البيانات",
-    nameEn: "DS",
-    color: "#C07A9B", // Soft Rose
-    icon: "📊",
-    desc: "Data Science",
-  },
-];
+export const departments = departmentsData;
 
 interface Props {
   nav: NavState;
   navigate: (s: NavState) => void;
 }
 
-export default function DepartmentScreen({ nav, navigate }: Props) {
+export default function DepartmentScreen({ navigate }: Props) {
   const [search, setSearch] = useState("");
-  const filtered = departments.filter(
+  const filtered = departmentsData.filter(
     (d) =>
       d.name.includes(search) ||
       d.nameEn.toLowerCase().includes(search.toLowerCase()),
@@ -72,17 +24,17 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
       <TopBar
         breadcrumbs={[
           { label: "الرئيسية", onClick: () => navigate({ screen: "home" }) },
-          { label: nav.college?.name ?? "" },
+          { label: "الأقسام" },
         ]}
       />
       <div className="p-6 sm:p-8 max-w-7xl mx-auto space-y-6">
         {/* Page Title on Base Canvas */}
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-black text-[#F8FAFC]">
-            {nav.college?.name}
+            الأقسام الأكاديمية
           </h1>
           <p className="text-sm font-medium text-[#A5B4BF]">
-            اختر القسم للمتابعة
+            اختر التخصص الأكاديمي للمتابعة
           </p>
         </div>
 
@@ -98,13 +50,12 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
         </div>
 
         {/* Departments Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filtered.map((dept) => (
             <div
               key={dept.id}
               onClick={() =>
                 navigate({
-                  ...nav,
                   screen: "levels",
                   department: {
                     id: dept.id,
@@ -115,41 +66,58 @@ export default function DepartmentScreen({ nav, navigate }: Props) {
                   },
                 })
               }
-              className="group relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#323D59] p-7 text-right shadow-lg transition-all duration-300 hover:-translate-y-1.5 hover:border-white/[0.15] hover:shadow-2xl hover:bg-[#3B4868] cursor-pointer"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.07] bg-[#323D59] p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-white/[0.15] hover:shadow-2xl hover:bg-[#3B4868] cursor-pointer"
             >
               <div
-                className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full transition-transform group-hover:scale-125 duration-500 opacity-[0.12] blur-xl"
+                className="absolute -top-8 -left-8 h-28 w-28 rounded-full opacity-[0.12] blur-xl pointer-events-none transition-transform duration-500 group-hover:scale-125"
                 style={{ background: dept.color }}
               />
 
-              <div
-                className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-2xl font-bold transition-transform duration-300 group-hover:scale-110 shadow-md"
-                style={{
-                  background: `${dept.color}18`,
-                  color: dept.color,
-                  border: `1.5px solid ${dept.color}30`,
-                }}
-              >
-                {dept.icon}
+              <div>
+                <div className="flex items-start justify-between">
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-xl text-xl font-bold transition-transform duration-300 group-hover:scale-110 shadow-md"
+                    style={{
+                      background: `${dept.color}18`,
+                      color: dept.color,
+                      border: `1.5px solid ${dept.color}30`,
+                    }}
+                  >
+                    {dept.icon}
+                  </div>
+                  <span
+                    className="rounded-lg px-2 py-0.5 text-xs font-bold font-['JetBrains_Mono'] border"
+                    style={{
+                      borderColor: `${dept.color}30`,
+                      color: dept.color,
+                      backgroundColor: `${dept.color}12`,
+                    }}
+                  >
+                    {dept.nameEn}
+                  </span>
+                </div>
+
+                <div className="mt-4">
+                  <h3 className="text-base font-bold text-[#F8FAFC] group-hover:text-[#9DBFB8] transition-colors">
+                    {dept.name}
+                  </h3>
+                  <p className="mt-1 text-xs font-semibold text-[#A5B4BF]">
+                    {dept.desc}
+                  </p>
+                </div>
               </div>
 
-              <h3 className="mb-1 text-lg sm:text-xl font-extrabold text-[#F8FAFC] group-hover:text-[#9DBFB8] transition-colors">
-                {dept.name}
-              </h3>
-              <p className="mb-3 text-xs font-semibold text-[#A5B4BF]">
-                {dept.nameEn}
-              </p>
-
-              <span
-                className="inline-block rounded-lg px-2.5 py-1 text-xs font-bold"
-                style={{
-                  color: dept.color,
-                  background: `${dept.color}15`,
-                  border: `1px solid ${dept.color}25`,
-                }}
-              >
-                {dept.desc}
-              </span>
+              <div className="mt-6 flex items-center justify-between border-t border-white/[0.06] pt-3 text-xs">
+                <span className="text-[#A5B4BF] font-semibold">
+                  4 سنوات دراسية
+                </span>
+                <span
+                  className="font-bold flex items-center gap-1 transition-transform group-hover:translate-x-[-4px]"
+                  style={{ color: dept.color }}
+                >
+                  استعراض المواد ←
+                </span>
+              </div>
             </div>
           ))}
         </div>

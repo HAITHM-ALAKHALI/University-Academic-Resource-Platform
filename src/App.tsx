@@ -1,13 +1,16 @@
 import { useState, useMemo, lazy, Suspense } from "react";
-import { courses, type Lang } from "./data";
+import { courses } from "./data";
+import type { Page, Lang } from "./types/app";
+import { useAuth } from "./hooks/useAuth";
 
-const StudentApp = lazy(() => import("./Components/StudentApp"));
-const AdminApp = lazy(() => import("./Components/AdminApp"));
+export type { Page } from "./types/app";
+
+const StudentApp = lazy(() => import("./features/student/StudentApp"));
+const AdminApp = lazy(() => import("./features/admin/AdminApp"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const CourseDetailPage = lazy(() => import("./pages/CourseDetailPage"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-
-export type Page = "landing" | "course" | "admin" | "app";
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 
 function LoadingFallback() {
   return (
@@ -23,7 +26,10 @@ function LoadingFallback() {
 }
 
 export default function App() {
-  const [mode, setMode] = useState<"student" | "admin" | "pages">("student");
+  // Authentication & session management via custom hook
+  const { currentUser, mode, setMode, handleLoginSuccess, handleLogout } =
+    useAuth();
+
   const [page, setPage] = useState<Page>("landing");
   const [dark, setDark] = useState<boolean>(true);
   const [lang, setLang] = useState<Lang>("ar");
@@ -31,7 +37,7 @@ export default function App() {
 
   const selectedCourse = useMemo(
     () => courses.find((c) => c.id === selectedCourseId) || courses[0],
-    [selectedCourseId],
+    [selectedCourseId]
   );
 
   const handleOpenCourse = (id: string) => {
@@ -40,28 +46,54 @@ export default function App() {
     setMode("pages");
   };
 
+  const handleOpenLogin = () => {
+    if (currentUser) {
+      setMode("admin");
+    } else {
+      setMode("pages");
+      setPage("login");
+    }
+  };
+
+  const handleStudentLogout = () => {
+    handleLogout();
+    setPage("landing");
+  };
+
+  // 1. عرض واجهة الطالب
   if (mode === "student") {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
-          <StudentApp onSwitchAdmin={() => setMode("admin")} />
+          <StudentApp onSwitchAdmin={handleOpenLogin} />
         </Suspense>
       </div>
     );
   }
 
+  // 2. عرض لوحة المشرف بعد تسجيل الدخول
   if (mode === "admin") {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
-          <AdminApp onSwitchStudent={() => setMode("student")} />
+          <AdminApp
+            onSwitchStudent={() => setMode("student")}
+            onLogout={handleStudentLogout}
+          />
         </Suspense>
       </div>
     );
   }
 
+  // 3. عرض الصفحات العامة والتسجيل (mode === "pages")
   return (
-    <div className={`min-h-screen ${dark ? "bg-[var(--bg-base)] text-[var(--text-primary)]" : "bg-slate-50 text-slate-900"}`}>
+    <div
+      className={`min-h-screen ${
+        dark
+          ? "bg-[var(--bg-base)] text-[var(--text-primary)]"
+          : "bg-slate-50 text-slate-900"
+      }`}
+    >
       <Suspense fallback={<LoadingFallback />}>
         {page === "landing" && (
           <LandingPage
@@ -71,8 +103,10 @@ export default function App() {
             setLang={setLang}
             setPage={setPage}
             openCourse={handleOpenCourse}
+            onOpenLogin={handleOpenLogin}
           />
         )}
+
         {page === "course" && (
           <CourseDetailPage
             dark={dark}
@@ -84,6 +118,19 @@ export default function App() {
             openCourse={handleOpenCourse}
           />
         )}
+
+        {page === "login" && (
+          <AdminLogin
+            onLoginSuccess={(user) => {
+              handleLoginSuccess(user);
+            }}
+            onBackToHome={() => {
+              setMode("student");
+              setPage("landing");
+            }}
+          />
+        )}
+
         {page === "admin" && (
           <AdminDashboard
             dark={dark}
@@ -91,6 +138,7 @@ export default function App() {
             setDark={setDark}
             setLang={setLang}
             setPage={setPage}
+            onLogout={handleStudentLogout}
           />
         )}
       </Suspense>
