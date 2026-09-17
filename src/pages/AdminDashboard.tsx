@@ -9,6 +9,7 @@ import {
   Sparkles,
   TrendingUp,
   FolderOpen,
+  LogOut,
 } from "lucide-react";
 import OverviewTab from "../features/admin-dashboard/components/OverviewTab";
 import CoursesTab from "../features/admin-dashboard/components/CoursesTab";
@@ -66,6 +67,7 @@ export default function AdminDashboard({
         setDark={setDark}
         setLang={setLang}
         setPage={setPage}
+        onLogout={onLogout}
         currentPage="admin"
       />
 
@@ -95,6 +97,17 @@ export default function AdminDashboard({
               <Upload className="h-4 w-4" />
               <span>{tx.admin.uploadResource}</span>
             </button>
+
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 text-sm font-bold text-rose-300 shadow-md transition-all hover:bg-rose-500/20 active:scale-95 cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 text-rose-400" />
+                <span>{lang === "ar" ? "تسجيل الخروج" : "Logout"}</span>
+              </button>
+            )}
           </div>
         </div>
 

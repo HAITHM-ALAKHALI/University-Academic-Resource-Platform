@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import { GraduationCap, Globe, Sun, Moon } from "lucide-react";
+import { GraduationCap, Globe, Sun, Moon, LogOut } from "lucide-react";
 import type { Lang } from "../data";
 import type { Page } from "../App";
 import { t } from "../data";
@@ -10,7 +10,8 @@ export interface NavbarProps {
   setDark: Dispatch<SetStateAction<boolean>>;
   setLang: Dispatch<SetStateAction<Lang>>;
   setPage?: Dispatch<SetStateAction<Page>>;
-  onSwitchAdmin?: () => void; // إضافة خيار لتشغيل دالة التبديل إن وجدت
+  onSwitchAdmin?: () => void;
+  onLogout?: () => void;
   currentPage?: string;
 }
 
@@ -21,6 +22,7 @@ export default function Navbar({
   setLang,
   setPage,
   onSwitchAdmin,
+  onLogout,
   currentPage = "landing",
 }: NavbarProps) {
   const tx = t[lang] || t.ar;
@@ -150,6 +152,25 @@ export default function Navbar({
               <Moon className="h-4 w-4" />
             )}
           </button>
+
+          {/* Logout Button */}
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              title={lang === "ar" ? "تسجيل الخروج" : "Logout"}
+              className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                dark
+                  ? "border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 hover:border-rose-500/50"
+                  : "border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100"
+              }`}
+            >
+              <LogOut className="h-3.5 w-3.5 text-rose-400" />
+              <span className="hidden sm:inline">
+                {lang === "ar" ? "خروج" : "Logout"}
+              </span>
+            </button>
+          )}
         </div>
       </div>
     </header>

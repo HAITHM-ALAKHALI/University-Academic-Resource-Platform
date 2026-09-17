@@ -192,7 +192,43 @@ const tableData: Record<string, { headers: string[]; rows: string[][] }> = {
       ],
     ],
   },
-  users: {
+  admins: {
+    headers: [
+      "المعرف",
+      "الاسم",
+      "البريد الإلكتروني",
+      "الدور",
+      "تاريخ الانضمام",
+      "الإجراءات",
+    ],
+    rows: [
+      ["1", "محمد أحمد", "mohammed@cairo.edu", "طالب", "2024-01-01", ""],
+      ["2", "سارة علي", "sara@alex.edu", "طالب", "2024-01-03", ""],
+      ["3", "أحمد محمود", "ahmed@azhar.edu", "أستاذ", "2024-01-05", ""],
+      ["4", "فاطمة حسن", "fatma@cairo.edu", "طالب", "2024-01-07", ""],
+      ["5", "عمر خالد", "omar@ainshams.edu", "مشرف", "2024-01-10", ""],
+      ["6", "نور إبراهيم", "nour@mansoura.edu", "طالب", "2024-01-12", ""],
+    ],
+  },
+  content_managers: {
+    headers: [
+      "المعرف",
+      "الاسم",
+      "البريد الإلكتروني",
+      "الدور",
+      "تاريخ الانضمام",
+      "الإجراءات",
+    ],
+    rows: [
+      ["1", "محمد أحمد", "mohammed@cairo.edu", "طالب", "2024-01-01", ""],
+      ["2", "سارة علي", "sara@alex.edu", "طالب", "2024-01-03", ""],
+      ["3", "أحمد محمود", "ahmed@azhar.edu", "أستاذ", "2024-01-05", ""],
+      ["4", "فاطمة حسن", "fatma@cairo.edu", "طالب", "2024-01-07", ""],
+      ["5", "عمر خالد", "omar@ainshams.edu", "مشرف", "2024-01-10", ""],
+      ["6", "نور إبراهيم", "nour@mansoura.edu", "طالب", "2024-01-12", ""],
+    ],
+  },
+  content_managements: {
     headers: [
       "المعرف",
       "الاسم",
@@ -233,7 +269,9 @@ export function AdminTableView({
     semesters: "ترم",
     courses: "مادة",
     files: "ملف",
-    users: "مستخدم",
+    admins: "المدراء",
+    content_managers: "مدراء المحتوى",
+    content_managements: "ادارة المحتوى",
   };
   const label = labelMap[view] ?? "عنصر";
 

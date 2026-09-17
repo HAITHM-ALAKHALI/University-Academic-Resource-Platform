@@ -7,6 +7,7 @@ import {
   SlidersHorizontal,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import type { NavState } from "./StudentApp";
 
@@ -14,12 +15,14 @@ interface StudentNavbarProps {
   nav: NavState;
   navigate: (state: NavState) => void;
   onSwitchAdmin: () => void;
+  onLogout?: () => void;
 }
 
 export default function StudentNavbar({
   nav,
   navigate,
   onSwitchAdmin,
+  onLogout,
 }: StudentNavbarProps) {
   const [showAbout, setShowAbout] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -112,6 +115,18 @@ export default function StudentNavbar({
               <span>لوحة المشرف</span>
             </button>
 
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                title="تسجيل الخروج"
+                className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2 text-xs sm:text-sm font-bold text-rose-300 shadow-md shadow-[#242D42]/40 transition-all duration-200 hover:border-rose-500/50 hover:bg-rose-500/20 hover:scale-[1.02] cursor-pointer active:scale-95"
+              >
+                <LogOut className="h-4 w-4 text-rose-400" />
+                <span className="hidden sm:inline">تسجيل الخروج</span>
+              </button>
+            )}
+
             {/* Mobile Menu Toggle Button */}
             <button
               type="button"
@@ -168,6 +183,20 @@ export default function StudentNavbar({
               <Info className="h-4 w-4" />
               <span>عن المنصة</span>
             </button>
+
+            {onLogout && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onLogout();
+                }}
+                className="flex w-full items-center gap-3 rounded-lg border border-rose-500/25 bg-rose-500/10 px-3.5 py-2.5 text-right text-sm font-bold text-rose-300 hover:bg-rose-500/20 cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 text-rose-400" />
+                <span>تسجيل الخروج</span>
+              </button>
+            )}
           </div>
         )}
       </header>

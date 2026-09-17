@@ -55,9 +55,11 @@ export type AdminView =
   | "levels"
   | "semesters"
   | "courses"
-  | "doctors"
   | "files"
-  | "users"
+  | "admins"
+  | "content_managers"
+  | "doctors"
+  | "content_managements"
   | "settings";
 
 export type AdminTab = "overview" | "courses" | "resources" | "upload";

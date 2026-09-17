@@ -11,6 +11,7 @@ export interface LandingPageProps {
   setPage: Dispatch<SetStateAction<Page>>;
   openCourse: (id: string) => void;
   onOpenLogin?: () => void;
+  onLogout?: () => void;
 }
 
 const stats = [
@@ -83,6 +84,7 @@ export default function LandingPage({
   setPage,
   openCourse,
   onOpenLogin,
+  onLogout,
 }: LandingPageProps) {
   const tx = t[lang];
   const featured = courses.slice(0, 3);
@@ -91,7 +93,7 @@ export default function LandingPage({
     if (onOpenLogin) {
       onOpenLogin();
     } else {
-      setPage("admin");
+      setPage("login");
     }
   };
 
@@ -104,6 +106,7 @@ export default function LandingPage({
         setLang={setLang}
         setPage={setPage}
         onSwitchAdmin={handleAdminAccess}
+        onLogout={onLogout}
         currentPage="landing"
       />
 

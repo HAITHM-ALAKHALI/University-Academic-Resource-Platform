@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import type { AdminView } from "../../../types/app";
 import { defaultAdminNav } from "./AdminSidebar";
 import NotificationDropdown from "./NotificationDropdown";
@@ -12,6 +12,7 @@ export interface AdminHeaderProps {
   unreadCount: number;
   onMarkAllRead: () => void;
   onSelectNotification: (id: number) => void;
+  onLogout?: () => void;
 }
 
 export function AdminHeader({
@@ -22,6 +23,7 @@ export function AdminHeader({
   unreadCount,
   onMarkAllRead,
   onSelectNotification,
+  onLogout,
 }: AdminHeaderProps) {
   const currentNav = defaultAdminNav.find((n) => n.id === currentView);
 
@@ -65,6 +67,19 @@ export function AdminHeader({
             />
           )}
         </div>
+
+        {/* Logout Button */}
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            title="تسجيل الخروج"
+            className="flex items-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3.5 py-2 text-xs font-bold text-rose-300 transition-all duration-200 hover:bg-rose-500/20 hover:border-rose-500/40 cursor-pointer active:scale-95"
+          >
+            <LogOut className="h-4 w-4 text-rose-400" />
+            <span className="hidden sm:inline">تسجيل الخروج</span>
+          </button>
+        )}
       </div>
     </header>
   );

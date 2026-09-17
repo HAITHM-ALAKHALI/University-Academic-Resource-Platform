@@ -21,6 +21,7 @@ const CourseDetailScreen = lazy(
 
 export interface StudentAppProps {
   onSwitchAdmin: () => void;
+  onLogout?: () => void;
 }
 
 function ScreenLoader() {
@@ -36,7 +37,10 @@ function ScreenLoader() {
   );
 }
 
-export default function StudentApp({ onSwitchAdmin }: StudentAppProps) {
+export default function StudentApp({
+  onSwitchAdmin,
+  onLogout,
+}: StudentAppProps) {
   const [nav, setNav] = useState<NavState>({ screen: "home" });
 
   const navigate = useCallback((state: NavState) => setNav(state), []);
@@ -69,6 +73,7 @@ export default function StudentApp({ onSwitchAdmin }: StudentAppProps) {
         nav={nav}
         navigate={navigate}
         onSwitchAdmin={onSwitchAdmin}
+        onLogout={onLogout}
       />
       <main className="w-full flex-1 min-h-[calc(100vh-65px)]">
         <Suspense fallback={<ScreenLoader />}>{renderScreen()}</Suspense>

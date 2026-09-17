@@ -65,7 +65,10 @@ export default function App() {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
-          <StudentApp onSwitchAdmin={handleOpenLogin} />
+          <StudentApp
+            onSwitchAdmin={handleOpenLogin}
+            onLogout={currentUser ? handleStudentLogout : undefined}
+          />
         </Suspense>
       </div>
     );
@@ -104,6 +107,7 @@ export default function App() {
             setPage={setPage}
             openCourse={handleOpenCourse}
             onOpenLogin={handleOpenLogin}
+            onLogout={currentUser ? handleStudentLogout : undefined}
           />
         )}
 
@@ -116,6 +120,7 @@ export default function App() {
             setPage={setPage}
             course={selectedCourse}
             openCourse={handleOpenCourse}
+            onLogout={currentUser ? handleStudentLogout : undefined}
           />
         )}
 

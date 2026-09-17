@@ -9,6 +9,7 @@ import {
   Users,
   FileText,
   Settings,
+  LogOut,
 } from "lucide-react";
 import type { AdminView } from "../../../types/app";
 
@@ -51,22 +52,34 @@ export const defaultAdminNav: NavItem[] = [
     badge: 3,
   },
   {
-    id: "doctors",
-    label: "إدارة الدكاترة",
-    icon: <Users className="h-4 w-4" />,
-    badge: 0,
-  },
-  {
     id: "files",
     label: "الملفات",
     icon: <FileText className="h-4 w-4" />,
     badge: 12,
   },
   {
-    id: "users",
-    label: "المستخدمون",
+    id: "admins",
+    label: "المدراء ",
     icon: <Users className="h-4 w-4" />,
     badge: 5,
+  },
+  {
+    id: "content_managers",
+    label: "مدراء المحتوى",
+    icon: <Users className="h-4 w-4" />,
+    badge: 5,
+  },
+  {
+    id: "doctors",
+    label: "الدكاترة",
+    icon: <Users className="h-4 w-4" />,
+    badge: 0,
+  },
+  {
+    id: "content_managements",
+    label: "ادارة المحتوى",
+    icon: <Settings className="h-4 w-4" />,
+    badge: 0,
   },
   {
     id: "settings",
@@ -80,6 +93,7 @@ export interface AdminSidebarProps {
   currentView: AdminView;
   onSelectView: (view: AdminView) => void;
   onSwitchStudent?: () => void;
+  onLogout?: () => void;
   doctorsCount?: number;
 }
 
@@ -87,6 +101,7 @@ export function AdminSidebar({
   currentView,
   onSelectView,
   onSwitchStudent,
+  onLogout,
   doctorsCount = 0,
 }: AdminSidebarProps) {
   return (
@@ -150,16 +165,30 @@ export function AdminSidebar({
         })}
       </nav>
 
-      {/* Return to Student Button */}
-      {onSwitchStudent && (
-        <div className="border-t border-white/[0.06] p-4">
-          <button
-            onClick={onSwitchStudent}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.07] bg-[#323D59] px-4 py-2.5 text-xs font-bold text-[#F4F7F6] transition-all duration-200 hover:bg-[#3B4868] hover:border-white/20 cursor-pointer"
-          >
-            <ArrowRight className="h-4 w-4 text-[#899C9A]" />
-            <span>العودة لواجهة الطالب</span>
-          </button>
+      {/* Footer Actions */}
+      {(onSwitchStudent || onLogout) && (
+        <div className="border-t border-white/[0.06] p-4 space-y-2">
+          {onSwitchStudent && (
+            <button
+              type="button"
+              onClick={onSwitchStudent}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.07] bg-[#323D59] px-4 py-2.5 text-xs font-bold text-[#F4F7F6] transition-all duration-200 hover:bg-[#3B4868] hover:border-white/20 cursor-pointer"
+            >
+              <ArrowRight className="h-4 w-4 text-[#899C9A]" />
+              <span>العودة لواجهة الطالب</span>
+            </button>
+          )}
+
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-4 py-2.5 text-xs font-bold text-rose-300 transition-all duration-200 hover:bg-rose-500/20 hover:border-rose-500/40 cursor-pointer active:scale-95"
+            >
+              <LogOut className="h-4 w-4 text-rose-400" />
+              <span>تسجيل الخروج</span>
+            </button>
+          )}
         </div>
       )}
     </aside>

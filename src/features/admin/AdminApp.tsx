@@ -16,7 +16,7 @@ export interface AdminAppProps {
   onLogout?: () => void;
 }
 
-export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
+export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
   const [view, setView] = useState<AdminView>("dashboard");
   const [showDialog, setShowDialog] = useState(false);
   const [dialogType, setDialogType] = useState<"add" | "edit">("add");
@@ -52,6 +52,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
         currentView={view}
         onSelectView={setView}
         onSwitchStudent={onSwitchStudent}
+        onLogout={onLogout}
         doctorsCount={doctorsList.length}
       />
 
@@ -66,6 +67,7 @@ export default function AdminApp({ onSwitchStudent }: AdminAppProps) {
           unreadCount={unreadCount}
           onMarkAllRead={markAllRead}
           onSelectNotification={markAsRead}
+          onLogout={onLogout}
         />
 
         {/* View Routing */}

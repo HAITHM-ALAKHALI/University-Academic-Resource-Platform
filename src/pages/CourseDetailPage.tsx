@@ -18,6 +18,7 @@ export interface CourseDetailPageProps {
   setPage: Dispatch<SetStateAction<Page>>;
   course: (typeof courses)[0];
   openCourse: (id: string) => void;
+  onLogout?: () => void;
 }
 
 export default function CourseDetailPage({
@@ -28,6 +29,7 @@ export default function CourseDetailPage({
   setPage,
   course,
   openCourse,
+  onLogout,
 }: CourseDetailPageProps) {
   const [activeTab, setActiveTab] = useState<TabKey>("lectures");
 
@@ -46,6 +48,7 @@ export default function CourseDetailPage({
         setDark={setDark}
         setLang={setLang}
         setPage={setPage}
+        onLogout={onLogout}
         currentPage="course"
       />
 

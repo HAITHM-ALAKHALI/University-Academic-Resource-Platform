@@ -27,11 +27,11 @@ export const userService = {
    * Endpoint: POST /api/check-user
    */
   checkUser: async (
-    credentials: CheckUserCredentials
+    credentials: CheckUserCredentials,
   ): Promise<ApiResponse<AuthenticatedUser>> => {
     const response = await apiClient.post<ApiResponse<AuthenticatedUser>>(
       "/check-user",
-      credentials
+      credentials,
     );
     return response.data;
   },
@@ -41,11 +41,11 @@ export const userService = {
    * Endpoint: POST /api/add-admin
    */
   addAdmin: async (
-    payload: UserPayload
+    payload: UserPayload,
   ): Promise<ApiResponse<AdminCreationResult>> => {
     const response = await apiClient.post<ApiResponse<AdminCreationResult>>(
       "/add-admin",
-      payload
+      payload,
     );
     return response.data;
   },
@@ -55,11 +55,11 @@ export const userService = {
    * Endpoint: POST /api/add-contextMangment
    */
   addContextManagement: async (
-    payload: UserPayload
+    payload: UserPayload,
   ): Promise<ApiResponse<AdminCreationResult>> => {
     const response = await apiClient.post<ApiResponse<AdminCreationResult>>(
       "/add-contextMangment",
-      payload
+      payload,
     );
     return response.data;
   },
