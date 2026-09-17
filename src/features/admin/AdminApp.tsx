@@ -7,6 +7,7 @@ import AdminHeader from "./components/AdminHeader";
 import AdminDashboardView from "./components/AdminDashboardView";
 import AdminSettingsView from "./components/AdminSettingsView";
 import AdminTableView from "./components/AdminTableView";
+import ContentManagementView from "./components/ContentManagementView";
 import AdminDialogModal from "./components/AdminDialogModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import DoctorsManagementView from "../../Components/admin/DoctorsManagementView";
@@ -18,6 +19,7 @@ export interface AdminAppProps {
 
 export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
   const [view, setView] = useState<AdminView>("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogType, setDialogType] = useState<"add" | "edit">("add");
   const [showNotifs, setShowNotifs] = useState(false);
@@ -54,10 +56,16 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         onSwitchStudent={onSwitchStudent}
         onLogout={onLogout}
         doctorsCount={doctorsList.length}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
       {/* Main Content Area */}
-      <main className="mr-64 flex-1 overflow-x-hidden min-h-screen bg-[#242D42]">
+      <main
+        className={`flex-1 overflow-x-hidden min-h-screen bg-[#242D42] transition-all duration-300 ease-in-out ${
+          sidebarCollapsed ? "mr-20" : "mr-64"
+        }`}
+      >
         {/* Sticky Top Header */}
         <AdminHeader
           currentView={view}
@@ -93,9 +101,12 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
             />
           )}
 
+          {view === "content_management" && <ContentManagementView />}
+
           {view !== "dashboard" &&
             view !== "settings" &&
-            view !== "doctors" && (
+            view !== "doctors" &&
+            view !== "content_management" && (
               <AdminTableView
                 view={view}
                 onAdd={() => {

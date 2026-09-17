@@ -10,7 +10,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import type { AdminView } from "../../../types/app";
-import { defaultAdminNav } from "./AdminSidebar";
+import { adminNavItems } from "../../../constants/adminNav";
 
 export interface AdminTableViewProps {
   view: AdminView;
@@ -133,117 +133,36 @@ const tableData: Record<string, { headers: string[]; rows: string[][] }> = {
       ],
     ],
   },
-  files: {
+  system_admins: {
     headers: [
       "المعرف",
-      "اسم الملف",
-      "المادة",
-      "النوع",
-      "الحجم",
-      "تاريخ الرفع",
-      "الإجراءات",
-    ],
-    rows: [
-      [
-        "1",
-        "Lecture 1 - Introduction.pdf",
-        "برمجة 1",
-        "PDF",
-        "2.4 MB",
-        "2024-01-10",
-        "",
-      ],
-      ["2", "Assignment 1.docx", "برمجة 1", "DOCX", "0.8 MB", "2024-01-15", ""],
-      [
-        "3",
-        "Midterm Exam 2023.pdf",
-        "هياكل البيانات",
-        "PDF",
-        "1.2 MB",
-        "2024-01-20",
-        "",
-      ],
-      [
-        "4",
-        "Database Notes.pdf",
-        "قواعد البيانات",
-        "PDF",
-        "3.1 MB",
-        "2024-01-22",
-        "",
-      ],
-      [
-        "5",
-        "AI Lecture 5 - Neural Networks.pdf",
-        "الذكاء الاصطناعي",
-        "PDF",
-        "2.8 MB",
-        "2024-01-25",
-        "",
-      ],
-      [
-        "6",
-        "CS50 Week 2 - Arrays.mp4",
-        "برمجة 1",
-        "MP4",
-        "180 MB",
-        "2024-01-28",
-        "",
-      ],
-    ],
-  },
-  admins: {
-    headers: [
-      "المعرف",
-      "الاسم",
+      "الاسم الكامل",
       "البريد الإلكتروني",
-      "الدور",
-      "تاريخ الانضمام",
+      "الدور والصلاحية",
+      "الحالة",
+      "تاريخ التسجيل",
       "الإجراءات",
     ],
     rows: [
-      ["1", "محمد أحمد", "mohammed@cairo.edu", "طالب", "2024-01-01", ""],
-      ["2", "سارة علي", "sara@alex.edu", "طالب", "2024-01-03", ""],
-      ["3", "أحمد محمود", "ahmed@azhar.edu", "أستاذ", "2024-01-05", ""],
-      ["4", "فاطمة حسن", "fatma@cairo.edu", "طالب", "2024-01-07", ""],
-      ["5", "عمر خالد", "omar@ainshams.edu", "مشرف", "2024-01-10", ""],
-      ["6", "نور إبراهيم", "nour@mansoura.edu", "طالب", "2024-01-12", ""],
+      ["1", "أيمن (Ayman)", "Ayman@gmail.com", "مالك النظام (Owner)", "نشط", "2026-09-11", ""],
+      ["2", "أحمد - تجربة أدمن", "admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
+      ["3", "محمد - تجربة أدمن", "Mohamad_admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
+      ["4", "علي - تجربة أدمن", "Ali_admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
     ],
   },
   content_managers: {
     headers: [
       "المعرف",
-      "الاسم",
+      "الاسم الكامل",
       "البريد الإلكتروني",
-      "الدور",
-      "تاريخ الانضمام",
+      "الدور والصلاحية",
+      "الحالة",
+      "تاريخ التسجيل",
       "الإجراءات",
     ],
     rows: [
-      ["1", "محمد أحمد", "mohammed@cairo.edu", "طالب", "2024-01-01", ""],
-      ["2", "سارة علي", "sara@alex.edu", "طالب", "2024-01-03", ""],
-      ["3", "أحمد محمود", "ahmed@azhar.edu", "أستاذ", "2024-01-05", ""],
-      ["4", "فاطمة حسن", "fatma@cairo.edu", "طالب", "2024-01-07", ""],
-      ["5", "عمر خالد", "omar@ainshams.edu", "مشرف", "2024-01-10", ""],
-      ["6", "نور إبراهيم", "nour@mansoura.edu", "طالب", "2024-01-12", ""],
-    ],
-  },
-  content_managements: {
-    headers: [
-      "المعرف",
-      "الاسم",
-      "البريد الإلكتروني",
-      "الدور",
-      "تاريخ الانضمام",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "محمد أحمد", "mohammed@cairo.edu", "طالب", "2024-01-01", ""],
-      ["2", "سارة علي", "sara@alex.edu", "طالب", "2024-01-03", ""],
-      ["3", "أحمد محمود", "ahmed@azhar.edu", "أستاذ", "2024-01-05", ""],
-      ["4", "فاطمة حسن", "fatma@cairo.edu", "طالب", "2024-01-07", ""],
-      ["5", "عمر خالد", "omar@ainshams.edu", "مشرف", "2024-01-10", ""],
-      ["6", "نور إبراهيم", "nour@mansoura.edu", "طالب", "2024-01-12", ""],
+      ["5", "علي - مدير المحتوى", "Adirect@drasty.com", "مدير محتوى (Content Manager)", "نشط", "2026-09-12", ""],
+      ["8", "مريم سعيد", "mariam.content@drasty.com", "مدير محتوى (Content Manager)", "نشط", "2026-09-14", ""],
     ],
   },
 };
@@ -268,18 +187,16 @@ export function AdminTableView({
     levels: "مستوى",
     semesters: "ترم",
     courses: "مادة",
-    files: "ملف",
-    admins: "المدراء",
-    content_managers: "مدراء المحتوى",
-    content_managements: "ادارة المحتوى",
+    system_admins: "مدير نظام",
+    content_managers: "مدير محتوى",
   };
   const label = labelMap[view] ?? "عنصر";
 
   const roleColors: Record<string, string> = {
-    طالب: "bg-[#899C9A]/20 text-[#AABCAF] border border-[#899C9A]/30",
-    أستاذ: "bg-[#323D59] text-[#F4F7F6] border border-white/[0.07]",
-    مشرف: "bg-[#AABCAF]/20 text-[#F4F7F6] border border-[#AABCAF]/30",
-    "Super Admin": "bg-[#899C9A] text-[#1D263B] font-bold",
+    "مالك النظام (Owner)": "bg-purple-500/20 text-purple-300 border border-purple-500/40",
+    "مدير النظام (Admin)": "bg-blue-500/20 text-blue-300 border border-blue-500/40",
+    "مدير محتوى (Content Manager)": "bg-[#7DA49F]/20 text-[#7DA49F] border border-[#7DA49F]/40",
+    "Super Admin": "bg-[#7DA49F] text-[#1D263B] font-bold",
   };
 
   const typeColors: Record<string, string> = {
@@ -315,7 +232,7 @@ export function AdminTableView({
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={`بحث في ${defaultAdminNav.find((n) => n.id === view)?.label}...`}
+              placeholder={`بحث في ${adminNavItems.find((n) => n.id === view)?.label || "العناصر"}...`}
               className="w-72 rounded-xl border border-white/[0.07] bg-[#323D59] pr-10 pl-4 py-2 text-xs text-[#F4F7F6] placeholder-[#AABCAF]/70 outline-none transition-all focus:border-[#899C9A] focus:ring-2 focus:ring-[#899C9A]/25"
             />
           </div>

@@ -1,76 +1,133 @@
 import type { AdminView } from "../types/app";
 
+export type AdminNavIconName =
+  | "LayoutDashboard"
+  | "FolderTree"
+  | "GraduationCap"
+  | "Calendar"
+  | "BookOpen"
+  | "FileText"
+  | "Users"
+  | "ShieldCheck"
+  | "UserCog"
+  | "Settings";
+
 export interface AdminNavItemConfig {
   id: AdminView;
   label: string;
-  iconName:
-    | "LayoutDashboard"
-    | "FolderTree"
-    | "GraduationCap"
-    | "Calendar"
-    | "BookOpen"
-    | "Users"
-    | "FileText"
-    | "Settings";
-  badge: number;
+  iconName: AdminNavIconName;
+  badge?: number;
+  queryFilter?: {
+    role_id?: number | number[];
+  };
 }
 
-export const adminNavItems: AdminNavItemConfig[] = [
+export interface NavSection {
+  id: string;
+  title: string;
+  items: AdminNavItemConfig[];
+}
+
+export const adminNavSections: NavSection[] = [
   {
-    id: "dashboard",
-    label: "لوحة التحكم",
-    iconName: "LayoutDashboard",
-    badge: 0,
+    id: "dashboard_section",
+    title: "لوحة التحكم",
+    items: [
+      {
+        id: "dashboard",
+        label: "لوحة التحكم",
+        iconName: "LayoutDashboard",
+        badge: 0,
+      },
+    ],
   },
   {
-    id: "departments",
-    label: "الأقسام",
-    iconName: "FolderTree",
-    badge: 0,
+    id: "academic_structure",
+    title: "الهيكل الأكاديمي",
+    items: [
+      {
+        id: "departments",
+        label: "الأقسام",
+        iconName: "FolderTree",
+        badge: 0,
+      },
+      {
+        id: "levels",
+        label: "المستويات",
+        iconName: "GraduationCap",
+        badge: 0,
+      },
+      {
+        id: "semesters",
+        label: "الترمات",
+        iconName: "Calendar",
+        badge: 0,
+      },
+      {
+        id: "courses",
+        label: "المواد",
+        iconName: "BookOpen",
+        badge: 0,
+      },
+    ],
   },
   {
-    id: "levels",
-    label: "المستويات",
-    iconName: "GraduationCap",
-    badge: 0,
+    id: "content_management_section",
+    title: "إدارة المحتوى",
+    items: [
+      {
+        id: "content_management",
+        label: "إدارة المحتوى والملفات",
+        iconName: "FileText",
+        badge: 0,
+      },
+    ],
   },
   {
-    id: "semesters",
-    label: "الترمات",
-    iconName: "Calendar",
-    badge: 0,
+    id: "users_permissions",
+    title: "المستخدمين والصلاحيات",
+    items: [
+      {
+        id: "doctors",
+        label: "الكادر الأكاديمي (الدكاترة)",
+        iconName: "Users",
+        badge: 0,
+        queryFilter: { role_id: 3 },
+      },
+      {
+        id: "system_admins",
+        label: "مدراء النظام",
+        iconName: "ShieldCheck",
+        badge: 0,
+        queryFilter: { role_id: [0, 1] },
+      },
+      {
+        id: "content_managers",
+        label: "مدراء المحتوى",
+        iconName: "UserCog",
+        badge: 0,
+        queryFilter: { role_id: 2 },
+      },
+    ],
   },
   {
-    id: "courses",
-    label: "المواد",
-    iconName: "BookOpen",
-    badge: 3,
-  },
-  {
-    id: "doctors",
-    label: "إدارة الدكاترة",
-    iconName: "Users",
-    badge: 0,
-  },
-  {
-    id: "files",
-    label: "الملفات",
-    iconName: "FileText",
-    badge: 12,
-  },
-  {
-    id: "users",
-    label: "المستخدمون",
-    iconName: "Users",
-    badge: 5,
-  },
-  {
-    id: "settings",
-    label: "الإعدادات",
-    iconName: "Settings",
-    badge: 0,
+    id: "system_section",
+    title: "النظام",
+    items: [
+      {
+        id: "settings",
+        label: "الإعدادات",
+        iconName: "Settings",
+        badge: 0,
+      },
+    ],
   },
 ];
+
+// Flattened list for direct lookups
+export const adminNavItems: AdminNavItemConfig[] = adminNavSections.flatMap(
+  (section) => section.items
+);
 
 export interface AdminNotificationItem {
   id: number;
@@ -92,7 +149,7 @@ export const initialAdminNotifications: AdminNotificationItem[] = [
   },
   {
     id: 2,
-    text: "طلب مستخدم جديد: محمد أحمد للانضمام",
+    text: "طلب انضمام مستخدم جديد: د. موسى غراب",
     time: "18 دقيقة",
     iconName: "Users",
     color: "bg-[#AABCAF]/20 text-[#AABCAF] border border-[#AABCAF]/30",
@@ -100,7 +157,7 @@ export const initialAdminNotifications: AdminNotificationItem[] = [
   },
   {
     id: 4,
-    text: "تحديث النظام: الإصدار 2.4.1 متاح",
+    text: "تحديث النظام: قاعدة البيانات darasty_db_2 متزامنة",
     time: "3 ساعات",
     iconName: "RotateCcw",
     color: "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]",
@@ -108,7 +165,7 @@ export const initialAdminNotifications: AdminNotificationItem[] = [
   },
   {
     id: 5,
-    text: "تقرير أسبوعي: 1,240 تحميل هذا الأسبوع",
+    text: "تقرير المحتوى: 1,240 تحميل هذا الأسبوع",
     time: "5 ساعات",
     iconName: "TrendingUp",
     color: "bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/30",

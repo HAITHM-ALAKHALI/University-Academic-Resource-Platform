@@ -51,20 +51,20 @@ export function AdminDashboardView({
       view: "doctors",
     },
     {
-      label: "الملفات",
+      label: "المحتوى والملفات",
       value: "8.4K",
       icon: <FileText className="h-5 w-5" />,
       color: "#899C9A",
       trend: "+124",
-      view: "files",
+      view: "content_management",
     },
     {
-      label: "المستخدمون",
-      value: "2.1K",
+      label: "مدراء النظام",
+      value: "4",
       icon: <Users className="h-5 w-5" />,
       color: "#AABCAF",
-      trend: "+47",
-      view: "users",
+      trend: "+1",
+      view: "system_admins",
     },
   ];
 
@@ -87,9 +87,9 @@ export function AdminDashboardView({
       color: "#7DA49F",
     },
     {
-      label: "رفع ملفات",
+      label: "إدارة المحتوى",
       icon: <UploadCloud className="h-5 w-5" />,
-      view: "files",
+      view: "content_management",
       color: "#AABCAF",
     },
   ];

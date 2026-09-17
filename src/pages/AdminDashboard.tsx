@@ -45,7 +45,7 @@ export default function AdminDashboard({
   setDark,
   setLang,
   setPage,
-  onLogout: _onLogout,
+  onLogout,
 }: AdminDashboardProps) {
   const [tab, setTab] = useState<AdminTab>("overview");
   const [uploadDrag, setUploadDrag] = useState(false);

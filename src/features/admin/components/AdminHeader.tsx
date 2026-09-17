@@ -1,8 +1,10 @@
 import { Bell, LogOut } from "lucide-react";
 import type { AdminView } from "../../../types/app";
-import { defaultAdminNav } from "./AdminSidebar";
+import {
+  adminNavItems,
+  type AdminNotificationItem,
+} from "../../../constants/adminNav";
 import NotificationDropdown from "./NotificationDropdown";
-import type { AdminNotificationItem } from "../../../constants/adminNav";
 
 export interface AdminHeaderProps {
   currentView: AdminView;
@@ -25,7 +27,7 @@ export function AdminHeader({
   onSelectNotification,
   onLogout,
 }: AdminHeaderProps) {
-  const currentNav = defaultAdminNav.find((n) => n.id === currentView);
+  const currentNav = adminNavItems.find((n) => n.id === currentView);
 
   return (
     <header
