@@ -36,3 +36,26 @@ export interface ActionSuccessResponse {
   success: boolean;
   message?: string;
 }
+
+export interface AdminCreationResult {
+  id?: number;
+  full_name?: string;
+  email?: string;
+}
+
+export interface DepartmentEntity {
+  department_id: number;
+  name: string;
+  code: string;
+}
+
+export interface  AddDepartment{
+  name: string;
+  code: string;
+}
+
+export interface DepartmentsInfo {
+  status: boolean;
+  count: number;
+  data: DepartmentEntity[]; 
+}

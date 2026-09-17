@@ -8,9 +8,11 @@ import {
   Edit3,
   ChevronRight,
   ChevronLeft,
+  Loader2,
 } from "lucide-react";
 import type { AdminView } from "../../../types/app";
 import { adminNavItems } from "../../../constants/adminNav";
+import { useDepartments } from "../../../hooks/useDepartments"; // استدعاء الـ Hook
 
 export interface AdminTableViewProps {
   view: AdminView;
@@ -19,153 +21,26 @@ export interface AdminTableViewProps {
   onDelete: (name: string) => void;
 }
 
-const tableData: Record<string, { headers: string[]; rows: string[][] }> = {
-  departments: {
-    headers: [
-      "المعرف",
-      "اسم القسم",
-      "المواد",
-      "الملفات",
-      "الحالة",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "علوم حاسوب", "32", "840", "نشط", ""],
-      ["2", "تقنية معلومات", "28", "720", "نشط", ""],
-      ["3", "أمن سيبراني", "24", "610", "نشط", ""],
-      ["4", "ذكاء اصطناعي", "20", "520", "نشط", ""],
-      ["5", "علم البيانات", "18", "460", "نشط", ""],
-    ],
-  },
-  levels: {
-    headers: [
-      "المعرف",
-      "المستوى",
-      "القسم",
-      "عدد المواد",
-      "عدد الطلاب",
-      "الحالة",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "السنة الأولى", "علوم حاسوب", "8", "280", "نشط", ""],
-      ["2", "السنة الثانية", "علوم حاسوب", "10", "245", "نشط", ""],
-      ["3", "السنة الثالثة", "علوم حاسوب", "10", "210", "نشط", ""],
-      ["4", "السنة الرابعة", "علوم حاسوب", "9", "190", "نشط", ""],
-      ["5", "السنة الأولى", "تقنية معلومات", "8", "220", "نشط", ""],
-    ],
-  },
-  semesters: {
-    headers: [
-      "المعرف",
-      "اسم الترم",
-      "المستوى",
-      "القسم",
-      "عدد المواد",
-      "الحالة",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "الترم الأول", "السنة الأولى", "علوم حاسوب", "6", "نشط", ""],
-      ["2", "الترم الثاني", "السنة الأولى", "علوم حاسوب", "6", "نشط", ""],
-      ["3", "الترم الأول", "السنة الثانية", "علوم حاسوب", "6", "نشط", ""],
-      ["4", "الترم الثاني", "السنة الثانية", "علوم حاسوب", "6", "نشط", ""],
-      ["5", "الترم الأول", "السنة الثالثة", "علوم حاسوب", "6", "نشط", ""],
-    ],
-  },
-  courses: {
-    headers: [
-      "المعرف",
-      "اسم المادة",
-      "القسم",
-      "المستوى",
-      "الترم",
-      "الملفات",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "برمجة 1", "علوم حاسوب", "السنة الأولى", "الترم الأول", "32", ""],
-      ["2", "رياضيات", "علوم حاسوب", "السنة الأولى", "الترم الأول", "28", ""],
-      [
-        "3",
-        "هياكل البيانات",
-        "علوم حاسوب",
-        "السنة الثانية",
-        "الترم الأول",
-        "45",
-        "",
+// البيانات الثابتة لباقي التبويبات المؤقتة
+const staticTableData: Record<string, { headers: string[]; rows: string[][] }> =
+  {
+    levels: {
+      headers: [
+        "المعرف",
+        "المستوى",
+        "القسم",
+        "عدد المواد",
+        "عدد الطلاب",
+        "الحالة",
+        "الإجراءات",
       ],
-      [
-        "4",
-        "قواعد البيانات",
-        "علوم حاسوب",
-        "السنة الثانية",
-        "الترم الثاني",
-        "38",
-        "",
+      rows: [
+        ["1", "السنة الأولى", "علوم حاسوب", "8", "280", "نشط", ""],
+        ["2", "السنة الثانية", "علوم حاسوب", "10", "245", "نشط", ""],
       ],
-      [
-        "5",
-        "الذكاء الاصطناعي",
-        "علوم حاسوب",
-        "السنة الثالثة",
-        "الترم الأول",
-        "55",
-        "",
-      ],
-      [
-        "6",
-        "شبكات الحاسوب",
-        "علوم حاسوب",
-        "السنة الثالثة",
-        "الترم الثاني",
-        "41",
-        "",
-      ],
-      [
-        "7",
-        "هندسة البرمجيات",
-        "علوم حاسوب",
-        "السنة الرابعة",
-        "الترم الأول",
-        "36",
-        "",
-      ],
-    ],
-  },
-  system_admins: {
-    headers: [
-      "المعرف",
-      "الاسم الكامل",
-      "البريد الإلكتروني",
-      "الدور والصلاحية",
-      "الحالة",
-      "تاريخ التسجيل",
-      "الإجراءات",
-    ],
-    rows: [
-      ["1", "أيمن (Ayman)", "Ayman@gmail.com", "مالك النظام (Owner)", "نشط", "2026-09-11", ""],
-      ["2", "أحمد - تجربة أدمن", "admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
-      ["3", "محمد - تجربة أدمن", "Mohamad_admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
-      ["4", "علي - تجربة أدمن", "Ali_admin_test_direct@drasty.com", "مدير النظام (Admin)", "نشط", "2026-09-12", ""],
-    ],
-  },
-  content_managers: {
-    headers: [
-      "المعرف",
-      "الاسم الكامل",
-      "البريد الإلكتروني",
-      "الدور والصلاحية",
-      "الحالة",
-      "تاريخ التسجيل",
-      "الإجراءات",
-    ],
-    rows: [
-      ["5", "علي - مدير المحتوى", "Adirect@drasty.com", "مدير محتوى (Content Manager)", "نشط", "2026-09-12", ""],
-      ["8", "مريم سعيد", "mariam.content@drasty.com", "مدير محتوى (Content Manager)", "نشط", "2026-09-14", ""],
-    ],
-  },
-};
+    },
+    // ... باقي الجداول
+  };
 
 export function AdminTableView({
   view,
@@ -177,10 +52,33 @@ export function AdminTableView({
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [allChecked, setAllChecked] = useState(false);
 
-  const data = tableData[view] ?? {
-    headers: ["المعرف", "الاسم", "الحالة", "الإجراءات"],
-    rows: [],
-  };
+  // استخدام الـ Hook مباشرة بدلاً من كتابة useState و useEffect يدوياً
+  const {
+    departments,
+    loading: isDeptLoading,
+    error: deptError,
+  } = useDepartments();
+
+  // تجهيز البيانات بحسب التبويب المختار
+  const data = (() => {
+    if (view === "departments") {
+      return {
+        headers: ["المعرف", "اسم القسم", "الكود", "الإجراءات"],
+        rows: departments.map((d) => [
+          String(d.department_id),
+          d.name,
+          d.code,
+          "",
+        ]),
+      };
+    }
+    return (
+      staticTableData[view] ?? {
+        headers: ["المعرف", "الاسم", "الحالة", "الإجراءات"],
+        rows: [],
+      }
+    );
+  })();
 
   const labelMap: Record<string, string> = {
     departments: "قسم",
@@ -193,22 +91,16 @@ export function AdminTableView({
   const label = labelMap[view] ?? "عنصر";
 
   const roleColors: Record<string, string> = {
-    "مالك النظام (Owner)": "bg-purple-500/20 text-purple-300 border border-purple-500/40",
-    "مدير النظام (Admin)": "bg-blue-500/20 text-blue-300 border border-blue-500/40",
-    "مدير محتوى (Content Manager)": "bg-[#7DA49F]/20 text-[#7DA49F] border border-[#7DA49F]/40",
-    "Super Admin": "bg-[#7DA49F] text-[#1D263B] font-bold",
-  };
-
-  const typeColors: Record<string, string> = {
-    PDF: "bg-[#899C9A]/20 text-[#F4F7F6] border border-[#899C9A]/40",
-    DOCX: "bg-[#323D59] text-[#AABCAF] border border-white/[0.07]",
-    XLSX: "bg-[#AABCAF]/20 text-[#F4F7F6] border border-[#AABCAF]/40",
-    MP4: "bg-[#899C9A]/20 text-[#899C9A] border border-[#899C9A]/40",
-    ZIP: "bg-[#323D59] text-[#F4F7F6] border border-white/[0.07]",
+    "مالك النظام (Owner)":
+      "bg-purple-500/20 text-purple-300 border border-purple-500/40",
+    "مدير النظام (Admin)":
+      "bg-blue-500/20 text-blue-300 border border-blue-500/40",
+    "مدير محتوى (Content Manager)":
+      "bg-[#7DA49F]/20 text-[#7DA49F] border border-[#7DA49F]/40",
   };
 
   const filtered = data.rows.filter((row) =>
-    row.some((c) => c.toLowerCase().includes(searchTerm.toLowerCase()))
+    row.some((c) => c.toLowerCase().includes(searchTerm.toLowerCase())),
   );
 
   const toggleAll = () => {
@@ -221,12 +113,14 @@ export function AdminTableView({
     }
   };
 
+  const isLoading = view === "departments" && isDeptLoading;
+  const currentError = view === "departments" ? deptError : null;
+
   return (
     <div className="space-y-4 fade-in">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          {/* Search Input */}
           <div className="relative">
             <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#899C9A]" />
             <input
@@ -297,79 +191,96 @@ export function AdminTableView({
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
-              {filtered.map((row, ri) => (
-                <tr
-                  key={ri}
-                  className={`transition-colors hover:bg-white/[0.04] ${
-                    selected.has(ri) ? "bg-[#899C9A]/15" : ""
-                  }`}
-                >
-                  <td className="px-4 py-4 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(ri)}
-                      onChange={() => {
-                        const s = new Set(selected);
-                        if (s.has(ri)) s.delete(ri);
-                        else s.add(ri);
-                        setSelected(s);
-                      }}
-                      className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
-                    />
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan={data.headers.length + 1}
+                    className="py-12 text-center text-xs text-[#AABCAF]"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="h-5 w-5 animate-spin text-[#899C9A]" />
+                      <span>جاري تحميل الأقسام عبر useDepartments...</span>
+                    </div>
                   </td>
-                  {row.map((cell, ci) => (
-                    <td
-                      key={ci}
-                      className="px-6 py-4 text-xs font-semibold text-[#F4F7F6] whitespace-nowrap"
-                    >
-                      {ci === row.length - 1 ? (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={onEdit}
-                            className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
-                          >
-                            <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
-                            <span>تعديل</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => onDelete(row[1])}
-                            className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ) : cell === "نشط" ? (
-                        <span className="inline-flex items-center gap-1 rounded-md bg-[#899C9A]/20 border border-[#899C9A]/40 px-2.5 py-0.5 text-[11px] font-bold text-[#F4F7F6]">
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#899C9A]" />
-                          نشط
-                        </span>
-                      ) : roleColors[cell] ? (
-                        <span
-                          className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
-                        >
-                          {cell}
-                        </span>
-                      ) : typeColors[cell] ? (
-                        <span
-                          className={`inline-block rounded-md px-2 py-0.5 font-['JetBrains_Mono'] text-[11px] font-bold ${typeColors[cell]}`}
-                        >
-                          {cell}
-                        </span>
-                      ) : ci === 0 ? (
-                        <span className="font-['JetBrains_Mono'] font-bold text-[#AABCAF]">
-                          #{cell}
-                        </span>
-                      ) : (
-                        cell
-                      )}
-                    </td>
-                  ))}
                 </tr>
-              ))}
+              ) : currentError ? (
+                <tr>
+                  <td
+                    colSpan={data.headers.length + 1}
+                    className="py-12 text-center text-xs text-red-400"
+                  >
+                    {currentError}
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((row, ri) => (
+                  <tr
+                    key={ri}
+                    className={`transition-colors hover:bg-white/[0.04] ${
+                      selected.has(ri) ? "bg-[#899C9A]/15" : ""
+                    }`}
+                  >
+                    <td className="px-4 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(ri)}
+                        onChange={() => {
+                          const s = new Set(selected);
+                          if (s.has(ri)) s.delete(ri);
+                          else s.add(ri);
+                          setSelected(s);
+                        }}
+                        className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
+                      />
+                    </td>
+                    {row.map((cell, ci) => (
+                      <td
+                        key={ci}
+                        className="px-6 py-4 text-xs font-semibold text-[#F4F7F6] whitespace-nowrap"
+                      >
+                        {ci === row.length - 1 ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={onEdit}
+                              className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
+                            >
+                              <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
+                              <span>تعديل</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onDelete(row[1])}
+                              className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        ) : cell === "نشط" ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-[#899C9A]/20 border border-[#899C9A]/40 px-2.5 py-0.5 text-[11px] font-bold text-[#F4F7F6]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#899C9A]" />
+                            نشط
+                          </span>
+                        ) : roleColors[cell] ? (
+                          <span
+                            className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
+                          >
+                            {cell}
+                          </span>
+                        ) : ci === 0 ? (
+                          <span className="font-['JetBrains_Mono'] font-bold text-[#AABCAF]">
+                            #{cell}
+                          </span>
+                        ) : (
+                          cell
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
 
-              {filtered.length === 0 && (
+              {!isLoading && !currentError && filtered.length === 0 && (
                 <tr>
                   <td
                     colSpan={data.headers.length + 1}

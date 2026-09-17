@@ -5,21 +5,8 @@ import type {
   CheckUserCredentials,
   AuthenticatedUser,
   ApiResponse,
+  AdminCreationResult,
 } from "../types/api";
-
-// Re-export contracts for backwards-compatibility
-export type {
-  UserPayload,
-  CheckUserCredentials,
-  AuthenticatedUser,
-  ApiResponse,
-};
-
-export interface AdminCreationResult {
-  id?: number;
-  full_name?: string;
-  email?: string;
-}
 
 export const userService = {
   /**

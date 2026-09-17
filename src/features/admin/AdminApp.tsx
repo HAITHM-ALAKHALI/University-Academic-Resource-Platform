@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { AdminView } from "../../types/app";
 import { useDoctors } from "../../hooks/useDoctors";
 import { useNotifications } from "../../hooks/useNotifications";
+import { useDepartments } from "../../hooks/useDepartments"; // 1. استيراد هوك الأقسام
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
 import AdminDashboardView from "./components/AdminDashboardView";
@@ -11,6 +12,7 @@ import ContentManagementView from "./components/ContentManagementView";
 import AdminDialogModal from "./components/AdminDialogModal";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
 import DoctorsManagementView from "../../Components/admin/DoctorsManagementView";
+import { AddDepartmentModal } from "./components/modals/AddDepartmentModal"; // 2. استيراد المودال المخصص
 
 export interface AdminAppProps {
   onSwitchStudent?: () => void;
@@ -25,6 +27,9 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
   const [showNotifs, setShowNotifs] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
+  // حالة فتح مودال إضافة الأقسام المخصص
+  const [showAddDeptModal, setShowAddDeptModal] = useState(false);
+
   // Business logic delegated to custom hooks
   const {
     doctorsList,
@@ -36,12 +41,20 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
     handleUnassignCourse,
   } = useDoctors();
 
-  const {
-    notifList,
-    unreadCount,
-    markAllRead,
-    markAsRead,
-  } = useNotifications();
+  const { notifList, unreadCount, markAllRead, markAsRead } =
+    useNotifications();
+
+  // دوال وإجراءات الأقسام
+  const { addDepartment, isSubmitting } = useDepartments();
+
+  const handleAddClick = () => {
+    if (view === "departments") {
+      setShowAddDeptModal(true);
+    } else {
+      setDialogType("add");
+      setShowDialog(true);
+    }
+  };
 
   return (
     <div
@@ -109,10 +122,7 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
             view !== "content_management" && (
               <AdminTableView
                 view={view}
-                onAdd={() => {
-                  setDialogType("add");
-                  setShowDialog(true);
-                }}
+                onAdd={handleAddClick}
                 onEdit={() => {
                   setDialogType("edit");
                   setShowDialog(true);
@@ -123,7 +133,15 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         </div>
       </main>
 
-      {/* Add / Edit Dialog Modal */}
+      {/* مودال إضافة قسم المرتبط بالـ API وقاعدة البيانات */}
+      <AddDepartmentModal
+        isOpen={showAddDeptModal}
+        onClose={() => setShowAddDeptModal(false)}
+        onAdd={addDepartment}
+        isSubmitting={isSubmitting}
+      />
+
+      {/* Add / Edit Dialog Modal لبقية الجداول */}
       {showDialog && (
         <AdminDialogModal
           type={dialogType}
