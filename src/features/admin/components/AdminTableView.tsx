@@ -13,11 +13,14 @@ import {
 import type { AdminView } from "../../../types/app";
 import { adminNavItems } from "../../../constants/adminNav";
 import { useDepartments } from "../../../hooks/useDepartments"; // استدعاء الـ Hook
-
+import { useCourses } from "../../../hooks/useCourses";
+import { useLevels } from "../../../hooks/useLevels";
+import { useSemesters } from "../../../hooks/useSemesters";
+import { useDoctors } from "../../../hooks/useDoctors";
 export interface AdminTableViewProps {
   view: AdminView;
   onAdd: () => void;
-  onEdit: () => void;
+  onEdit: (row: string[]) => void;
   onDelete: (name: string) => void;
 }
 
@@ -59,6 +62,26 @@ export function AdminTableView({
     error: deptError,
   } = useDepartments();
 
+  const {
+    courses,
+    loading: isCourseLoading,
+    error: courseError,
+  } = useCourses();
+
+  const { levels, loading: isLevelLoading, error: levelError } = useLevels();
+
+  const {
+    semesters,
+    loading: isSemesterLoading,
+    error: semesterError,
+  } = useSemesters();
+
+  const {
+    doctorsList,
+    loading: isDoctorLoading,
+    error: doctorError,
+  } = useDoctors();
+
   // تجهيز البيانات بحسب التبويب المختار
   const data = (() => {
     if (view === "departments") {
@@ -72,6 +95,92 @@ export function AdminTableView({
         ]),
       };
     }
+
+    if (view === "courses") {
+      return {
+        headers: [
+          "رمز المادة",
+          "الاسم بالعربي",
+          "الاسم بالإنجليزي",
+          "الساعات",
+          "الإجراءات",
+        ],
+        rows: courses.map((c) => [
+          c.course_code,
+          c.course_name_ar,
+          c.course_name_en,
+          String(c.credit_hours),
+          "",
+        ]),
+      };
+    }
+
+    if (view === "levels") {
+      return {
+        headers: ["اسم المستوى", "رقم المستوى", "القسم", "الإجراءات"],
+        rows: levels.map((l: any) => {
+          // قراءة اسم المستوى القادم من الباك إند كـ level_name أو name مع خيار احتياطي
+          const levelTitle =
+            l.level_name ||
+            l.name ||
+            (l.level_number ? `مستوى ${l.level_number}` : "#");
+
+          // جلب اسم القسم إما مباشرة من الرد المسطح أو العلاقة أو البحث
+          const deptName =
+            l.department_name ||
+            l.department?.name ||
+            departments.find((d: any) => d.department_id === l.department_id)
+              ?.name ||
+            `قسم #${l.department_id}`;
+
+          return [levelTitle, String(l.level_number ?? ""), deptName, ""];
+        }),
+      };
+    }
+
+    if (view === "semesters") {
+      return {
+        headers: [
+          "اسم الترم",
+          "رقم الترم",
+          "العام الجامعي",
+          "المستوى",
+          "الإجراءات",
+        ],
+        rows: semesters.map((s) => {
+          const semesterTitle =
+            s.semester_name ||
+            s.name ||
+            (s.semester_number ? `الفصل الدراسي ${s.semester_number}` : "#");
+
+          const levelTitle =
+            s.level_name ||
+            s.level?.name ||
+            levels.find((lvl) => lvl.level_id === s.level_id)?.name ||
+            `مستوى #${s.level_id}`;
+
+          return [
+            semesterTitle,
+            String(s.semester_number),
+            s.academic_year,
+            levelTitle,
+            "",
+          ];
+        }),
+      };
+    }
+
+    if (view === "doctors") {
+      return {
+        headers: ["اسم الدكتور", "البريد الجامعي", "الإجراءات"],
+        rows: doctorsList.map((doc) => [
+          doc.user?.full_name || doc.user?.name_ar || "غير محدد",
+          doc.user?.email || "-",
+          "",
+        ]),
+      };
+    }
+
     return (
       staticTableData[view] ?? {
         headers: ["المعرف", "الاسم", "الحالة", "الإجراءات"],
@@ -87,6 +196,7 @@ export function AdminTableView({
     courses: "مادة",
     system_admins: "مدير نظام",
     content_managers: "مدير محتوى",
+    doctors: "دكتور",
   };
   const label = labelMap[view] ?? "عنصر";
 
@@ -100,7 +210,11 @@ export function AdminTableView({
   };
 
   const filtered = data.rows.filter((row) =>
-    row.some((c) => c.toLowerCase().includes(searchTerm.toLowerCase())),
+    row.some((c) =>
+      c != null
+        ? String(c).toLowerCase().includes(searchTerm.toLowerCase())
+        : false,
+    ),
   );
 
   const toggleAll = () => {
@@ -113,8 +227,25 @@ export function AdminTableView({
     }
   };
 
-  const isLoading = view === "departments" && isDeptLoading;
-  const currentError = view === "departments" ? deptError : null;
+  const isLoading =
+    (view === "departments" && isDeptLoading) ||
+    (view === "courses" && isCourseLoading) ||
+    (view === "levels" && isLevelLoading) ||
+    (view === "semesters" && isSemesterLoading) ||
+    (view === "doctors" && isDoctorLoading);
+
+  const currentError =
+    view === "departments"
+      ? deptError
+      : view === "courses"
+        ? courseError
+        : view === "levels"
+          ? levelError
+          : view === "semesters"
+            ? semesterError
+            : view === "doctors"
+              ? doctorError
+              : null;
 
   return (
     <div className="space-y-4 fade-in">
@@ -242,7 +373,7 @@ export function AdminTableView({
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
-                              onClick={onEdit}
+                              onClick={() => onEdit(row)} // تمرير السطر الحالي
                               className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
                             >
                               <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />

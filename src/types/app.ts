@@ -59,7 +59,8 @@ export type AdminView =
   | "doctors"
   | "system_admins"
   | "content_managers"
-  | "settings";
+  | "settings"
+  | "course_offerings";
 
 export type AdminTab = "overview" | "courses" | "resources" | "upload";
 

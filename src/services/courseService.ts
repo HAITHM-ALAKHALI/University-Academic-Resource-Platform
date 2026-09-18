@@ -1,30 +1,54 @@
-// src/services/courseService.ts
 import { apiClient } from "./api";
-import type { AcademicCourse, CourseResource } from "../types/academic";
-import type { ApiResponse } from "../types/api";
+import type {
+  CourseEntity,
+  CourseInfo,
+  ApiResponse,
+  AddCourse,
+} from "../types/api";
 
 export const courseService = {
   /**
    * Fetch all courses from the API
    */
-  fetchCourses: async (): Promise<AcademicCourse[]> => {
-    const response = await apiClient.get<ApiResponse<AcademicCourse[]>>("/courses");
-    return response.data.data || [];
+  fetchCourses: async (): Promise<CourseInfo> => {
+    const response = await apiClient.get<CourseInfo>("/courses");
+    return response.data;
   },
 
   /**
-   * Fetch academic content/resources for a specific doctor
+   * Add a new course
    */
-  fetchDoctorContents: async (courseDoctorId: number): Promise<CourseResource[]> => {
-    const response = await apiClient.get<ApiResponse<CourseResource[]>>(
-      `/contents?doctor_id=${courseDoctorId}`
+  addCourse: async (payload: AddCourse): Promise<ApiResponse<CourseEntity>> => {
+    const response = await apiClient.post<ApiResponse<CourseEntity>>(
+      "/courses",
+      payload,
     );
-    return response.data.data || [];
+    return response.data;
+  },
+
+  /**
+   * Update an existing course
+   */
+  updateCourse: async (
+    id: number,
+    payload: AddCourse,
+  ): Promise<ApiResponse<CourseEntity>> => {
+    const response = await apiClient.put<ApiResponse<CourseEntity>>(
+      `/courses/${id}`,
+      payload,
+    );
+    return response.data;
+  },
+
+  /**
+   * Delete a course
+   */
+  deleteCourse: async (id: number): Promise<ApiResponse<null>> => {
+    const response = await apiClient.delete<ApiResponse<null>>(
+      `/courses/${id}`,
+    );
+    return response.data;
   },
 };
-
-// Export individual functions for convenience
-export const fetchCourses = courseService.fetchCourses;
-export const fetchDoctorContents = courseService.fetchDoctorContents;
 
 export default courseService;

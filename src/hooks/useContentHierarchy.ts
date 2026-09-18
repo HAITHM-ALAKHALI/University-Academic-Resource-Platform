@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import type {
   DepartmentEntity,
   LevelEntity,
@@ -8,27 +8,21 @@ import type {
   ContentTypeEntity,
   ContentEntity,
   ContentStatus,
-  CreateContentPayload,
 } from "../types/content";
-import {
-  initialDepartments,
-  initialLevels,
-  initialSemesters,
-  initialCourseOfferings,
-  initialCourseDoctors,
-  initialContentTypes,
-  initialContents,
-} from "../constants/contentManagementData";
+
+import { useDepartments } from "./useDepartments";
+import { useLevels } from "./useLevels";
+import { useSemesters } from "./useSemesters";
+import { courseOfferingsService } from "../services/courseOfferingsService";
+import { contentService } from "../services/contentService";
 
 export interface UseContentHierarchyReturn {
-  // Cascading Selection State
   selectedDepartmentId: number | "";
   selectedLevelId: number | "";
   selectedSemesterId: number | "";
   selectedOfferingId: number | "";
   selectedCourseDoctorId: number | "";
 
-  // Selection Setters with Cascading Reset
   setDepartmentId: (id: number | "") => void;
   setLevelId: (id: number | "") => void;
   setSemesterId: (id: number | "") => void;
@@ -36,7 +30,6 @@ export interface UseContentHierarchyReturn {
   setCourseDoctorId: (id: number | "") => void;
   resetAll: () => void;
 
-  // Filtered Options for Each Cascading Tier
   departments: DepartmentEntity[];
   filteredLevels: LevelEntity[];
   filteredSemesters: SemesterEntity[];
@@ -44,7 +37,6 @@ export interface UseContentHierarchyReturn {
   filteredCourseDoctors: CourseDoctorEntity[];
   contentTypes: ContentTypeEntity[];
 
-  // Resolved Current Selected Entities
   currentDepartment?: DepartmentEntity;
   currentLevel?: LevelEntity;
   currentSemester?: SemesterEntity;
@@ -52,49 +44,113 @@ export interface UseContentHierarchyReturn {
   currentCourseDoctor?: CourseDoctorEntity;
   isChainComplete: boolean;
 
-  // Content Records & CRUD Operations
   displayedContents: ContentEntity[];
-  updateContentStatus: (contentId: number, status: ContentStatus) => void;
-  addContent: (payload: CreateContentPayload) => void;
-  editContent: (contentId: number, updates: Partial<ContentEntity>) => void;
-  deleteContent: (contentId: number) => void;
+  loading: boolean;
+  updateContentStatus: (
+    contentId: number,
+    status: ContentStatus,
+  ) => Promise<void>;
+  addContent: (formData: FormData) => Promise<boolean>;
+  editContent: (
+    contentId: number,
+    updates: Partial<ContentEntity>,
+  ) => Promise<boolean>;
+  deleteContent: (contentId: number) => Promise<boolean>;
 }
 
 export function useContentHierarchy(): UseContentHierarchyReturn {
-  // 1. Cascading Selected IDs
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | "">(1);
-  const [selectedLevelId, setSelectedLevelId] = useState<number | "">(1);
-  const [selectedSemesterId, setSelectedSemesterId] = useState<number | "">(1);
-  const [selectedOfferingId, setSelectedOfferingId] = useState<number | "">(1);
-  const [selectedCourseDoctorId, setSelectedCourseDoctorId] = useState<number | "">(1);
+  // 1. حالات التحديد المتتالية (Cascading IDs)
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | "">(
+    "",
+  );
+  const [selectedLevelId, setSelectedLevelId] = useState<number | "">("");
+  const [selectedSemesterId, setSelectedSemesterId] = useState<number | "">("");
+  const [selectedOfferingId, setSelectedOfferingId] = useState<number | "">("");
+  const [selectedCourseDoctorId, setSelectedCourseDoctorId] = useState<
+    number | ""
+  >("");
 
-  // 2. Master & Dynamic Contents State
-  const [contents, setContents] = useState<ContentEntity[]>(initialContents);
+  // 2. حالات البيانات الأكاديمية
+  const { departments } = useDepartments();
+  const { levels } = useLevels();
+  const { semesters } = useSemesters();
 
-  // 3. Filtered Lists per Hierarchy Tier
-  const departments = initialDepartments;
+  const [filteredOfferings, setFilteredOfferings] = useState<
+    CourseOfferingEntity[]
+  >([]);
+  const [filteredCourseDoctors, setFilteredCourseDoctors] = useState<
+    CourseDoctorEntity[]
+  >([]);
+  const [contentTypes, setContentTypes] = useState<ContentTypeEntity[]>([]);
+  const [displayedContents, setDisplayedContents] = useState<ContentEntity[]>(
+    [],
+  );
+  const [loading, setLoading] = useState<boolean>(false);
 
+  // جلب أنواع المحتوى الأكاديمي عند بدء التشغيل
+  useEffect(() => {
+    courseOfferingsService
+      .getContentTypes?.()
+      ?.then((types: any) => setContentTypes(types))
+      ?.catch(() => {});
+  }, []);
+
+  // الفلترة الهرمية للمستويات والفصول محلياً من القوائم
   const filteredLevels = useMemo(() => {
     if (!selectedDepartmentId) return [];
-    return initialLevels.filter((lvl) => lvl.department_id === selectedDepartmentId);
-  }, [selectedDepartmentId]);
+    return levels.filter(
+      (lvl: any) => lvl.department_id === selectedDepartmentId,
+    );
+  }, [levels, selectedDepartmentId]);
 
   const filteredSemesters = useMemo(() => {
     if (!selectedLevelId) return [];
-    return initialSemesters.filter((sem) => sem.level_id === selectedLevelId);
-  }, [selectedLevelId]);
+    return semesters.filter((sem: any) => sem.level_id === selectedLevelId);
+  }, [semesters, selectedLevelId]);
 
-  const filteredOfferings = useMemo(() => {
-    if (!selectedSemesterId) return [];
-    return initialCourseOfferings.filter((off) => off.semester_id === selectedSemesterId);
+  // جلب المقررات المطروحة عند اختيار الفصل الدراسي
+  useEffect(() => {
+    if (!selectedSemesterId) {
+      setFilteredOfferings([]);
+      return;
+    }
+    courseOfferingsService
+      .getOfferings(Number(selectedSemesterId))
+      .then((data: any) => setFilteredOfferings(data))
+      .catch(() => setFilteredOfferings([]));
   }, [selectedSemesterId]);
 
-  const filteredCourseDoctors = useMemo(() => {
-    if (!selectedOfferingId) return [];
-    return initialCourseDoctors.filter((cd) => cd.offering_id === selectedOfferingId);
+  // جلب الدكاترة المسندين عند اختيار المادة المطروحة
+  useEffect(() => {
+    if (!selectedOfferingId) {
+      setFilteredCourseDoctors([]);
+      return;
+    }
+    courseOfferingsService
+      .getCourseDoctors(Number(selectedOfferingId))
+      .then((data: any) => setFilteredCourseDoctors(data))
+      .catch(() => setFilteredCourseDoctors([]));
   }, [selectedOfferingId]);
 
-  // 4. Cascading Reset Handlers
+  // جلب المحتويات عبر طبقة الخدمات (كل المحتويات أو مصفاة حسب دكتور المادة)
+  const loadContents = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await contentService.getContents(selectedCourseDoctorId);
+      setDisplayedContents(data);
+    } catch {
+      setDisplayedContents([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedCourseDoctorId]);
+
+  // استدعاء الجلب عند بدء التشغيل أو عند تغيير الدكتور
+  useEffect(() => {
+    loadContents();
+  }, [loadContents]);
+
+  // 3. دوال إعادة الضبط المتتالي (Cascading Resets)
   const setDepartmentId = useCallback((id: number | "") => {
     setSelectedDepartmentId(id);
     setSelectedLevelId("");
@@ -133,109 +189,107 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     setSelectedCourseDoctorId("");
   }, []);
 
-  // 5. Resolved Entities
+  // 4. الكيانات الحالية المختارة
   const currentDepartment = useMemo(
-    () => departments.find((d) => d.department_id === selectedDepartmentId),
-    [departments, selectedDepartmentId]
+    () =>
+      departments.find((d: any) => d.department_id === selectedDepartmentId),
+    [departments, selectedDepartmentId],
   );
 
   const currentLevel = useMemo(
     () => filteredLevels.find((l) => l.level_id === selectedLevelId),
-    [filteredLevels, selectedLevelId]
+    [filteredLevels, selectedLevelId],
   );
 
   const currentSemester = useMemo(
     () => filteredSemesters.find((s) => s.semester_id === selectedSemesterId),
-    [filteredSemesters, selectedSemesterId]
+    [filteredSemesters, selectedSemesterId],
   );
 
   const currentOffering = useMemo(
     () => filteredOfferings.find((o) => o.offering_id === selectedOfferingId),
-    [filteredOfferings, selectedOfferingId]
+    [filteredOfferings, selectedOfferingId],
   );
 
   const currentCourseDoctor = useMemo(
-    () => filteredCourseDoctors.find((cd) => cd.course_doctor_id === selectedCourseDoctorId),
-    [filteredCourseDoctors, selectedCourseDoctorId]
+    () =>
+      filteredCourseDoctors.find(
+        (cd) => cd.course_doctor_id === selectedCourseDoctorId,
+      ),
+    [filteredCourseDoctors, selectedCourseDoctorId],
   );
 
   const isChainComplete = Boolean(
     selectedDepartmentId &&
-      selectedLevelId &&
-      selectedSemesterId &&
-      selectedOfferingId &&
-      selectedCourseDoctorId
+    selectedLevelId &&
+    selectedSemesterId &&
+    selectedOfferingId &&
+    selectedCourseDoctorId,
   );
 
-  // 6. Contents Filtered by Selected Course Doctor ID
-  const displayedContents = useMemo(() => {
-    if (!selectedCourseDoctorId) return [];
-    return contents.filter((c) => c.course_doctor_id === selectedCourseDoctorId);
-  }, [contents, selectedCourseDoctorId]);
-
-  // 7. Operations
+  // 5. عمليات الـ CRUD المتصلة بالـ API
   const updateContentStatus = useCallback(
-    (contentId: number, status: ContentStatus) => {
-      setContents((prev) =>
-        prev.map((item) =>
-          item.content_id === contentId
-            ? { ...item, status, updated_at: new Date().toISOString() }
-            : item
-        )
-      );
+    async (contentId: number, status: ContentStatus) => {
+      try {
+        await contentService.updateStatus(contentId, status);
+        setDisplayedContents((prev) =>
+          prev.map((item) =>
+            item.content_id === contentId ? { ...item, status } : item,
+          ),
+        );
+      } catch (err: any) {
+        alert(err.response?.data?.message || "فشل تحديث حالة المحتوى");
+      }
     },
-    []
+    [],
   );
 
   const addContent = useCallback(
-    (payload: CreateContentPayload) => {
-      if (!selectedCourseDoctorId) return;
-
-      const newId = Date.now();
-      const formattedSize = payload.file_size
-        ? `${(payload.file_size / (1024 * 1024)).toFixed(1)} MB`
-        : undefined;
-
-      const newContent: ContentEntity = {
-        content_id: newId,
-        course_doctor_id: Number(selectedCourseDoctorId),
-        content_type_id: payload.content_type_id,
-        uploaded_by: 1, // Current active admin user
-        uploaded_by_name: "مدير النظام (أنت)",
-        title: payload.title,
-        description: payload.description,
-        source_type: payload.source_type,
-        file_name: payload.file_name,
-        file_size: payload.file_size,
-        file_size_formatted: formattedSize,
-        file_extension: payload.file_extension,
-        video_url: payload.video_url,
-        download_count: 0,
-        status: "approved",
-        created_at: new Date().toISOString().replace("T", " ").substring(0, 16),
-      };
-
-      setContents((prev) => [newContent, ...prev]);
+    async (formData: FormData): Promise<boolean> => {
+      try {
+        await contentService.createContent(formData);
+        await loadContents();
+        return true;
+      } catch (err: any) {
+        alert(err.response?.data?.message || "فشل رفع المحتوى");
+        return false;
+      }
     },
-    [selectedCourseDoctorId]
+    [loadContents],
   );
 
   const editContent = useCallback(
-    (contentId: number, updates: Partial<ContentEntity>) => {
-      setContents((prev) =>
-        prev.map((item) =>
-          item.content_id === contentId
-            ? { ...item, ...updates, updated_at: new Date().toISOString() }
-            : item
-        )
-      );
+    async (
+      contentId: number,
+      updates: Partial<ContentEntity>,
+    ): Promise<boolean> => {
+      try {
+        await contentService.updateContent(contentId, updates);
+        await loadContents();
+        return true;
+      } catch (err: any) {
+        alert(err.response?.data?.message || "فشل تعديل المحتوى");
+        return false;
+      }
     },
-    []
+    [loadContents],
   );
 
-  const deleteContent = useCallback((contentId: number) => {
-    setContents((prev) => prev.filter((item) => item.content_id !== contentId));
-  }, []);
+  const deleteContent = useCallback(
+    async (contentId: number): Promise<boolean> => {
+      try {
+        await contentService.deleteContent(contentId);
+        setDisplayedContents((prev) =>
+          prev.filter((item) => item.content_id !== contentId),
+        );
+        return true;
+      } catch (err: any) {
+        alert(err.response?.data?.message || "فشل حذف المحتوى");
+        return false;
+      }
+    },
+    [],
+  );
 
   return {
     selectedDepartmentId,
@@ -254,7 +308,7 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     filteredSemesters,
     filteredOfferings,
     filteredCourseDoctors,
-    contentTypes: initialContentTypes,
+    contentTypes,
     currentDepartment,
     currentLevel,
     currentSemester,
@@ -262,10 +316,12 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     currentCourseDoctor,
     isChainComplete,
     displayedContents,
+    loading,
     updateContentStatus,
     addContent,
     editContent,
     deleteContent,
   };
 }
+
 export default useContentHierarchy;

@@ -1,36 +1,35 @@
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
-import type { AddDepartment, DepartmentEntity } from "../../../../types/api";
+import type { AddDoctor, DoctorEntity } from "../../../../types/api";
 
-interface AddDepartmentModalProps {
+interface AddDoctorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (payload: AddDepartment) => Promise<boolean>;
+  onSubmit: (payload: AddDoctor) => Promise<boolean>;
   isSubmitting?: boolean;
-  initialData?: DepartmentEntity | null; // استلام بيانات القسم في حالة التعديل
+  initialData?: DoctorEntity | null;
 }
 
-export function AddDepartmentModal({
+export function AddDoctorModal({
   isOpen,
   onClose,
-  onAdd,
+  onSubmit,
   isSubmitting = false,
   initialData = null,
-}: AddDepartmentModalProps) {
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
+}: AddDoctorModalProps) {
+  const [nameAr, setNameAr] = useState("");
+  const [nameEn, setNameEn] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const isEditMode = Boolean(initialData);
 
-  // تحديث الحقول تلقائياً عند فتح المودال بناءً على نوع العملية
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name);
-      setCode(initialData.code);
+      setNameAr(initialData.user?.name_ar || initialData.user?.full_name || "");
+      setNameEn(initialData.user?.name_en || "");
     } else {
-      setName("");
-      setCode("");
+      setNameAr("");
+      setNameEn("");
     }
     setValidationError(null);
   }, [initialData, isOpen]);
@@ -41,19 +40,19 @@ export function AddDepartmentModal({
     e.preventDefault();
     setValidationError(null);
 
-    if (!name.trim() || !code.trim()) {
-      setValidationError("يرجى ملء جميع الحقول المطلوبة");
+    if (!nameAr.trim() || !nameEn.trim()) {
+      setValidationError(
+        "يرجى إدخال اسم الدكتور باللغتين العربية والإنجليزية.",
+      );
       return;
     }
 
-    const success = await onAdd({
-      name: name.trim(),
-      code: code.trim().toUpperCase(),
+    const success = await onSubmit({
+      name_ar: nameAr.trim(),
+      name_en: nameEn.trim(),
     });
 
     if (success) {
-      setName("");
-      setCode("");
       onClose();
     }
   };
@@ -61,12 +60,10 @@ export function AddDepartmentModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/[0.08] bg-[#242D42] shadow-2xl">
-        {/* Header - يتغير تلقائياً حسب العملية */}
+        {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
           <h3 className="text-sm font-bold text-[#F4F7F6]">
-            {isEditMode
-              ? "تعديل بيانات القسم الأكاديمي"
-              : "إضافة قسم أكاديمي جديد"}
+            {isEditMode ? "تعديل بيانات الدكتور" : "تسجيل دكتور جديد"}
           </h3>
           <button
             type="button"
@@ -77,7 +74,7 @@ export function AddDepartmentModal({
           </button>
         </div>
 
-        {/* Form */}
+        {/* Modal Body */}
         <form onSubmit={handleSubmit} className="space-y-4 p-6">
           {validationError && (
             <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
@@ -87,33 +84,33 @@ export function AddDepartmentModal({
 
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-[#AABCAF]">
-              اسم القسم <span className="text-red-400">*</span>
+              الاسم بالعربية <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="مثال: هندسة البرمجيات"
+              value={nameAr}
+              onChange={(e) => setNameAr(e.target.value)}
+              placeholder="مثال: د. محمد علي سالم"
               className="w-full rounded-xl border border-white/[0.08] bg-[#323D59] px-3.5 py-2.5 text-xs text-white placeholder-[#AABCAF]/60 outline-none focus:border-[#899C9A] focus:ring-1 focus:ring-[#899C9A]"
             />
           </div>
 
           <div>
             <label className="mb-1.5 block text-xs font-semibold text-[#AABCAF]">
-              رمز القسم (Code) <span className="text-red-400">*</span>
+              الاسم بالإنجليزية <span className="text-red-400">*</span>
             </label>
             <input
               type="text"
               required
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="مثال: SE"
-              className="w-full rounded-xl border border-white/[0.08] bg-[#323D59] px-3.5 py-2.5 font-['JetBrains_Mono'] text-xs text-white placeholder-[#AABCAF]/60 uppercase outline-none focus:border-[#899C9A] focus:ring-1 focus:ring-[#899C9A]"
+              value={nameEn}
+              onChange={(e) => setNameEn(e.target.value)}
+              placeholder="مثال: Mohammed Ali Salem"
+              className="w-full rounded-xl border border-white/[0.08] bg-[#323D59] px-3.5 py-2.5 text-xs text-white placeholder-[#AABCAF]/60 outline-none focus:border-[#899C9A] focus:ring-1 focus:ring-[#899C9A]"
             />
           </div>
 
-          {/* Actions - يتغير نص الزر تلقائياً */}
+          {/* Modal Actions */}
           <div className="flex items-center justify-end gap-2.5 pt-2">
             <button
               type="button"
@@ -131,10 +128,10 @@ export function AddDepartmentModal({
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>جاري الحفظ...</span>
+                  <span>جاري المعالجة...</span>
                 </>
               ) : (
-                <span>{isEditMode ? "حفظ التعديلات" : "إضافة القسم"}</span>
+                <span>{isEditMode ? "تحديث البيانات" : "تسجيل الدكتور"}</span>
               )}
             </button>
           </div>

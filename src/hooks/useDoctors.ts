@@ -1,98 +1,122 @@
-import { useState, useCallback } from "react";
-import { initialDoctors, initialCourses } from "../data/academicData";
-import type { Doctor, AcademicCourse } from "../types/academic";
+import { useState, useEffect, useCallback } from "react";
+import { doctorService } from "../services/doctorService";
+import type { DoctorEntity, AddDoctor } from "../types/api";
 
-export function useDoctors(
-  initialDocs: Doctor[] = initialDoctors,
-  initialCrs: AcademicCourse[] = initialCourses
-) {
-  const [doctorsList, setDoctorsList] = useState<Doctor[]>(initialDocs);
-  const [coursesList, setCoursesList] = useState<AcademicCourse[]>(initialCrs);
+export function useDoctors() {
+  const [doctorsList, setDoctorsList] = useState<DoctorEntity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddDoctor = useCallback((newDoc: Doctor) => {
-    setDoctorsList((prev) => [newDoc, ...prev]);
+  // 1. GET: جلب كافة الدكاترة
+  const fetchDoctors = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await doctorService.fetchDoctors();
+      if (res.status) {
+        setDoctorsList(res.data);
+      } else {
+        setError("تعذر جلب قائمة الدكاترة");
+      }
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "حدث خطأ أثناء تحميل الدكاترة",
+      );
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const handleEditDoctor = useCallback((updatedDoc: Doctor) => {
-    setDoctorsList((prev) =>
-      prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d))
-    );
-  }, []);
+  // 2. POST: تسجيل دكتور جديد
+  const handleAddDoctor = async (payload: AddDoctor): Promise<boolean> => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await doctorService.addDoctor(payload);
+      if (res.status && res.data) {
+        const newDoctor: DoctorEntity = res.data;
+        setDoctorsList((prev) => [newDoctor, ...prev]);
+        return true;
+      }
+      setError(res.message || "فشلت إضافة الدكتور");
+      return false;
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "حدث خطأ أثناء حفظ بيانات الدكتور",
+      );
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  const handleDeleteDoctor = useCallback((docId: string) => {
-    setDoctorsList((prev) => prev.filter((d) => d.id !== docId));
-    setCoursesList((prev) =>
-      prev.map((c) => ({
-        ...c,
-        doctorIds: c.doctorIds?.filter((id) => id !== docId) || [],
-      }))
-    );
-  }, []);
+  // 3. PUT: تحديث بيانات دكتور
+  const handleEditDoctor = async (
+    id: number,
+    payload: Partial<AddDoctor>,
+  ): Promise<boolean> => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await doctorService.updateDoctor(id, payload);
+      if (res.status && res.data) {
+        const updatedDoctor: DoctorEntity = res.data;
+        setDoctorsList((prev) =>
+          prev.map((doc) => (doc.doctor_id === id ? updatedDoctor : doc)),
+        );
+        return true;
+      }
+      setError(res.message || "فشل تحديث بيانات الدكتور");
+      return false;
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "حدث خطأ أثناء تعديل بيانات الدكتور",
+      );
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  const handleAssignCourse = useCallback((doctorId: string, courseId: number) => {
-    setDoctorsList((prev) =>
-      prev.map((d) => {
-        if (d.id === doctorId) {
-          const exists = d.assignedCourseIds?.includes(courseId);
-          return {
-            ...d,
-            assignedCourseIds: exists
-              ? d.assignedCourseIds
-              : [...(d.assignedCourseIds || []), courseId],
-          };
-        }
-        return d;
-      })
-    );
-    setCoursesList((prev) =>
-      prev.map((c) => {
-        if (c.id === courseId) {
-          const exists = c.doctorIds?.includes(doctorId);
-          return {
-            ...c,
-            doctorIds: exists ? c.doctorIds : [...(c.doctorIds || []), doctorId],
-          };
-        }
-        return c;
-      })
-    );
-  }, []);
+  // 4. DELETE: حذف حساب الدكتور
+  const handleDeleteDoctor = async (id: number): Promise<boolean> => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await doctorService.deleteDoctor(id);
+      if (res.status) {
+        setDoctorsList((prev) => prev.filter((doc) => doc.doctor_id !== id));
+        return true;
+      }
+      setError(res.message || "تعذر حذف الدكتور لوجود ارتباطات بنظام المقررات");
+      return false;
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "حدث خطأ أثناء محاولة الحذف",
+      );
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  const handleUnassignCourse = useCallback((doctorId: string, courseId: number) => {
-    setDoctorsList((prev) =>
-      prev.map((d) => {
-        if (d.id === doctorId) {
-          return {
-            ...d,
-            assignedCourseIds:
-              d.assignedCourseIds?.filter((id) => id !== courseId) || [],
-          };
-        }
-        return d;
-      })
-    );
-    setCoursesList((prev) =>
-      prev.map((c) => {
-        if (c.id === courseId) {
-          return {
-            ...c,
-            doctorIds: c.doctorIds?.filter((id) => id !== doctorId) || [],
-          };
-        }
-        return c;
-      })
-    );
-  }, []);
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   return {
     doctorsList,
-    setDoctorsList,
-    coursesList,
-    setCoursesList,
+    loading,
+    isSubmitting,
+    error,
     handleAddDoctor,
     handleEditDoctor,
     handleDeleteDoctor,
-    handleAssignCourse,
-    handleUnassignCourse,
+    refetchDoctors: fetchDoctors,
   };
 }
+
+export default useDoctors;
