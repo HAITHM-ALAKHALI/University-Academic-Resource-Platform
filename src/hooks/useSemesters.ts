@@ -70,12 +70,21 @@ export function useSemesters() {
       }
       setError(res.message || "فشل تحديث الفصل الدراسي");
       return false;
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "حدث خطأ أثناء تعديل الفصل الدراسي",
-      );
+    } catch (err: any) {
+      // استخراج رسائل أخطاء الـ Validation من لارافيل
+      const validationErrors = err.response?.data?.errors;
+      const backendMessage = err.response?.data?.message;
+
+      if (validationErrors) {
+        console.error("تفاصيل أخطاء التحقق (422):", validationErrors);
+        // أخذ أول رسالة خطأ صريحة من السيرفر
+        const firstErrorKey = Object.keys(validationErrors)[0];
+        setError(validationErrors[firstErrorKey][0]);
+      } else {
+        setError(
+          backendMessage || err.message || "حدث خطأ أثناء تعديل الفصل الدراسي",
+        );
+      }
       return false;
     } finally {
       setIsSubmitting(false);

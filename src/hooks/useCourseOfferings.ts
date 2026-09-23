@@ -78,14 +78,50 @@ export function useCourseOfferings(selectedSemesterId?: number) {
   // إضافة طرح جديد لمادة
   const handleAddOffering = async (
     payload: AddCourseOfferingPayload,
+  ): Promise<number | null> => {
+    try {
+      setIsSubmitting(true);
+      const res = await courseOfferingsService.createOffering(payload);
+      await loadOfferings();
+
+      const newOfferingId = res.data?.offering_id || res.offering_id;
+      return newOfferingId ?? null;
+    } catch (err: any) {
+      alert(err.response?.data?.message || "فشلت عملية طرح المادة");
+      return null;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // تعديل مقرر مطروح مسبقاً وتحديث الدكاترة
+  const handleUpdateOffering = async (
+    offeringId: number,
+    payload: { course_id: number; semester_id: number; doctor_ids?: number[] },
   ): Promise<boolean> => {
     try {
       setIsSubmitting(true);
-      await courseOfferingsService.createOffering(payload);
+      // 1. إرسال طلب التعديل إلى الـ API
+      await courseOfferingsService.updateOffering(offeringId, {
+        course_id: payload.course_id,
+        semester_id: payload.semester_id,
+      });
+
+      // 2. تحديث إسناد الدكاترة
+      if (payload.doctor_ids && payload.doctor_ids.length > 0) {
+        for (const docId of payload.doctor_ids) {
+          await courseOfferingsService.assignDoctor({
+            offering_id: offeringId,
+            doctor_id: docId,
+          });
+        }
+      }
+
+      // 3. إعادة تحميل البيانات لتنعكس في الجدول فوراً
       await loadOfferings();
       return true;
     } catch (err: any) {
-      alert(err.response?.data?.message || "فشلت عملية طرح المادة");
+      alert(err.response?.data?.message || "فشلت عملية تحديث المقرر المطروح");
       return false;
     } finally {
       setIsSubmitting(false);
@@ -119,6 +155,7 @@ export function useCourseOfferings(selectedSemesterId?: number) {
     refreshOfferings: loadOfferings,
     loadDoctorsForOffering,
     handleAddOffering,
+    handleUpdateOffering, // 👈 تم التصدير هنا
     handleDeleteOffering,
     handleAssignDoctor,
   };

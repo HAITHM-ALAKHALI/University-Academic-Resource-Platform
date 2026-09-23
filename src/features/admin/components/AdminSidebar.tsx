@@ -14,6 +14,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Layers,
 } from "lucide-react";
 import type { AdminView } from "../../../types/app";
 import {
@@ -32,6 +33,7 @@ const navIcons: Record<AdminNavIconName, ReactNode> = {
   ShieldCheck: <ShieldCheck className="h-4 w-4 shrink-0" />,
   UserCog: <UserCog className="h-4 w-4 shrink-0" />,
   Settings: <Settings className="h-4 w-4 shrink-0" />,
+  Layers: <Layers className="h-4 w-4 shrink-0" />,
 };
 
 export interface AdminSidebarProps {

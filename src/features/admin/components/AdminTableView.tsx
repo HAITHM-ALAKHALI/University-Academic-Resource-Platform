@@ -9,22 +9,25 @@ import {
   ChevronRight,
   ChevronLeft,
   Loader2,
+  UserCheck,
 } from "lucide-react";
 import type { AdminView } from "../../../types/app";
 import { adminNavItems } from "../../../constants/adminNav";
-import { useDepartments } from "../../../hooks/useDepartments"; // استدعاء الـ Hook
+import { useDepartments } from "../../../hooks/useDepartments";
 import { useCourses } from "../../../hooks/useCourses";
 import { useLevels } from "../../../hooks/useLevels";
 import { useSemesters } from "../../../hooks/useSemesters";
 import { useDoctors } from "../../../hooks/useDoctors";
+import { useCourseOfferings } from "../../../hooks/useCourseOfferings";
+import { useCourseDoctors } from "../../../hooks/useCourseDoctors";
+
 export interface AdminTableViewProps {
   view: AdminView;
   onAdd: () => void;
   onEdit: (row: string[]) => void;
-  onDelete: (name: string) => void;
+  onDelete: (id: string, name?: string) => void;
 }
 
-// البيانات الثابتة لباقي التبويبات المؤقتة
 const staticTableData: Record<string, { headers: string[]; rows: string[][] }> =
   {
     levels: {
@@ -42,7 +45,6 @@ const staticTableData: Record<string, { headers: string[]; rows: string[][] }> =
         ["2", "السنة الثانية", "علوم حاسوب", "10", "245", "نشط", ""],
       ],
     },
-    // ... باقي الجداول
   };
 
 export function AdminTableView({
@@ -55,34 +57,39 @@ export function AdminTableView({
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [allChecked, setAllChecked] = useState(false);
 
-  // استخدام الـ Hook مباشرة بدلاً من كتابة useState و useEffect يدوياً
   const {
     departments,
     loading: isDeptLoading,
     error: deptError,
   } = useDepartments();
-
   const {
     courses,
     loading: isCourseLoading,
     error: courseError,
   } = useCourses();
-
   const { levels, loading: isLevelLoading, error: levelError } = useLevels();
-
   const {
     semesters,
     loading: isSemesterLoading,
     error: semesterError,
   } = useSemesters();
-
   const {
     doctorsList,
     loading: isDoctorLoading,
     error: doctorError,
   } = useDoctors();
+  const {
+    offerings,
+    loading: isCourseOfferingsLoading,
+    error: courseOfferingsError,
+  } = useCourseOfferings();
+  const {
+    assignments,
+    loading: isCourseDocLoading,
+    error: courseDocError,
+  } = useCourseDoctors();
 
-  // تجهيز البيانات بحسب التبويب المختار
+  // تجهيز البيانات لجميع الجداول مع اعتماد المعرف كـ row[0] دائماً
   const data = (() => {
     if (view === "departments") {
       return {
@@ -99,6 +106,7 @@ export function AdminTableView({
     if (view === "courses") {
       return {
         headers: [
+          "المعرف",
           "رمز المادة",
           "الاسم بالعربي",
           "الاسم بالإنجليزي",
@@ -106,6 +114,7 @@ export function AdminTableView({
           "الإجراءات",
         ],
         rows: courses.map((c) => [
+          String(c.course_id),
           c.course_code,
           c.course_name_ar,
           c.course_name_en,
@@ -117,23 +126,27 @@ export function AdminTableView({
 
     if (view === "levels") {
       return {
-        headers: ["اسم المستوى", "رقم المستوى", "القسم", "الإجراءات"],
+        headers: ["المعرف", "اسم المستوى", "رقم المستوى", "القسم", "الإجراءات"],
         rows: levels.map((l: any) => {
-          // قراءة اسم المستوى القادم من الباك إند كـ level_name أو name مع خيار احتياطي
           const levelTitle =
-            l.level_name ||
             l.name ||
-            (l.level_number ? `مستوى ${l.level_number}` : "#");
+            l.level_name ||
+            (l.level_number ? `المستوى ${l.level_number}` : "#");
 
-          // جلب اسم القسم إما مباشرة من الرد المسطح أو العلاقة أو البحث
           const deptName =
-            l.department_name ||
             l.department?.name ||
+            l.department_name ||
             departments.find((d: any) => d.department_id === l.department_id)
               ?.name ||
-            `قسم #${l.department_id}`;
+            "";
 
-          return [levelTitle, String(l.level_number ?? ""), deptName, ""];
+          return [
+            String(l.level_id),
+            levelTitle,
+            String(l.level_number ?? "1"),
+            deptName,
+            "",
+          ];
         }),
       };
     }
@@ -141,6 +154,7 @@ export function AdminTableView({
     if (view === "semesters") {
       return {
         headers: [
+          "المعرف",
           "اسم الترم",
           "رقم الترم",
           "العام الجامعي",
@@ -153,18 +167,190 @@ export function AdminTableView({
             s.name ||
             (s.semester_number ? `الفصل الدراسي ${s.semester_number}` : "#");
 
-          const levelTitle =
+          const matchedLevel =
+            s.level || levels.find((lvl: any) => lvl.level_id === s.level_id);
+
+          const baseLevelName =
+            matchedLevel?.name ||
+            matchedLevel?.level_name ||
             s.level_name ||
-            s.level?.name ||
-            levels.find((lvl) => lvl.level_id === s.level_id)?.name ||
-            `مستوى #${s.level_id}`;
+            (matchedLevel?.level_number
+              ? `المستوى ${matchedLevel.level_number}`
+              : `مستوى #${s.level_id}`);
+
+          const deptName =
+            matchedLevel?.department?.name ||
+            matchedLevel?.department_name ||
+            departments.find(
+              (d: any) => d.department_id === matchedLevel?.department_id,
+            )?.name ||
+            "";
+
+          const levelWithDept = deptName
+            ? `${baseLevelName} (${deptName})`
+            : baseLevelName;
 
           return [
+            String(s.semester_id),
             semesterTitle,
             String(s.semester_number),
             s.academic_year,
-            levelTitle,
+            levelWithDept,
             "",
+          ];
+        }),
+      };
+    }
+
+    if (view === "course_doctors") {
+      return {
+        headers: [
+          "المعرف",
+          "اسم الدكتور",
+          "اسم المقرر",
+          "رمز المقرر",
+          "القسم",
+          "المستوى",
+          "الترم الدراسي",
+          "الإجراءات",
+        ],
+        rows: assignments.map((item) => [
+          String(item.course_doctor_id), // row[0]: المعرف المخفي للحذف والتعديل
+          item.doctor_name, // row[1]
+          item.course_name, // row[2]
+          item.course_code || "—", // row[3]
+          item.department_name, // row[4]
+          item.level_name, // row[5]
+          item.semester_name, // row[6]
+          "", // row[7]: أزرار الإجراءات
+        ]),
+      };
+    }
+
+    if (view === "course_offerings") {
+      return {
+        headers: [
+          "المعرف",
+          "اسم المقرر",
+          "رمز المقرر",
+          "الترم الدراسي",
+          "المستوى / القسم",
+          "الدكتور المسند",
+          "الإجراءات",
+        ],
+        rows: offerings.map((o: any) => {
+          // 1. المادة ورمزها
+          const courseTitle =
+            o.course?.course_name_ar ||
+            o.course_name ||
+            courses.find((c) => c.course_id === o.course_id)?.course_name_ar ||
+            "—";
+
+          const courseCode =
+            o.course?.course_code ||
+            o.course_code ||
+            courses.find((c) => c.course_id === o.course_id)?.course_code ||
+            "—";
+
+          // 2. اسم الترم
+          const currentSemesterName =
+            o.semester?.name || o.semester_name || "—";
+
+          // 3. العثور على الترم في مصفوفة semesters عبر الـ ID أو الاسم
+          const matchedSemester = semesters.find(
+            (s) =>
+              s.semester_id === o.semester_id ||
+              s.name === currentSemesterName ||
+              s.semester_name === currentSemesterName ||
+              (s.semester_number &&
+                `الفصل الدراسي ${s.semester_number}` === currentSemesterName),
+          );
+
+          // 4. استخراج المستوى والقسم من مصفوفة levels و departments المحملة محلياً
+          const matchedLevel = levels.find(
+            (l) => l.level_id === matchedSemester?.level_id,
+          );
+
+          const matchedDept = departments.find(
+            (d) => d.department_id === matchedLevel?.department_id,
+          );
+
+          const levelName =
+            matchedLevel?.name ||
+            (matchedLevel?.level_number
+              ? `المستوى ${matchedLevel.level_number}`
+              : "");
+
+          const deptName =
+            matchedDept?.name || matchedLevel?.department_name || "";
+
+          const levelAndDept =
+            levelName && deptName
+              ? `${levelName} (${deptName})`
+              : levelName || deptName || "—";
+
+          // 5. استخراج اسم الدكتور المسند عبر كافة الاحتمالات المتاحة
+          // 5. استخراج اسم الدكتور المسند
+          let doctorsNames = "";
+
+          // فحص مصفوفة doctors الموجودة في o
+          const rawDocs = o.doctors || o.course_doctors || o.courseDoctors;
+
+          if (Array.isArray(rawDocs) && rawDocs.length > 0) {
+            doctorsNames = rawDocs
+              .map((d: any) => {
+                // قد يكون العنصر هو كائن الدكتور مباشرة أو يحمل معرّف doctor_id
+                const docId = d.doctor_id || d.id;
+                const localDoc = doctorsList.find(
+                  (doc: any) => doc.doctor_id === docId,
+                );
+
+                return (
+                  d.user?.full_name ||
+                  d.user?.name_ar ||
+                  d.doctor?.user?.full_name ||
+                  d.doctor?.user?.name_ar ||
+                  d.doctor_name ||
+                  d.name ||
+                  localDoc?.user?.full_name ||
+                  localDoc?.user?.name_ar ||
+                  ""
+                );
+              })
+              .filter((name: string) => Boolean(name && name.trim()))
+              .join("، ");
+          }
+
+          // إذا لم تكن مصفوفة، نفحص الحقول الفردية
+          if (!doctorsNames) {
+            const singleDocId = o.doctor_id || o.doctor?.doctor_id;
+            const matchedDoc = doctorsList.find(
+              (doc: any) => doc.doctor_id === singleDocId,
+            );
+
+            doctorsNames =
+              o.doctor?.user?.full_name ||
+              o.doctor?.user?.name_ar ||
+              o.doctor_name ||
+              o.doctor?.name ||
+              matchedDoc?.user?.full_name ||
+              matchedDoc?.user?.name_ar ||
+              "";
+          }
+
+          // إذا لم يوجد دكتور مسند نهائياً
+          if (!doctorsNames.trim()) {
+            doctorsNames = "—";
+          }
+
+          return [
+            String(o.offering_id || o.id), // row[0]: المعرف المخفي
+            courseTitle, // row[1]
+            courseCode, // row[2]
+            currentSemesterName, // row[3]
+            levelAndDept, // row[4]
+            doctorsNames, // row[5]
+            "", // row[6]
           ];
         }),
       };
@@ -172,8 +358,9 @@ export function AdminTableView({
 
     if (view === "doctors") {
       return {
-        headers: ["اسم الدكتور", "البريد الجامعي", "الإجراءات"],
+        headers: ["المعرف", "اسم الدكتور", "البريد الجامعي", "الإجراءات"],
         rows: doctorsList.map((doc) => [
+          String(doc.doctor_id),
           doc.user?.full_name || doc.user?.name_ar || "غير محدد",
           doc.user?.email || "-",
           "",
@@ -194,11 +381,17 @@ export function AdminTableView({
     levels: "مستوى",
     semesters: "ترم",
     courses: "مادة",
+    course_offerings: "طرح مقرر في ترم",
     system_admins: "مدير نظام",
     content_managers: "مدير محتوى",
     doctors: "دكتور",
+    course_doctors: "إسناد مادة لدكتور",
   };
-  const label = labelMap[view] ?? "عنصر";
+
+  const getButtonText = () => {
+    if (view === "course_offerings") return "طرح مقرر في ترم";
+    return `إضافة ${labelMap[view] ?? "عنصر"}`;
+  };
 
   const roleColors: Record<string, string> = {
     "مالك النظام (Owner)":
@@ -232,7 +425,9 @@ export function AdminTableView({
     (view === "courses" && isCourseLoading) ||
     (view === "levels" && isLevelLoading) ||
     (view === "semesters" && isSemesterLoading) ||
-    (view === "doctors" && isDoctorLoading);
+    (view === "doctors" && isDoctorLoading) ||
+    (view === "course_offerings" && isCourseOfferingsLoading) ||
+    (view === "course_doctors" && isCourseDocLoading);
 
   const currentError =
     view === "departments"
@@ -245,7 +440,11 @@ export function AdminTableView({
             ? semesterError
             : view === "doctors"
               ? doctorError
-              : null;
+              : view === "course_offerings"
+                ? courseOfferingsError
+                : view === "course_doctors"
+                  ? courseDocError
+                  : null;
 
   return (
     <div className="space-y-4 fade-in">
@@ -296,7 +495,7 @@ export function AdminTableView({
           className="flex items-center gap-2 rounded-xl bg-[#899C9A] px-4 py-2.5 text-xs font-black text-[#1D263B] shadow-md transition-all hover:bg-[#AABCAF] hover:scale-[1.02] active:scale-95 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
-          <span>إضافة {label}</span>
+          <span>{getButtonText()}</span>
         </button>
       </div>
 
@@ -314,11 +513,15 @@ export function AdminTableView({
                     className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
                   />
                 </th>
-                {data.headers.map((h, i) => (
-                  <th key={i} className="px-6 py-4 whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
+                {data.headers.map((h, i) => {
+                  if (h === "المعرف" || h === "ID" || h === "id") return null;
+
+                  return (
+                    <th key={i} className="px-6 py-4 whitespace-nowrap">
+                      {h}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
@@ -330,7 +533,7 @@ export function AdminTableView({
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="h-5 w-5 animate-spin text-[#899C9A]" />
-                      <span>جاري تحميل الأقسام عبر useDepartments...</span>
+                      <span>جاري التحميل...</span>
                     </div>
                   </td>
                 </tr>
@@ -364,62 +567,68 @@ export function AdminTableView({
                         className="h-4 w-4 rounded border-white/20 bg-[#242D42] text-[#899C9A] focus:ring-[#899C9A] cursor-pointer"
                       />
                     </td>
-                    {row.map((cell, ci) => (
-                      <td
-                        key={ci}
-                        className="px-6 py-4 text-xs font-semibold text-[#F4F7F6] whitespace-nowrap"
-                      >
-                        {ci === row.length - 1 ? (
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => onEdit(row)} // تمرير السطر الحالي
-                              className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
-                            >
-                              <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
-                              <span>تعديل</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => onDelete(row[1])}
-                              className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        ) : cell === "نشط" ? (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-[#899C9A]/20 border border-[#899C9A]/40 px-2.5 py-0.5 text-[11px] font-bold text-[#F4F7F6]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#899C9A]" />
-                            نشط
-                          </span>
-                        ) : roleColors[cell] ? (
-                          <span
-                            className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
+
+                    {row.map((cell, ci) => {
+                      if (ci === 0) return null;
+
+                      if (ci === row.length - 1) {
+                        return (
+                          <td
+                            key={ci}
+                            className="px-6 py-4 text-xs font-semibold text-[#F4F7F6] whitespace-nowrap"
                           >
-                            {cell}
-                          </span>
-                        ) : ci === 0 ? (
-                          <span className="font-['JetBrains_Mono'] font-bold text-[#AABCAF]">
-                            #{cell}
-                          </span>
-                        ) : (
-                          cell
-                        )}
-                      </td>
-                    ))}
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => onEdit(row)}
+                                className="flex items-center gap-1 rounded-lg border border-white/[0.07] bg-[#242D42] px-2.5 py-1 text-xs font-bold text-[#AABCAF] transition-colors hover:border-[#899C9A] hover:bg-[#3B4868] hover:text-white cursor-pointer"
+                              >
+                                <Edit3 className="h-3.5 w-3.5 text-[#899C9A]" />
+                                <span>تعديل</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => onDelete(row[0], row[1])}
+                                className="flex items-center gap-1 rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-300 transition-colors hover:bg-red-500/25 cursor-pointer"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        );
+                      }
+
+                      return (
+                        <td
+                          key={ci}
+                          className="px-6 py-4 text-xs font-semibold text-[#F4F7F6] whitespace-nowrap"
+                        >
+                          {cell === "نشط" ? (
+                            <span className="inline-flex items-center gap-1 rounded-md bg-[#899C9A]/20 border border-[#899C9A]/40 px-2.5 py-0.5 text-[11px] font-bold text-[#F4F7F6]">
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#899C9A]" />
+                              نشط
+                            </span>
+                          ) : roleColors && roleColors[cell] ? (
+                            <span
+                              className={`rounded-md px-2.5 py-0.5 text-[11px] font-bold ${roleColors[cell]}`}
+                            >
+                              {cell}
+                            </span>
+                          ) : view === "course_offerings" &&
+                            ci === 5 &&
+                            cell !== "—" ? (
+                            <span className="inline-flex items-center gap-1.5 text-[#F4F7F6]">
+                              <UserCheck className="h-3.5 w-3.5 text-[#899C9A]" />
+                              <span>{cell}</span>
+                            </span>
+                          ) : (
+                            cell
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))
-              )}
-
-              {!isLoading && !currentError && filtered.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={data.headers.length + 1}
-                    className="py-12 text-center text-xs text-[#AABCAF]"
-                  >
-                    لا توجد نتائج مطابقة لعملية البحث
-                  </td>
-                </tr>
               )}
             </tbody>
           </table>

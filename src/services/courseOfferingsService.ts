@@ -25,6 +25,15 @@ export const courseOfferingsService = {
     return res.data;
   },
 
+  // 👈 دالة تعديل طرح المادة (المضافة)
+  updateOffering: async (
+    offeringId: number,
+    payload: { course_id: number; semester_id: number },
+  ) => {
+    const res = await apiClient.put(`/course-offerings/${offeringId}`, payload);
+    return res.data;
+  },
+
   // جلب الدكاترة المسندين لمادة مطروحة محددة
   getCourseDoctors: async (
     offeringId?: number,

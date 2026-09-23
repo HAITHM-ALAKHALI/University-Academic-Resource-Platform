@@ -32,9 +32,22 @@ export function AddLevelModal({
 
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name);
-      setSelectedDeptIds([initialData.department_id]);
-      setLevelNumber(initialData.level_number);
+      // قراءة الاسم مع التعامل مع الاختلافات المحتملة في التسمية
+      setName(initialData.name || (initialData as any).level_name || "");
+
+      // استخراج department_id الخاص بالصف المحدد فقط
+      const deptId =
+        initialData.department_id ??
+        (initialData as any).department?.department_id;
+      setSelectedDeptIds(deptId ? [Number(deptId)] : []);
+
+      // قراءة رقم المستوى بأمان لمنع ظهور قيمة NaN
+      const rawNum =
+        initialData.level_number ??
+        (initialData as any).number ??
+        (initialData as any).level;
+      const parsedNum = Number(rawNum);
+      setLevelNumber(!isNaN(parsedNum) && parsedNum > 0 ? parsedNum : 1);
     } else {
       setName("");
       setSelectedDeptIds(
@@ -75,13 +88,19 @@ export function AddLevelModal({
     const success = await onSubmit({
       name: name.trim(),
       department_ids: selectedDeptIds,
-      level_number: Number(levelNumber),
+      level_number: Number(levelNumber) || 1,
     });
 
     if (success) {
       onClose();
     }
   };
+
+  // العثور على اسم القسم التابع لهذا الصف في وضع التعديل
+  const currentDepartmentName =
+    departments.find((d) => d.department_id === selectedDeptIds[0])?.name ||
+    (initialData as any)?.department?.name ||
+    "القسم المحدد";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -108,48 +127,63 @@ export function AddLevelModal({
             </div>
           )}
 
-          {/* اختيار الأقسام (تحديد مفرد أو متعدد) */}
+          {/* القسم التابع للمستوى */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-[#AABCAF]">
-                الأقسام التابعة <span className="text-red-400">*</span>
-              </label>
-              {!isEditMode && (
-                <button
-                  type="button"
-                  onClick={handleSelectAll}
-                  className="text-[11px] text-[#899C9A] hover:underline"
-                >
-                  {selectedDeptIds.length === departments.length
-                    ? "إلغاء تحديد الكل"
-                    : "تحديد كل الأقسام"}
-                </button>
-              )}
-            </div>
+            <label className="mb-1.5 block text-xs font-semibold text-[#AABCAF]">
+              {isEditMode ? "القسم التابع للمستوى" : "الأقسام التابعة"}{" "}
+              <span className="text-red-400">*</span>
+            </label>
 
-            <div className="max-h-36 overflow-y-auto space-y-1.5 rounded-xl border border-white/[0.08] bg-[#1E2638] p-3">
-              {departments.map((dept) => {
-                const isChecked = selectedDeptIds.includes(dept.department_id);
-                return (
-                  <label
-                    key={dept.department_id}
-                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors ${
-                      isChecked
-                        ? "bg-[#323D59] text-white"
-                        : "text-[#AABCAF] hover:bg-white/[0.02]"
-                    }`}
+            {isEditMode ? (
+              /* في وضع التعديل: إظهار القسم الخاص بهذا الصف فقط */
+              <div className="rounded-xl border border-white/[0.08] bg-[#1E2638] px-3.5 py-2.5 text-xs font-semibold text-white">
+                {currentDepartmentName}
+              </div>
+            ) : (
+              /* في وضع الإضافة: إتاحة تحديد قسم أو عدة أقسام */
+              <>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] text-[#AABCAF]">
+                    حدد الأقسام المستهدفة
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleSelectAll}
+                    className="text-[11px] text-[#899C9A] hover:underline"
                   >
-                    <span>{dept.name}</span>
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => toggleDepartment(dept.department_id)}
-                      className="rounded border-white/20 bg-transparent text-[#899C9A] focus:ring-0"
-                    />
-                  </label>
-                );
-              })}
-            </div>
+                    {selectedDeptIds.length === departments.length
+                      ? "إلغاء تحديد الكل"
+                      : "تحديد كل الأقسام"}
+                  </button>
+                </div>
+
+                <div className="max-h-36 overflow-y-auto space-y-1.5 rounded-xl border border-white/[0.08] bg-[#1E2638] p-3">
+                  {departments.map((dept) => {
+                    const isChecked = selectedDeptIds.includes(
+                      dept.department_id,
+                    );
+                    return (
+                      <label
+                        key={dept.department_id}
+                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-colors ${
+                          isChecked
+                            ? "bg-[#323D59] text-white"
+                            : "text-[#AABCAF] hover:bg-white/[0.02]"
+                        }`}
+                      >
+                        <span>{dept.name}</span>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleDepartment(dept.department_id)}
+                          className="rounded border-white/20 bg-transparent text-[#899C9A] focus:ring-0"
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           <div>
@@ -176,8 +210,11 @@ export function AddLevelModal({
               min={1}
               max={6}
               required
-              value={levelNumber}
-              onChange={(e) => setLevelNumber(Number(e.target.value))}
+              value={isNaN(levelNumber) ? "" : levelNumber}
+              onChange={(e) => {
+                const val = e.target.value;
+                setLevelNumber(val === "" ? ("" as any) : Number(val));
+              }}
               className="w-full rounded-xl border border-white/[0.08] bg-[#323D59] px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#899C9A] focus:ring-1 focus:ring-[#899C9A]"
             />
           </div>

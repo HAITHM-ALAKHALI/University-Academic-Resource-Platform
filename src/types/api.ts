@@ -213,3 +213,15 @@ export interface AssignDoctorPayload {
   offering_id: number;
   doctor_id: number;
 }
+
+
+export interface CourseDoctorAssignment {
+  course_doctor_id: number;
+  doctor_name: string;
+  course_name: string;
+  course_code: string | null;
+  department_name: string;
+  level_name: string;
+  semester_name: string;
+}
+

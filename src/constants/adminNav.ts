@@ -6,6 +6,7 @@ export type AdminNavIconName =
   | "GraduationCap"
   | "Calendar"
   | "BookOpen"
+  | "Layers"
   | "FileText"
   | "Users"
   | "ShieldCheck"
@@ -69,6 +70,19 @@ export const adminNavSections: NavSection[] = [
         iconName: "BookOpen",
         badge: 0,
       },
+
+      {
+        id: "course_doctors",
+        label: "مواد الدكاترة (الإسناد)",
+        iconName: "GraduationCap", // أو أي أيقونة مناسبة
+        badge: 0,
+      },
+      {
+        id: "course_offerings",
+        label: "طرح المقررات",
+        iconName: "Layers",
+        badge: 0,
+      },
     ],
   },
   {
@@ -126,7 +140,7 @@ export const adminNavSections: NavSection[] = [
 
 // Flattened list for direct lookups
 export const adminNavItems: AdminNavItemConfig[] = adminNavSections.flatMap(
-  (section) => section.items
+  (section) => section.items,
 );
 
 export interface AdminNotificationItem {

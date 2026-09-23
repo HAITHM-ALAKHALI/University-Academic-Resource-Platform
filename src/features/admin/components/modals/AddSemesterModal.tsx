@@ -33,10 +33,11 @@ export function AddSemesterModal({
 
   useEffect(() => {
     if (initialData) {
-      setName(initialData.name);
-      setLevelId(initialData.level_id);
-      setSemesterNumber(initialData.semester_number);
-      setAcademicYear(initialData.academic_year);
+      // استخدام قيمة احتياطية لمنع تمرير undefined
+      setName(initialData.name || (initialData as any).semester_name || "");
+      setLevelId(initialData.level_id ?? "");
+      setSemesterNumber(initialData.semester_number ?? 1);
+      setAcademicYear(initialData.academic_year || "2024/2025");
     } else {
       setName("");
       setLevelId(levels.length > 0 ? levels[0].level_id : "");
@@ -108,16 +109,31 @@ export function AddSemesterModal({
               <option value="" disabled className="bg-[#242D42] text-[#AABCAF]">
                 اختر المستوى الدراسي...
               </option>
-              {levels.map((lvl) => (
-                <option
-                  key={lvl.level_id}
-                  value={lvl.level_id}
-                  className="bg-[#242D42] text-white"
-                >
-                  {lvl.name} (
-                  {lvl.department?.name || `قسم #${lvl.department_id}`})
-                </option>
-              ))}
+              {levels.map((lvl: any) => {
+                // قراءة اسم المستوى بكل الاحتمالات الممكنة
+                const lvlName =
+                  lvl.name ||
+                  lvl.level_name ||
+                  (lvl.level_number
+                    ? `المستوى ${lvl.level_number}`
+                    : `مستوى #${lvl.level_id}`);
+
+                // قراءة اسم القسم
+                const deptName =
+                  lvl.department?.name ||
+                  lvl.department_name ||
+                  `قسم #${lvl.department_id}`;
+
+                return (
+                  <option
+                    key={lvl.level_id}
+                    value={lvl.level_id}
+                    className="bg-[#242D42] text-white"
+                  >
+                    {lvlName} ({deptName})
+                  </option>
+                );
+              })}
             </select>
           </div>
 

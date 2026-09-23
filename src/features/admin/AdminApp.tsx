@@ -27,7 +27,10 @@ import { AddCourseModal } from "./components/modals/AddCourseModal";
 import { AddLevelModal } from "./components/modals/AddLevelModal";
 import { AddSemesterModal } from "./components/modals/AddSemesterModal";
 import { AddDoctorModal } from "./components/modals/AddDoctorModal";
-import { AddCourseOfferingsModal } from "./components/modals/AddCourseOfferingsModal";
+import { AddCourseOfferingModal } from "./components/modals/AddCourseOfferingModal";
+import { useCourseDoctors } from "../../hooks/useCourseDoctors";
+import { AssignDoctorCourseModal } from "./components/modals/AssignDoctorCourseModal";
+
 export interface AdminAppProps {
   onSwitchStudent?: () => void;
   onLogout?: () => void;
@@ -59,26 +62,49 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
   const [showEditLevelModal, setShowEditLevelModal] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<LevelEntity | null>(null);
 
+  // حالات إدارة الترمات
   const [showAddSemesterModal, setShowAddSemesterModal] = useState(false);
   const [showEditSemesterModal, setShowEditSemesterModal] = useState(false);
   const [selectedSemester, setSelectedSemester] =
     useState<SemesterEntity | null>(null);
 
+  // حالات إدارة الدكاترة
   const [showAddDoctorModal, setShowAddDoctorModal] = useState(false);
   const [showEditDoctorModal, setShowEditDoctorModal] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorEntity | null>(
     null,
   );
 
+  // حالات طرح المقررات
   const [showAddOfferingModal, setShowAddOfferingModal] = useState(false);
   const [selectedOffering, setSelectedOffering] = useState<any | null>(null);
+
+  const [showAssignDoctorModal, setShowAssignDoctorModal] = useState(false);
   const [showEditOfferingModal, setShowEditOfferingModal] = useState(false);
+
+  const [selectedAssignment, setSelectedAssignment] = useState<any | null>(
+    null,
+  );
+  const [showEditAssignmentModal, setShowEditAssignmentModal] = useState(false);
+
+  const {
+    handleAssignDoctor: assignDoctorToCourse,
+    handleUpdateAssignment,
+    handleDeleteAssignment,
+    isSubmitting: isAssignSubmitting,
+  } = useCourseDoctors();
 
   // حالة تأكيد الحذف الديناميكية
   const [itemToDelete, setItemToDelete] = useState<{
     id: number;
     name: string;
-    type: "department" | "course" | "level" | "semester" | "doctor";
+    type:
+      | "department"
+      | "course"
+      | "level"
+      | "semester"
+      | "doctor"
+      | "course_offering";
   } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -129,7 +155,9 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
     offerings,
     isSubmitting: isOfferingSubmitting,
     handleAddOffering,
+    handleUpdateOffering, // 👈 استخرج دالة التعديل هنا
     handleDeleteOffering,
+    handleAssignDoctor,
   } = useCourseOfferings();
 
   // فتح نافذة الإضافة المخصصة لكل شاشة
@@ -144,8 +172,11 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
       setShowAddLevelModal(true);
     } else if (view === "doctors") {
       setShowAddDoctorModal(true);
-    } else if (view === "course_offerings") setShowAddOfferingModal(true);
-    else {
+    } else if (view === "course_offerings") {
+      setShowAddOfferingModal(true); // 👈 تم التصحيح لفتح نافذة طرح المقررات
+    } else if (view === "course_doctors") {
+      setShowAssignDoctorModal(true);
+    } else {
       setDialogType("add");
       setShowDialog(true);
     }
@@ -153,84 +184,128 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
 
   // فتح نافذة التعديل واستخراج البيانات من صف الجدول
   const handleEditClick = (row: string[]) => {
+    const id = Number(row[0]);
+
     if (view === "departments") {
-      const [id, name, code] = row;
+      const originalDept = departments.find((d) => d.department_id === id);
       setSelectedDept({
-        department_id: Number(id),
-        name,
-        code,
+        department_id: id,
+        name: originalDept?.name || row[1] || "",
+        code: originalDept?.code || row[2] || "",
       });
       setShowEditDeptModal(true);
     } else if (view === "courses") {
-      const [id, course_code, course_name_ar, course_name_en, credit_hours] =
-        row;
-      setSelectedCourse({
-        course_id: Number(id),
-        course_code,
-        course_name_ar,
-        course_name_en,
-        credit_hours: Number(credit_hours),
-      });
+      const originalCourse = courses.find((c) => c.course_id === id);
+      if (originalCourse) {
+        setSelectedCourse(originalCourse);
+      } else {
+        setSelectedCourse({
+          course_id: id,
+          course_code: row[1] || "",
+          course_name_ar: row[2] || "",
+          course_name_en: row[3] || "",
+          credit_hours: Number(row[4]) || 3,
+        });
+      }
       setShowEditCourseModal(true);
     } else if (view === "levels") {
-      const [id, name, levelNumberStr, deptName] = row;
-      // مطابقة اسم القسم للحصول على department_id التابع له
-      const matchedDept = departments.find((d) => d.name === deptName);
-      setSelectedLevel({
-        level_id: Number(id),
-        name,
-        level_number: Number(levelNumberStr),
-        department_id: matchedDept ? matchedDept.department_id : 0,
-      });
+      const originalLevel = levels.find((l) => l.level_id === id);
+      if (originalLevel) {
+        setSelectedLevel({
+          level_id: originalLevel.level_id,
+          name: originalLevel.name || "",
+          level_number: originalLevel.level_number || 1,
+          department_id: originalLevel.department_id,
+        });
+      } else {
+        const [, name, levelNumberStr, deptName] = row;
+        const matchedDept = departments.find((d) => d.name === deptName);
+        setSelectedLevel({
+          level_id: id,
+          name,
+          level_number: Number(levelNumberStr) || 1,
+          department_id: matchedDept ? matchedDept.department_id : 0,
+        });
+      }
       setShowEditLevelModal(true);
     } else if (view === "semesters") {
-      const [id, name, semesterNumStr, academicYear, levelName] = row;
-      const matchedLevel = levels.find((l) => l.name === levelName);
-      setSelectedSemester({
-        semester_id: Number(id),
-        name,
-        semester_number: Number(semesterNumStr),
-        academic_year: academicYear,
-        level_id: matchedLevel ? matchedLevel.level_id : 0,
-      });
+      const originalSemester = semesters.find((s) => s.semester_id === id);
+      if (originalSemester) {
+        setSelectedSemester({
+          semester_id: originalSemester.semester_id,
+          name: originalSemester.name || originalSemester.semester_name || "",
+          semester_number: originalSemester.semester_number,
+          academic_year: originalSemester.academic_year,
+          level_id: originalSemester.level_id,
+        });
+      }
       setShowEditSemesterModal(true);
+    } else if (view === "course_doctors") {
+      setSelectedAssignment({
+        course_doctor_id: id,
+        doctor_name: row[1],
+        course_name: row[2],
+      });
+      setShowEditAssignmentModal(true);
     } else if (view === "doctors") {
-      // بناءً على ترتيب صفوف الدكاترة في الجدول: [id, user_id, name, email]
-      const [id, userId, fullName] = row;
-      const matchedDoctor = doctorsList.find(
-        (doc) => doc.doctor_id === Number(id),
-      );
+      const matchedDoctor = doctorsList.find((doc) => doc.doctor_id === id);
+      const userId = Number(row[1]);
+      const fullName = row[2] || "";
 
       setSelectedDoctor({
-        doctor_id: Number(id),
-        user_id: Number(userId),
+        doctor_id: id,
+        user_id: matchedDoctor?.user_id || userId,
         user: matchedDoctor?.user || {
-          user_id: Number(userId),
+          user_id: userId,
           full_name: fullName,
           name_ar: fullName,
           name_en: "",
-          email: "",
+          email: row[3] || "",
         },
       });
       setShowEditDoctorModal(true);
     } else if (view === "course_offerings") {
-      const [id, , courseName, semesterName] = row;
-      const matchedOffering = offerings?.find(
-        (off) => off.offering_id === Number(id),
-      );
-      const matchedCourse = courses?.find(
-        (c) => c.course_name_ar === courseName,
-      );
-      const matchedSemester = semesters?.find((s) => s.name === semesterName);
+      const originalOffering = offerings.find(
+        (off: any) => (off.offering_id || off.id) === id,
+      ) as any;
 
-      setSelectedOffering({
-        offering_id: Number(id),
-        course_id: matchedCourse ? matchedCourse.course_id : 0,
-        semester_id: matchedSemester ? matchedSemester.semester_id : 0,
-        course_name: courseName,
-        semester_name: semesterName,
-        offeringData: matchedOffering, // 👈 تم استخدامه هنا
-      });
+      if (originalOffering) {
+        // البحث عن المادة بالـ ID أو بالاسم
+        const targetCourse = courses.find(
+          (c) =>
+            c.course_id === originalOffering.course_id ||
+            c.course_name_ar ===
+              (originalOffering.course?.course_name_ar ||
+                originalOffering.course_name),
+        );
+
+        // البحث عن الترم بالـ ID أو بالاسم
+        const targetSemester = semesters.find(
+          (s) =>
+            s.semester_id === originalOffering.semester_id ||
+            s.name ===
+              (originalOffering.semester?.name ||
+                originalOffering.semester_name) ||
+            s.semester_name ===
+              (originalOffering.semester?.name ||
+                originalOffering.semester_name),
+        );
+
+        setSelectedOffering({
+          offering_id: id,
+          course_id: targetCourse
+            ? targetCourse.course_id
+            : (originalOffering.course_id ?? 0),
+          semester_id: targetSemester
+            ? targetSemester.semester_id
+            : (originalOffering.semester_id ?? 0),
+          course_name:
+            targetCourse?.course_name_ar || originalOffering.course_name || "",
+          semester_name:
+            targetSemester?.name || originalOffering.semester_name || "",
+          offeringData: originalOffering,
+        });
+      }
       setShowEditOfferingModal(true);
     } else {
       setDialogType("edit");
@@ -270,6 +345,19 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         name: name || `دكتور رقم #${idOrName}`,
         type: "doctor",
       });
+    } else if (view === "course_offerings") {
+      // 👈 تم ضبط معالجة حذف طرح المقرر
+      setItemToDelete({
+        id: Number(idOrName),
+        name: name || `المقرر المطروح #${idOrName}`,
+        type: "course_offering",
+      });
+    } else if (view === "course_doctors") {
+      setItemToDelete({
+        id: Number(idOrName),
+        name: name ? `إسناد: ${name}` : `إسناد رقم #${idOrName}`,
+        type: "course_doctor" as any,
+      });
     } else {
       setDeleteConfirm(idOrName);
     }
@@ -291,7 +379,9 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
     } else if (itemToDelete.type === "doctor") {
       success = await handleDeleteDoctor(itemToDelete.id);
     } else if (itemToDelete.type === "course_offering") {
-      success = await handleDeleteOffering(itemToDelete.id); // 👈 إضافة شرط حذف الطرح
+      success = await handleDeleteOffering(itemToDelete.id);
+    } else if ((itemToDelete.type as string) === "course_doctor") {
+      success = await handleDeleteAssignment(itemToDelete.id);
     }
 
     if (success) {
@@ -342,7 +432,6 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
               doctorsCount={doctorsList.length}
             />
           )}
-
 
           {view === "settings" && <AdminSettingsView />}
 
@@ -453,6 +542,7 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         />
       )}
 
+      {/* --- نوافذ الترمات --- */}
       <AddSemesterModal
         isOpen={showAddSemesterModal}
         onClose={() => setShowAddSemesterModal(false)}
@@ -485,16 +575,12 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         />
       )}
 
+      {/* --- نوافذ الدكاترة --- */}
       <AddDoctorModal
-        isOpen={showAddDoctorModal || showEditDoctorModal}
-        onClose={() => {
-          setShowAddDoctorModal(false);
-          setShowEditDoctorModal(false);
-          setSelectedDoctor(null);
-        }}
+        isOpen={showAddDoctorModal}
+        onClose={() => setShowAddDoctorModal(false)}
         onSubmit={handleAddDoctor}
-        initialData={selectedDoctor}
-        isSubmitting={isDoctorSubmitting} // تأكد من جلبها من الهوك
+        isSubmitting={isDoctorSubmitting}
       />
 
       {selectedDoctor && (
@@ -520,18 +606,97 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         />
       )}
 
-      <AddCourseOfferingsModal
-        isOpen={showAddOfferingModal || showEditOfferingModal}
-        onClose={() => {
-          setShowAddOfferingModal(false);
-          setShowEditOfferingModal(false);
-          setSelectedOffering(null);
-        }}
-        onSubmit={handleAddOffering}
-        courses={courses || []}
-        semesters={semesters || []}
+      {/* نافذة الإضافة */}
+      <AddCourseOfferingModal
+        isOpen={showAddOfferingModal}
+        onClose={() => setShowAddOfferingModal(false)}
+        courses={courses}
+        semesters={semesters}
+        doctors={doctorsList}
         isSubmitting={isOfferingSubmitting}
+        onSubmit={async (payload) => {
+          const newOfferingId = await handleAddOffering({
+            course_id: payload.course_id,
+            semester_id: payload.semester_id,
+          });
+
+          if (newOfferingId && payload.doctor_ids.length > 0) {
+            for (const doctorId of payload.doctor_ids) {
+              await handleAssignDoctor({
+                offering_id: newOfferingId,
+                doctor_id: doctorId,
+              });
+            }
+          }
+          return Boolean(newOfferingId);
+        }}
       />
+
+      {/* نافذة تعديل طرح المقرر */}
+      {selectedOffering && (
+        <AddCourseOfferingModal
+          isOpen={showEditOfferingModal}
+          onClose={() => {
+            setShowEditOfferingModal(false);
+            setSelectedOffering(null);
+          }}
+          initialData={selectedOffering}
+          courses={courses}
+          semesters={semesters}
+          doctors={doctorsList}
+          isSubmitting={isOfferingSubmitting}
+          onSubmit={async (payload) => {
+            const success = await handleUpdateOffering(
+              selectedOffering.offering_id,
+              {
+                course_id: payload.course_id,
+                semester_id: payload.semester_id,
+                doctor_ids: payload.doctor_ids,
+              },
+            );
+
+            if (success) {
+              setShowEditOfferingModal(false);
+              setSelectedOffering(null);
+            }
+            return success;
+          }}
+        />
+      )}
+
+      <AssignDoctorCourseModal
+        isOpen={showAssignDoctorModal}
+        onClose={() => setShowAssignDoctorModal(false)}
+        offerings={offerings}
+        doctors={doctorsList}
+        isSubmitting={isAssignSubmitting}
+        onSubmit={assignDoctorToCourse}
+      />
+
+      {selectedAssignment && (
+        <AssignDoctorCourseModal
+          isOpen={showEditAssignmentModal}
+          onClose={() => {
+            setShowEditAssignmentModal(false);
+            setSelectedAssignment(null);
+          }}
+          initialData={selectedAssignment}
+          offerings={offerings}
+          doctors={doctorsList}
+          isSubmitting={isAssignSubmitting}
+          onSubmit={async (payload) => {
+            const success = await handleUpdateAssignment(
+              selectedAssignment.course_doctor_id,
+              payload,
+            );
+            if (success) {
+              setShowEditAssignmentModal(false);
+              setSelectedAssignment(null);
+            }
+            return success;
+          }}
+        />
+      )}
 
       {/* النافذة الافتراضية لبقية الجداول */}
       {showDialog && (
@@ -542,7 +707,7 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
         />
       )}
 
-      {/* نافذة تأكيد حذف العناصر المتصلة بالـ API */}
+      {/* نافذة تأكيد حذف العناصر */}
       {itemToDelete && (
         <DeleteConfirmModal
           name={itemToDelete.name}
