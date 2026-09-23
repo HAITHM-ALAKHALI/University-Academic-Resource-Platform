@@ -1168,7 +1168,7 @@ function UploadModal({
             <input
               type="text"
               required
-              value={title}a
+              value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: المحاضرة الأولى - مقدمة عامة"
               className="w-full rounded-xl border border-white/[0.1] bg-[#1E2638] p-2.5 text-xs text-[#F8FAFC] placeholder-slate-500 focus:border-[#7DA49F] focus:outline-none"
