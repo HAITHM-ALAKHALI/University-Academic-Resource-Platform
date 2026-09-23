@@ -26,9 +26,15 @@ function LoadingFallback() {
 }
 
 export default function App() {
-  // Authentication & session management via custom hook
-  const { currentUser, mode, setMode, handleLoginSuccess, handleLogout } =
-    useAuth();
+  // إدارة الجلسة والمصادقة عبر الـ hook المحدث
+  const {
+    currentUser,
+    mode,
+    setMode,
+    handleLoginSuccess,
+    handleLogout,
+    isAuthenticated,
+  } = useAuth();
 
   const [page, setPage] = useState<Page>("landing");
   const [dark, setDark] = useState<boolean>(true);
@@ -37,7 +43,7 @@ export default function App() {
 
   const selectedCourse = useMemo(
     () => courses.find((c) => c.id === selectedCourseId) || courses[0],
-    [selectedCourseId]
+    [selectedCourseId],
   );
 
   const handleOpenCourse = (id: string) => {
@@ -47,7 +53,7 @@ export default function App() {
   };
 
   const handleOpenLogin = () => {
-    if (currentUser) {
+    if (isAuthenticated) {
       setMode("admin");
     } else {
       setMode("pages");
@@ -55,7 +61,7 @@ export default function App() {
     }
   };
 
-  const handleStudentLogout = () => {
+  const handleUserLogout = () => {
     handleLogout();
     setPage("landing");
   };
@@ -67,21 +73,28 @@ export default function App() {
         <Suspense fallback={<LoadingFallback />}>
           <StudentApp
             onSwitchAdmin={handleOpenLogin}
-            onLogout={currentUser ? handleStudentLogout : undefined}
+            onLogout={isAuthenticated ? handleUserLogout : undefined}
           />
         </Suspense>
       </div>
     );
   }
 
-  // 2. عرض لوحة المشرف بعد تسجيل الدخول
+  // 2. عرض لوحة المشرف بعد تسجيل الدخول (حماية مشروطة بالـ Token)
   if (mode === "admin") {
+    // إذا لم يكن مصادقاً عليه، يتم إرجاعه لشاشة الدخول تلقائياً
+    if (!isAuthenticated) {
+      setMode("pages");
+      setPage("login");
+      return null;
+    }
+
     return (
       <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
         <Suspense fallback={<LoadingFallback />}>
           <AdminApp
             onSwitchStudent={() => setMode("student")}
-            onLogout={handleStudentLogout}
+            onLogout={handleUserLogout}
           />
         </Suspense>
       </div>
@@ -107,7 +120,7 @@ export default function App() {
             setPage={setPage}
             openCourse={handleOpenCourse}
             onOpenLogin={handleOpenLogin}
-            onLogout={currentUser ? handleStudentLogout : undefined}
+            onLogout={isAuthenticated ? handleUserLogout : undefined}
           />
         )}
 
@@ -120,7 +133,7 @@ export default function App() {
             setPage={setPage}
             course={selectedCourse}
             openCourse={handleOpenCourse}
-            onLogout={currentUser ? handleStudentLogout : undefined}
+            onLogout={isAuthenticated ? handleUserLogout : undefined}
           />
         )}
 
@@ -136,16 +149,27 @@ export default function App() {
           />
         )}
 
-        {page === "admin" && (
-          <AdminDashboard
-            dark={dark}
-            lang={lang}
-            setDark={setDark}
-            setLang={setLang}
-            setPage={setPage}
-            onLogout={handleStudentLogout}
-          />
-        )}
+        {page === "admin" &&
+          (isAuthenticated ? (
+            <AdminDashboard
+              dark={dark}
+              lang={lang}
+              setDark={setDark}
+              setLang={setLang}
+              setPage={setPage}
+              onLogout={handleUserLogout}
+            />
+          ) : (
+            <AdminLogin
+              onLoginSuccess={(user) => {
+                handleLoginSuccess(user);
+              }}
+              onBackToHome={() => {
+                setMode("student");
+                setPage("landing");
+              }}
+            />
+          ))}
       </Suspense>
     </div>
   );

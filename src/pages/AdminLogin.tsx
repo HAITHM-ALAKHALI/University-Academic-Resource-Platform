@@ -1,11 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { userService } from "../services/userService";
+import { apiClient } from "../services/api"; // تأكد من صحة مسار ملف axios apiClient لديك
 import type { AuthenticatedUser, ApiErrorResponse } from "../types/api";
 
 export interface AdminLoginProps {
   onLoginSuccess?: (user: AuthenticatedUser) => void;
   onBackToHome?: () => void;
+}
+
+interface LoginApiResponse {
+  status: boolean;
+  message: string;
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  user: AuthenticatedUser;
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({
@@ -23,36 +32,42 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
     setLoading(true);
 
     try {
-      const res = await userService.checkUser({
+      // 1. الاتصال بمسار الـ JWT Login الجديد
+      const res = await apiClient.post<LoginApiResponse>("/login", {
         email: email.trim(),
         password,
       });
 
-      if (res.status && res.data) {
-        localStorage.setItem("auth_user", JSON.stringify(res.data));
+      if (res.data.status && res.data.access_token) {
+        // 2. تخزين التوكن وبيانات المستخدم في الـ localStorage
+        localStorage.setItem("access_token", res.data.access_token);
+        localStorage.setItem("token", res.data.access_token); // للحفاظ على التوافق إذا كان أي ملف يعتمد اسم token
+        localStorage.setItem("auth_user", JSON.stringify(res.data.user));
 
         if (onLoginSuccess) {
-          onLoginSuccess(res.data);
+          onLoginSuccess(res.data.user);
         } else {
           window.location.href = "/";
         }
       } else {
-        setError(res.message || "فشل التحقق من بيانات الدخول");
+        setError(res.data.message || "فشل التحقق من بيانات الدخول");
       }
     } catch (err: unknown) {
       if (axios.isAxiosError<ApiErrorResponse>(err) && err.response) {
         const errorData = err.response.data;
         if (errorData?.errors) {
           const firstKey = Object.keys(errorData.errors)[0];
-          setError(errorData.errors[firstKey]?.[0] || "بيانات الاعتماد غير صحيحة");
+          setError(
+            errorData.errors[firstKey]?.[0] || "بيانات الاعتماد غير صحيحة",
+          );
         } else {
           setError(
-            errorData?.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+            errorData?.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة",
           );
         }
       } else {
         setError(
-          "تعذر الاتصال بالخادم، تأكد من تشغيل السيرفر php artisan serve"
+          "تعذر الاتصال بالخادم، تأكد من تشغيل السيرفر php artisan serve",
         );
       }
     } finally {

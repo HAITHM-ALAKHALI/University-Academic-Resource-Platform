@@ -1,41 +1,36 @@
 import axios from "axios";
-import type { AuthenticatedUser } from "../types/api";
 
+// 1. إنشاء نسخة مخصصة من Axios
 export const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:8000/api", // Laravel API local backend
+  baseURL: "http://127.0.0.1:8000/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  timeout: 10000,
 });
 
-// Request interceptor to attach authentication token if available
+// 2. Request Interceptor: إرفاق التوكن تلقائياً مع كل طلب يخرج من الفرونت
 apiClient.interceptors.request.use(
   (config) => {
-    try {
-      const stored = localStorage.getItem("auth_user");
-      if (stored) {
-        const user = JSON.parse(stored) as AuthenticatedUser;
-        if (user?.token) {
-          config.headers.Authorization = `Bearer ${user.token}`;
-        }
-      }
-    } catch {
-      // Ignore parse errors
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
-// Response interceptor for consistent error unwrapping
+// 3. Response Interceptor: التعامل مع انتهاء صلاحية التوكن (401 Unauthorized)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Optionally log or format errors in production
+    if (error.response && error.response.status === 401) {
+      // حذف التوكن المنتهي وإعادة توجيه المستخدم لصفحة الدخول
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
-  }
+  },
 );
-
-export default apiClient;
