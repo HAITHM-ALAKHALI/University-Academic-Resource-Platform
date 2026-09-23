@@ -643,7 +643,6 @@ export default function AdminApp({ onSwitchStudent, onLogout }: AdminAppProps) {
           initialData={selectedOffering}
           courses={courses}
           semesters={semesters}
-          doctors={doctorsList}
           isSubmitting={isOfferingSubmitting}
           onSubmit={async (payload) => {
             const success = await handleUpdateOffering(

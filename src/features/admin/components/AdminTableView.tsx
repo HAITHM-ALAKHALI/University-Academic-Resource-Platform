@@ -235,7 +235,6 @@ export function AdminTableView({
           "رمز المقرر",
           "الترم الدراسي",
           "المستوى / القسم",
-          "الدكتور المسند",
           "الإجراءات",
         ],
         rows: offerings.map((o: any) => {
@@ -289,68 +288,13 @@ export function AdminTableView({
               ? `${levelName} (${deptName})`
               : levelName || deptName || "—";
 
-          // 5. استخراج اسم الدكتور المسند عبر كافة الاحتمالات المتاحة
-          // 5. استخراج اسم الدكتور المسند
-          let doctorsNames = "";
-
-          // فحص مصفوفة doctors الموجودة في o
-          const rawDocs = o.doctors || o.course_doctors || o.courseDoctors;
-
-          if (Array.isArray(rawDocs) && rawDocs.length > 0) {
-            doctorsNames = rawDocs
-              .map((d: any) => {
-                // قد يكون العنصر هو كائن الدكتور مباشرة أو يحمل معرّف doctor_id
-                const docId = d.doctor_id || d.id;
-                const localDoc = doctorsList.find(
-                  (doc: any) => doc.doctor_id === docId,
-                );
-
-                return (
-                  d.user?.full_name ||
-                  d.user?.name_ar ||
-                  d.doctor?.user?.full_name ||
-                  d.doctor?.user?.name_ar ||
-                  d.doctor_name ||
-                  d.name ||
-                  localDoc?.user?.full_name ||
-                  localDoc?.user?.name_ar ||
-                  ""
-                );
-              })
-              .filter((name: string) => Boolean(name && name.trim()))
-              .join("، ");
-          }
-
-          // إذا لم تكن مصفوفة، نفحص الحقول الفردية
-          if (!doctorsNames) {
-            const singleDocId = o.doctor_id || o.doctor?.doctor_id;
-            const matchedDoc = doctorsList.find(
-              (doc: any) => doc.doctor_id === singleDocId,
-            );
-
-            doctorsNames =
-              o.doctor?.user?.full_name ||
-              o.doctor?.user?.name_ar ||
-              o.doctor_name ||
-              o.doctor?.name ||
-              matchedDoc?.user?.full_name ||
-              matchedDoc?.user?.name_ar ||
-              "";
-          }
-
-          // إذا لم يوجد دكتور مسند نهائياً
-          if (!doctorsNames.trim()) {
-            doctorsNames = "—";
-          }
-
           return [
-            String(o.offering_id || o.id), // row[0]: المعرف المخفي
-            courseTitle, // row[1]
-            courseCode, // row[2]
-            currentSemesterName, // row[3]
-            levelAndDept, // row[4]
-            doctorsNames, // row[5]
-            "", // row[6]
+            String(o.offering_id || o.id), // row[0]: المعرف للعمليات
+            courseTitle, // row[1]: اسم المقرر
+            courseCode, // row[2]: رمز المقرر
+            currentSemesterName, // row[3]: الترم الدراسي
+            levelAndDept, // row[4]: المستوى / القسم
+            "", // row[5]: الإجراءات (تعديل / حذف)
           ];
         }),
       };

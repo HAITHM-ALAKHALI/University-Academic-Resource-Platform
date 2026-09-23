@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { X, BookOpen, AlertCircle, Loader2, UserCheck } from "lucide-react";
-import type {
-  CourseEntity,
-  SemesterEntity,
-  DoctorEntity,
-} from "../../../../types/api";
+import { X, BookOpen, AlertCircle, Loader2 } from "lucide-react";
+import type { CourseEntity, SemesterEntity } from "../../../../types/api";
 
 interface CourseOfferingFormData {
   course_id: number;
   semester_id: number;
-  doctor_ids: number[];
 }
 
 interface AddCourseOfferingModalProps {
@@ -18,7 +13,6 @@ interface AddCourseOfferingModalProps {
   onSubmit: (payload: CourseOfferingFormData) => Promise<boolean>;
   courses: CourseEntity[];
   semesters: SemesterEntity[];
-  doctors: DoctorEntity[];
   initialData?: any | null;
   isSubmitting?: boolean;
 }
@@ -29,13 +23,11 @@ export const AddCourseOfferingModal: React.FC<AddCourseOfferingModalProps> = ({
   onSubmit,
   courses,
   semesters,
-  doctors,
   initialData,
   isSubmitting = false,
 }) => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>("");
   const [selectedSemesterId, setSelectedSemesterId] = useState<string>("");
-  const [selectedDoctorIds, setSelectedDoctorIds] = useState<number[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const isEditMode = Boolean(initialData);
@@ -70,52 +62,14 @@ export const AddCourseOfferingModal: React.FC<AddCourseOfferingModalProps> = ({
         )?.semester_id;
 
       setSelectedSemesterId(sId ? String(sId) : "");
-
-      // 3. تحديد الدكاترة المسندين مسبقاً (Checked)
-      const rawDocs =
-        initialData.offeringData?.doctors ||
-        initialData.offeringData?.course_doctors ||
-        initialData.doctors ||
-        [];
-
-      let docIds: number[] = [];
-
-      if (Array.isArray(rawDocs) && rawDocs.length > 0) {
-        docIds = rawDocs
-          .map((d: any) => {
-            if (d.doctor_id) return Number(d.doctor_id);
-            if (d.id) return Number(d.id);
-            // مطابقة بالاسم إن لم يتوفر ID مباشر
-            const dName = d.user?.full_name || d.user?.name_ar || d.name;
-            const matched = doctors.find(
-              (doc) => (doc.user?.full_name || doc.user?.name_ar) === dName,
-            );
-            return matched ? matched.doctor_id : null;
-          })
-          .filter((id): id is number => Boolean(id));
-      } else if (initialData.doctor_id || initialData.offeringData?.doctor_id) {
-        docIds = [
-          Number(initialData.doctor_id || initialData.offeringData?.doctor_id),
-        ];
-      }
-
-      setSelectedDoctorIds(docIds);
     } else {
       setSelectedCourseId("");
       setSelectedSemesterId("");
-      setSelectedDoctorIds([]);
     }
     setValidationError(null);
-  }, [initialData, isOpen, courses, semesters, doctors]);
-  if (!isOpen) return null;
+  }, [initialData, isOpen, courses, semesters]);
 
-  const handleDoctorToggle = (docId: number) => {
-    setSelectedDoctorIds((prev) =>
-      prev.includes(docId)
-        ? prev.filter((id) => id !== docId)
-        : [...prev, docId],
-    );
-  };
+  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,7 +83,6 @@ export const AddCourseOfferingModal: React.FC<AddCourseOfferingModalProps> = ({
     const success = await onSubmit({
       course_id: Number(selectedCourseId),
       semester_id: Number(selectedSemesterId),
-      doctor_ids: selectedDoctorIds,
     });
 
     if (success) {
@@ -205,52 +158,6 @@ export const AddCourseOfferingModal: React.FC<AddCourseOfferingModalProps> = ({
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold text-[#AABCAF]">
-              إسناد الكادر الأكاديمي (اختياري)
-            </label>
-            <div className="max-h-40 overflow-y-auto rounded-xl border border-white/[0.07] bg-[#242D42] p-2 space-y-1">
-              {doctors.length === 0 ? (
-                <div className="p-2 text-center text-xs text-[#AABCAF]/60">
-                  لا يوجد دكاترة متاحين
-                </div>
-              ) : (
-                doctors.map((doc) => {
-                  const isChecked = selectedDoctorIds.includes(doc.doctor_id);
-                  const docName =
-                    doc.user?.full_name || doc.user?.name_ar || "غير محدد";
-
-                  return (
-                    <label
-                      key={doc.doctor_id}
-                      onClick={() => handleDoctorToggle(doc.doctor_id)}
-                      className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-xs transition-colors ${
-                        isChecked
-                          ? "bg-[#899C9A]/20 text-white font-semibold"
-                          : "text-[#AABCAF] hover:bg-white/[0.03]"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <UserCheck
-                          className={`h-4 w-4 ${
-                            isChecked ? "text-[#899C9A]" : "text-[#AABCAF]/40"
-                          }`}
-                        />
-                        <span>{docName}</span>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => {}}
-                        className="h-3.5 w-3.5 rounded border-white/20 bg-[#1D263B] text-[#899C9A] focus:ring-0"
-                      />
-                    </label>
-                  );
-                })
-              )}
-            </div>
           </div>
 
           {/* Action Buttons */}
