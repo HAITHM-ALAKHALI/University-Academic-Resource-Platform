@@ -25,12 +25,20 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // حذف التوكن المنتهي وإعادة توجيه المستخدم لصفحة الدخول
+    const status = error.response?.status;
+    const requestUrl = error.config?.url || "";
+
+    const isLoginRequest = requestUrl.includes("/login");
+
+    if (status === 401 && !isLoginRequest) {
       localStorage.removeItem("access_token");
+      localStorage.removeItem("token");
+      localStorage.removeItem("auth_user");
       localStorage.removeItem("user");
+
       window.location.href = "/login";
     }
+
     return Promise.reject(error);
   },
 );

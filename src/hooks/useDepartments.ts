@@ -2,7 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { departmentService } from "../services/departmentService";
 import type { DepartmentEntity, AddDepartment } from "../types/api";
 
-export function useDepartments() {
+interface UseDepartmentsOptions {
+  enabled?: boolean;
+}
+
+export function useDepartments({ enabled = true }: UseDepartmentsOptions = {}) {
   const [departments, setDepartments] = useState<DepartmentEntity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -108,8 +112,10 @@ export function useDepartments() {
   };
 
   useEffect(() => {
-    fetchDepartments();
-  }, [fetchDepartments]);
+    if (enabled) {
+      fetchDepartments();
+    }
+  }, [enabled, fetchDepartments]);
 
   return {
     departments,

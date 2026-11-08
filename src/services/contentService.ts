@@ -6,11 +6,10 @@ export const contentService = {
   getContents: async (
     courseDoctorId?: number | "",
   ): Promise<ContentEntity[]> => {
-    const endpoint = courseDoctorId
-      ? `/contents?course_doctor_id=${courseDoctorId}`
-      : `/contents`;
+    const res = await apiClient.get("/contents", {
+      params: courseDoctorId ? { course_doctor_id: courseDoctorId } : {},
+    });
 
-    const res = await apiClient.get(endpoint);
     return res.data?.data || res.data || [];
   },
 
