@@ -6,9 +6,22 @@ import type {
   ApiResponse,
 } from "../types/api";
 
+export interface SemesterFilterParams {
+  levelId?: number;
+  academicYear?: string;
+}
+
 export const semesterService = {
-  fetchSemesters: async (): Promise<SemestersInfo> => {
-    const response = await apiClient.get<SemestersInfo>("/semesters");
+  fetchSemesters: async (
+    filters?: SemesterFilterParams,
+  ): Promise<SemestersInfo> => {
+    const params: Record<string, string | number> = {};
+    if (filters?.levelId) params.level_id = filters.levelId;
+    if (filters?.academicYear) params.academic_year = filters.academicYear;
+
+    const response = await apiClient.get<SemestersInfo>("/semesters", {
+      params: Object.keys(params).length > 0 ? params : undefined,
+    });
     return response.data;
   },
 

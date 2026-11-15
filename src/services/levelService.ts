@@ -8,10 +8,12 @@ import type {
 
 export const levelService = {
   /**
-   * جلب كافة المستويات الدراسية
+   * جلب كافة المستويات الدراسية، مع إمكانية الفلترة بحسب القسم
    */
-  fetchLevels: async (): Promise<LevelsInfo> => {
-    const response = await apiClient.get<LevelsInfo>("/levels");
+  fetchLevels: async (departmentId?: number): Promise<LevelsInfo> => {
+    const response = await apiClient.get<LevelsInfo>("/levels", {
+      params: departmentId ? { department_id: departmentId } : undefined,
+    });
     return response.data;
   },
 
