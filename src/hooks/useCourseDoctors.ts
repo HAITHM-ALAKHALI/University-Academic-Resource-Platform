@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { courseDoctorsService } from "../services/courseDoctorsService";
+import { useAssignDoctor } from "./mutations/useAssignDoctor";
 import { queryKeys } from "../constants/queryKeys";
 import type { CourseDoctorAssignment } from "../types/api";
 
@@ -41,6 +42,8 @@ export interface UseCourseDoctorsReturn {
  * Hook for managing Course-Doctor Assignments.
  * Powered by TanStack Query v5 to provide shared caching, automatic deduplication,
  * offering-filtered caching, optimistic delete with rollback, and synchronized cache invalidation.
+ *
+ * Uses the canonical shared mutation hook `useAssignDoctor` for doctor assignments.
  */
 export function useCourseDoctors(
   offeringIdOrOptions?: number | UseCourseDoctorsOptions,
@@ -76,22 +79,12 @@ export function useCourseDoctors(
     enabled,
   });
 
-  // 2. Mutation: Assign Doctor to Course Offering
-  const assignDoctorMutation = useMutation({
-    mutationFn: async (payload: { offering_id: number; doctor_id: number }) => {
-      const res = await courseDoctorsService.assignDoctor(payload);
-      return res;
-    },
-    onSuccess: () => {
-      // Synchronize both course doctors and course offerings
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.courseDoctors.all,
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.courseOfferings.all,
-      });
-    },
-  });
+  // 2. Canonical shared mutation for assigning doctor
+  const {
+    assignDoctorMutation,
+    handleAssignDoctor,
+    mutationError: assignDoctorError,
+  } = useAssignDoctor({ defaultErrorMessage: "فشلت عملية إسناد المادة" });
 
   // 3. Mutation: Update Assignment
   const updateAssignmentMutation = useMutation({
@@ -155,24 +148,6 @@ export function useCourseDoctors(
     },
   });
 
-  // Action: Assign Doctor
-  const handleAssignDoctor = async (payload: {
-    offering_id: number;
-    doctor_id: number;
-  }): Promise<boolean> => {
-    setMutationError(null);
-    try {
-      await assignDoctorMutation.mutateAsync(payload);
-      return true;
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message || "فشلت عملية إسناد المادة";
-      alert(message);
-      setMutationError(message);
-      return false;
-    }
-  };
-
   // Action: Update Assignment
   const handleUpdateAssignment = async (
     id: number,
@@ -221,6 +196,7 @@ export function useCourseDoctors(
   // Combined error state
   const error =
     mutationError ||
+    assignDoctorError ||
     (queryError
       ? (queryError as any).response?.data?.message || queryError.message
       : null);

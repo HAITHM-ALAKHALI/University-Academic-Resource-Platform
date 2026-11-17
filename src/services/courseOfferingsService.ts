@@ -1,4 +1,5 @@
 import { apiClient } from "./api";
+import { courseDoctorsService } from "./courseDoctorsService";
 import type {
   CourseOfferingEntity,
   CourseDoctorEntity,
@@ -25,7 +26,7 @@ export const courseOfferingsService = {
     return res.data;
   },
 
-  // 👈 دالة تعديل طرح المادة (المضافة)
+  // دالة تعديل طرح المادة
   updateOffering: async (
     offeringId: number,
     payload: { course_id: number; semester_id: number },
@@ -45,11 +46,9 @@ export const courseOfferingsService = {
     return res.data.data;
   },
 
-  // إسناد دكتور إلى مادة مطروحة
-  assignDoctor: async (payload: AssignDoctorPayload) => {
-    const res = await apiClient.post("/course-doctors", payload);
-    return res.data;
-  },
+  // إسناد دكتور إلى مادة مطروحة (مفوض إلى الخدمة الموحدة courseDoctorsService)
+  assignDoctor: (payload: AssignDoctorPayload) =>
+    courseDoctorsService.assignDoctor(payload),
 
   // جلب أنواع المحتوى الأكاديمي
   getContentTypes: async (): Promise<ContentTypeEntity[]> => {
@@ -62,3 +61,5 @@ export const courseOfferingsService = {
     return res.data;
   },
 };
+
+export default courseOfferingsService;

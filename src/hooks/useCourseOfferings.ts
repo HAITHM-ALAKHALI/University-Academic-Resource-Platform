@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { courseOfferingsService } from "../services/courseOfferingsService";
+import { useAssignDoctor } from "./mutations/useAssignDoctor";
 import { queryKeys } from "../constants/queryKeys";
 import type {
   CourseOfferingEntity,
@@ -41,6 +42,8 @@ export interface UseCourseOfferingsReturn {
  * Hook for managing Course Offering entities.
  * Powered by TanStack Query v5 to provide shared caching, automatic deduplication,
  * semester-filtered queries, optimistic delete with rollback, and synchronized cache invalidation.
+ *
+ * Uses the canonical shared mutation hook `useAssignDoctor` for doctor assignments.
  */
 export function useCourseOfferings(
   semesterIdOrOptions?: number | UseCourseOfferingsOptions,
@@ -87,7 +90,14 @@ export function useCourseOfferings(
     staleTime: 5 * 60 * 1000,
   });
 
-  // 3. Mutation: Add Course Offering
+  // 3. Canonical shared mutation for assigning doctor to offering
+  const {
+    assignDoctorMutation,
+    handleAssignDoctor,
+    mutationError: assignDoctorError,
+  } = useAssignDoctor({ defaultErrorMessage: "فشلت عملية إسناد الدكتور" });
+
+  // 4. Mutation: Add Course Offering
   const addOfferingMutation = useMutation({
     mutationFn: async (payload: AddCourseOfferingPayload) => {
       const res = await courseOfferingsService.createOffering(payload);
@@ -101,47 +111,17 @@ export function useCourseOfferings(
     },
   });
 
-  // 4. Mutation: Update Course Offering with sequential doctor assignment and partial-success handling
+  // 5. Mutation: Update Course Offering entity
   const updateOfferingMutation = useMutation({
     mutationFn: async ({
       offeringId,
       payload,
     }: {
       offeringId: number;
-      payload: { course_id: number; semester_id: number; doctor_ids?: number[] };
+      payload: { course_id: number; semester_id: number };
     }) => {
-      let offeringUpdated = false;
-      try {
-        // Step 1: Send update request for course offering
-        await courseOfferingsService.updateOffering(offeringId, {
-          course_id: payload.course_id,
-          semester_id: payload.semester_id,
-        });
-        offeringUpdated = true;
-
-        // Step 2: Assign doctors sequentially if provided
-        if (payload.doctor_ids && payload.doctor_ids.length > 0) {
-          for (const docId of payload.doctor_ids) {
-            await courseOfferingsService.assignDoctor({
-              offering_id: offeringId,
-              doctor_id: docId,
-            });
-          }
-        }
-        return offeringId;
-      } catch (err: any) {
-        // If step 1 succeeded but doctor assignment failed, invalidate queries so cache matches DB
-        if (offeringUpdated) {
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.courseOfferings.all,
-          });
-          queryClient.invalidateQueries({
-            queryKey: queryKeys.courseDoctors.all,
-          });
-          err.partialSuccess = true;
-        }
-        throw err;
-      }
+      const res = await courseOfferingsService.updateOffering(offeringId, payload);
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -153,7 +133,7 @@ export function useCourseOfferings(
     },
   });
 
-  // 5. Mutation: Optimistic Delete with Snapshot Rollback
+  // 6. Mutation: Optimistic Delete with Snapshot Rollback
   const deleteOfferingMutation = useMutation({
     mutationFn: async (offeringId: number) => {
       await courseOfferingsService.deleteOffering(offeringId);
@@ -163,7 +143,6 @@ export function useCourseOfferings(
       // Cancel outgoing queries to prevent overwriting optimistic update
       await queryClient.cancelQueries({ queryKey: listKey });
 
-      // Snapshot previous offerings list for rollback
       const previousOfferings =
         queryClient.getQueryData<CourseOfferingEntity[]>(listKey);
 
@@ -197,22 +176,6 @@ export function useCourseOfferings(
     },
   });
 
-  // 6. Mutation: Assign Doctor to Course Offering
-  const assignDoctorMutation = useMutation({
-    mutationFn: async (payload: AssignDoctorPayload) => {
-      const res = await courseOfferingsService.assignDoctor(payload);
-      return res;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.courseOfferings.all,
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.courseDoctors.all,
-      });
-    },
-  });
-
   // Action: Add Offering (returns offeringId or null, maintaining legacy contract)
   const handleAddOffering = async (
     payload: AddCourseOfferingPayload,
@@ -231,19 +194,51 @@ export function useCourseOfferings(
     }
   };
 
-  // Action: Update Offering (returns Promise<boolean>)
+  // Action: Update Offering with sequential doctor assignment and non-transactional partial-success handling
   const handleUpdateOffering = async (
     offeringId: number,
     payload: { course_id: number; semester_id: number; doctor_ids?: number[] },
   ): Promise<boolean> => {
     setMutationError(null);
+    let offeringUpdated = false;
     try {
-      await updateOfferingMutation.mutateAsync({ offeringId, payload });
+      // Step 1: Update the course offering entity
+      await updateOfferingMutation.mutateAsync({
+        offeringId,
+        payload: {
+          course_id: payload.course_id,
+          semester_id: payload.semester_id,
+        },
+      });
+      offeringUpdated = true;
+
+      // Step 2: Assign doctors sequentially using the shared canonical mutation hook
+      if (payload.doctor_ids && payload.doctor_ids.length > 0) {
+        for (const docId of payload.doctor_ids) {
+          await assignDoctorMutation.mutateAsync({
+            offering_id: offeringId,
+            doctor_id: docId,
+          });
+        }
+      }
       return true;
     } catch (err: any) {
-      const message = err.partialSuccess
-        ? "تم تحديث بيانات المقرر المطروح، ولكن تعذر إسناد بعض المحاضرين"
-        : err?.response?.data?.message || "فشلت عملية تحديث المقرر المطروح";
+      // Non-transactional partial success: Step 1 succeeded, but one doctor assignment failed
+      if (offeringUpdated) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.courseOfferings.all,
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.courseDoctors.all,
+        });
+        const message =
+          "تم تحديث بيانات المقرر المطروح، ولكن تعذر إسناد بعض المحاضرين";
+        alert(message);
+        setMutationError(message);
+        return false;
+      }
+      const message =
+        err?.response?.data?.message || "فشلت عملية تحديث المقرر المطروح";
       alert(message);
       setMutationError(message);
       return false;
@@ -267,24 +262,7 @@ export function useCourseOfferings(
     }
   };
 
-  // Action: Assign Doctor (returns Promise<boolean>)
-  const handleAssignDoctor = async (
-    payload: AssignDoctorPayload,
-  ): Promise<boolean> => {
-    setMutationError(null);
-    try {
-      await assignDoctorMutation.mutateAsync(payload);
-      return true;
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message || "فشلت عملية إسناد الدكتور";
-      alert(message);
-      setMutationError(message);
-      return false;
-    }
-  };
-
-  // Imperative callback: Load doctors for a specific offering
+  // Imperative callback: Load doctors for a specific offering (isolated query, no global fetching)
   const loadDoctorsForOffering = useCallback(
     async (offeringId: number): Promise<CourseDoctorEntity[]> => {
       try {
@@ -320,6 +298,7 @@ export function useCourseOfferings(
   // Combined error state: mutation error takes precedence, falls back to query error
   const error =
     mutationError ||
+    assignDoctorError ||
     (queryError
       ? (queryError as any).response?.data?.message || queryError.message
       : null);
