@@ -1,42 +1,9 @@
-import { apiClient } from "./api";
-import type { ContentEntity, ContentStatus } from "../types/content";
+/**
+ * Backward-Compatibility Shim for contentService.
+ * Canonical content management implementation has been unified into courseContentsService.
+ * Re-exports courseContentsService under both named and default exports to prevent breaking callers.
+ */
+import { courseContentsService } from "./courseContentsService";
 
-export const contentService = {
-  // جلب كافة المحتويات أو تصفيتها بحسب دكتور المادة
-  getContents: async (
-    courseDoctorId?: number | "",
-  ): Promise<ContentEntity[]> => {
-    const res = await apiClient.get("/contents", {
-      params: courseDoctorId ? { course_doctor_id: courseDoctorId } : {},
-    });
-
-    return res.data?.data || res.data || [];
-  },
-
-  // رفع محتوى جديد
-  createContent: async (formData: FormData): Promise<ContentEntity> => {
-    const res = await apiClient.post("/contents", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return res.data?.data || res.data;
-  },
-
-  // تعديل بيانات المحتوى
-  updateContent: async (
-    id: number,
-    data: Partial<ContentEntity>,
-  ): Promise<ContentEntity> => {
-    const res = await apiClient.put(`/contents/${id}`, data);
-    return res.data?.data || res.data;
-  },
-
-  // تحديث حالة الاعتماد
-  updateStatus: async (id: number, status: ContentStatus): Promise<void> => {
-    await apiClient.patch(`/contents/${id}/status`, { status });
-  },
-
-  // حذف المحتوى
-  deleteContent: async (id: number): Promise<void> => {
-    await apiClient.delete(`/contents/${id}`);
-  },
-};
+export { courseContentsService, courseContentsService as contentService };
+export default courseContentsService;

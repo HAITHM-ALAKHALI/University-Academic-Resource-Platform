@@ -1,4 +1,10 @@
 export * from "./academic";
 export * from "./app";
 export * from "./api";
-export * from "./content";
+export type {
+  DoctorUserEntity,
+  ContentSourceType,
+  ContentStatus,
+  ContentEntity,
+  CreateContentPayload,
+} from "./content";

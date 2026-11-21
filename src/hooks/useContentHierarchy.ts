@@ -1,4 +1,5 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
   DepartmentEntity,
   LevelEntity,
@@ -14,7 +15,8 @@ import { useDepartments } from "./useDepartments";
 import { useLevels } from "./useLevels";
 import { useSemesters } from "./useSemesters";
 import { courseOfferingsService } from "../services/courseOfferingsService";
-import { contentService } from "../services/contentService";
+import { courseContentsService } from "../services/courseContentsService";
+import { queryKeys } from "../constants/queryKeys";
 
 export interface UseContentHierarchyReturn {
   selectedDepartmentId: number | "";
@@ -58,7 +60,14 @@ export interface UseContentHierarchyReturn {
   deleteContent: (contentId: number) => Promise<boolean>;
 }
 
+/**
+ * Hook for managing academic content hierarchy and resource operations.
+ * Powered by TanStack Query v5 to provide shared caching, automatic deduplication,
+ * synchronized mutations, and cascading query invalidation.
+ */
 export function useContentHierarchy(): UseContentHierarchyReturn {
+  const queryClient = useQueryClient();
+
   // 1. حالات التحديد المتتالية (Cascading IDs)
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | "">(
     "",
@@ -70,30 +79,17 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     number | ""
   >("");
 
-  // 2. حالات البيانات الأكاديمية
+  // 2. حالات البيانات الأكاديمية المشتركة (Academic Hierarchy Queries)
   const { departments } = useDepartments();
   const { levels } = useLevels();
   const { semesters } = useSemesters();
 
-  const [filteredOfferings, setFilteredOfferings] = useState<
-    CourseOfferingEntity[]
-  >([]);
-  const [filteredCourseDoctors, setFilteredCourseDoctors] = useState<
-    CourseDoctorEntity[]
-  >([]);
-  const [contentTypes, setContentTypes] = useState<ContentTypeEntity[]>([]);
-  const [displayedContents, setDisplayedContents] = useState<ContentEntity[]>(
-    [],
-  );
-  const [loading, setLoading] = useState<boolean>(false);
-
-  // جلب أنواع المحتوى الأكاديمي عند بدء التشغيل
-  useEffect(() => {
-    courseOfferingsService
-      .getContentTypes?.()
-      ?.then((types: any) => setContentTypes(types))
-      ?.catch(() => {});
-  }, []);
+  // 3. استعلام تصنيفات المحتوى الأكاديمي (Content Types Query - Cached globally)
+  const { data: contentTypes = [] } = useQuery<ContentTypeEntity[]>({
+    queryKey: queryKeys.contentTypes.all,
+    queryFn: () => courseContentsService.getContentTypes(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   // الفلترة الهرمية للمستويات والفصول محلياً من القوائم
   const filteredLevels = useMemo(() => {
@@ -108,49 +104,59 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     return semesters.filter((sem: any) => sem.level_id === selectedLevelId);
   }, [semesters, selectedLevelId]);
 
-  // جلب المقررات المطروحة عند اختيار الفصل الدراسي
-  useEffect(() => {
-    if (!selectedSemesterId) {
-      setFilteredOfferings([]);
-      return;
-    }
-    courseOfferingsService
-      .getOfferings(Number(selectedSemesterId))
-      .then((data: any) => setFilteredOfferings(data))
-      .catch(() => setFilteredOfferings([]));
-  }, [selectedSemesterId]);
+  // 4. استعلام المقررات المطروحة (Course Offerings Query - Dependent on selectedSemesterId)
+  const { data: filteredOfferings = [] } = useQuery<CourseOfferingEntity[]>({
+    queryKey: queryKeys.courseOfferings.list(
+      selectedSemesterId ? Number(selectedSemesterId) : undefined,
+    ),
+    queryFn: async () => {
+      const data = await courseOfferingsService.getOfferings(
+        Number(selectedSemesterId),
+      );
+      return Array.isArray(data)
+        ? (data as unknown as CourseOfferingEntity[])
+        : [];
+    },
+    enabled: Boolean(selectedSemesterId),
+  });
 
-  // جلب الدكاترة المسندين عند اختيار المادة المطروحة
-  useEffect(() => {
-    if (!selectedOfferingId) {
-      setFilteredCourseDoctors([]);
-      return;
-    }
-    courseOfferingsService
-      .getCourseDoctors(Number(selectedOfferingId))
-      .then((data: any) => setFilteredCourseDoctors(data))
-      .catch(() => setFilteredCourseDoctors([]));
-  }, [selectedOfferingId]);
+  // 5. استعلام الدكاترة المسندين (Course Doctors Query - Dependent on selectedOfferingId)
+  const { data: filteredCourseDoctors = [] } = useQuery<CourseDoctorEntity[]>({
+    queryKey: queryKeys.courseDoctors.list(
+      selectedOfferingId ? Number(selectedOfferingId) : undefined,
+    ),
+    queryFn: async () => {
+      const data = await courseOfferingsService.getCourseDoctors(
+        Number(selectedOfferingId),
+      );
+      return Array.isArray(data)
+        ? (data as unknown as CourseDoctorEntity[])
+        : [];
+    },
+    enabled: Boolean(selectedOfferingId),
+  });
 
-  // جلب المحتويات عبر طبقة الخدمات (كل المحتويات أو مصفاة حسب دكتور المادة)
-  const loadContents = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await contentService.getContents(selectedCourseDoctorId);
-      setDisplayedContents(data);
-    } catch {
-      setDisplayedContents([]);
-    } finally {
-      setLoading(false);
-    }
+  // 6. استعلام المحتويات الأكاديمية (Contents Query - Filtered by doctor or all contents)
+  const contentFilter = useMemo(() => {
+    return selectedCourseDoctorId !== ""
+      ? { course_doctor_id: selectedCourseDoctorId }
+      : undefined;
   }, [selectedCourseDoctorId]);
 
-  // استدعاء الجلب عند بدء التشغيل أو عند تغيير الدكتور
-  useEffect(() => {
-    loadContents();
-  }, [loadContents]);
+  const {
+    data: displayedContents = [],
+    isLoading: isContentsLoading,
+  } = useQuery<ContentEntity[]>({
+    queryKey: queryKeys.contents.list(contentFilter),
+    queryFn: async () => {
+      const data = await courseContentsService.getContents(
+        selectedCourseDoctorId !== "" ? selectedCourseDoctorId : undefined,
+      );
+      return Array.isArray(data) ? data : [];
+    },
+  });
 
-  // 3. دوال إعادة الضبط المتتالي (Cascading Resets)
+  // 7. دوال إعادة الضبط المتتالي (Cascading Resets)
   const setDepartmentId = useCallback((id: number | "") => {
     setSelectedDepartmentId(id);
     setSelectedLevelId("");
@@ -189,7 +195,7 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     setSelectedCourseDoctorId("");
   }, []);
 
-  // 4. الكيانات الحالية المختارة
+  // 8. الكيانات الحالية المختارة (Current Resolvers)
   const currentDepartment = useMemo(
     () =>
       departments.find((d: any) => d.department_id === selectedDepartmentId),
@@ -221,41 +227,86 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
 
   const isChainComplete = Boolean(
     selectedDepartmentId &&
-    selectedLevelId &&
-    selectedSemesterId &&
-    selectedOfferingId &&
-    selectedCourseDoctorId,
+      selectedLevelId &&
+      selectedSemesterId &&
+      selectedOfferingId &&
+      selectedCourseDoctorId,
   );
 
-  // 5. عمليات الـ CRUD المتصلة بالـ API
-  const updateContentStatus = useCallback(
-    async (contentId: number, status: ContentStatus) => {
-      try {
-        await contentService.updateStatus(contentId, status);
-        setDisplayedContents((prev) =>
-          prev.map((item) =>
-            item.content_id === contentId ? { ...item, status } : item,
-          ),
-        );
-      } catch (err: any) {
-        alert(err.response?.data?.message || "فشل تحديث حالة المحتوى");
-      }
+  // 9. طفرات تعديل البيانات (Mutations with Cache Synchronization)
+
+  // طفرة رفع محتوى جديد (Create Content Mutation)
+  const addMutation = useMutation({
+    mutationFn: (formData: FormData) =>
+      courseContentsService.createContent(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contents.all });
     },
-    [],
-  );
+  });
 
+  // طفرة حذف محتوى (Delete Content Mutation)
+  const deleteMutation = useMutation({
+    mutationFn: (contentId: number) =>
+      courseContentsService.deleteContent(contentId),
+    onSuccess: (_, deletedId) => {
+      queryClient.setQueriesData<ContentEntity[]>(
+        { queryKey: queryKeys.contents.all },
+        (old) =>
+          old ? old.filter((item) => item.content_id !== deletedId) : old,
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.contents.all });
+    },
+  });
+
+  // طفرة تعديل محتوى (Edit Content Mutation - unsupported on backend)
+  const editMutation = useMutation({
+    mutationFn: ({
+      contentId,
+      updates,
+    }: {
+      contentId: number;
+      updates: Partial<ContentEntity>;
+    }) => courseContentsService.updateContent(contentId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contents.all });
+    },
+  });
+
+  // طفرة تحديث الحالة (Status Mutation - unsupported on backend)
+  const statusMutation = useMutation({
+    mutationFn: ({
+      contentId,
+      status,
+    }: {
+      contentId: number;
+      status: ContentStatus;
+    }) => courseContentsService.updateStatus(contentId, status),
+    onSuccess: (_, { contentId, status }) => {
+      queryClient.setQueriesData<ContentEntity[]>(
+        { queryKey: queryKeys.contents.all },
+        (old) =>
+          old
+            ? old.map((item) =>
+                item.content_id === contentId ? { ...item, status } : item,
+              )
+            : old,
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.contents.all });
+    },
+  });
+
+  // دوال الإجراءات مع الحفاظ الكامل على عقود الواجهة البرمجية ومعالجة الأخطاء
   const addContent = useCallback(
     async (formData: FormData): Promise<boolean> => {
       try {
-        await contentService.createContent(formData);
-        await loadContents();
+        await addMutation.mutateAsync(formData);
         return true;
       } catch (err: any) {
         alert(err.response?.data?.message || "فشل رفع المحتوى");
         return false;
       }
     },
-    [loadContents],
+    [addMutation],
   );
 
   const editContent = useCallback(
@@ -264,31 +315,38 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
       updates: Partial<ContentEntity>,
     ): Promise<boolean> => {
       try {
-        await contentService.updateContent(contentId, updates);
-        await loadContents();
+        await editMutation.mutateAsync({ contentId, updates });
         return true;
       } catch (err: any) {
         alert(err.response?.data?.message || "فشل تعديل المحتوى");
         return false;
       }
     },
-    [loadContents],
+    [editMutation],
   );
 
   const deleteContent = useCallback(
     async (contentId: number): Promise<boolean> => {
       try {
-        await contentService.deleteContent(contentId);
-        setDisplayedContents((prev) =>
-          prev.filter((item) => item.content_id !== contentId),
-        );
+        await deleteMutation.mutateAsync(contentId);
         return true;
       } catch (err: any) {
         alert(err.response?.data?.message || "فشل حذف المحتوى");
         return false;
       }
     },
-    [],
+    [deleteMutation],
+  );
+
+  const updateContentStatus = useCallback(
+    async (contentId: number, status: ContentStatus): Promise<void> => {
+      try {
+        await statusMutation.mutateAsync({ contentId, status });
+      } catch (err: any) {
+        alert(err.response?.data?.message || "فشل تحديث حالة المحتوى");
+      }
+    },
+    [statusMutation],
   );
 
   return {
@@ -316,7 +374,7 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     currentCourseDoctor,
     isChainComplete,
     displayedContents,
-    loading,
+    loading: isContentsLoading,
     updateContentStatus,
     addContent,
     editContent,

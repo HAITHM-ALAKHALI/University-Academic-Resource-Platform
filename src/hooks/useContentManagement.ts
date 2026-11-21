@@ -1,9 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
-import { courseContentsService, ContentItem } from "../services/courseContentsService";
+import {
+  courseContentsService,
+  type ContentItem,
+  type ContentQueryParams,
+} from "../services/courseContentsService";
+import type { ContentTypeEntity } from "../types/content";
 
 export function useContentManagement() {
   const [contents, setContents] = useState<ContentItem[]>([]);
-  const [contentTypes, setContentTypes] = useState<any[]>([]);
+  const [contentTypes, setContentTypes] = useState<ContentTypeEntity[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -30,7 +35,7 @@ export function useContentManagement() {
   const loadContents = useCallback(async () => {
     try {
       setLoading(true);
-      const params: Record<string, any> = {};
+      const params: ContentQueryParams = {};
       if (selectedDoctorId) params.doctor_id = selectedDoctorId;
       if (selectedOfferingId) params.offering_id = selectedOfferingId;
       if (selectedSemesterId) params.semester_id = selectedSemesterId;

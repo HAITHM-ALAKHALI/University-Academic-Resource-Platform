@@ -22,7 +22,8 @@ export interface LevelEntity {
 export interface SemesterEntity {
   semester_id: number;
   level_id: number;
-  name: string;
+  name?: string;
+  semester_name?: string;
   semester_number: number;
   academic_year: string;
   created_at?: string;
@@ -82,7 +83,7 @@ export interface ContentEntity {
   uploaded_by: number;
   uploaded_by_name?: string;
   title: string;
-  description?: string;
+  description?: string | null;
   source_type: ContentSourceType;
   file_path?: string;
   file_name?: string;
