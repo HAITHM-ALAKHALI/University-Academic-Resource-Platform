@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   FolderTree,
   GraduationCap,
@@ -25,7 +25,10 @@ import {
   Loader2,
 } from "lucide-react";
 import { useContentHierarchy } from "../../../hooks/useContentHierarchy";
-import { courseOfferingsService } from "../../../services/courseOfferingsService";
+import { useLevels } from "../../../hooks/useLevels";
+import { useSemesters } from "../../../hooks/useSemesters";
+import { useCourseOfferings } from "../../../hooks/useCourseOfferings";
+import { useCourseDoctors } from "../../../hooks/useCourseDoctors";
 import type {
   ContentEntity,
   ContentStatus,
@@ -321,7 +324,7 @@ export default function ContentManagementView() {
               {filteredCourseDoctors.map((cd) => (
                 <option key={cd.course_doctor_id} value={cd.course_doctor_id}>
                   {cd.doctor?.full_name ||
-                    cd.doctor?.user?.full_name ||
+                    cd.doctor_name ||
                     `دكتور #${cd.course_doctor_id}`}
                 </option>
               ))}
@@ -768,8 +771,6 @@ export default function ContentManagementView() {
   );
 }
 
-import { apiClient } from "../../../services/api";
-
 interface UploadModalProps {
   departments: DepartmentEntity[];
   contentTypes: ContentTypeEntity[];
@@ -792,23 +793,75 @@ function UploadModal({
     "",
   );
 
-  // 2. قوائم البيانات المجلوبة مباشرة من الـ API
-  const [levelsList, setLevelsList] = useState<LevelEntity[]>([]);
-  const [semestersList, setSemestersList] = useState<SemesterEntity[]>([]);
-  const [offeringsList, setOfferingsList] = useState<CourseOfferingEntity[]>(
-    [],
+  // 2. استعلامات السلسلة الهرمية عبر خطافات TanStack Query الموحدة
+  const { levels: rawLevels, loading: loadingLevels } = useLevels({
+    departmentId: modalDeptId ? Number(modalDeptId) : undefined,
+    enabled: Boolean(modalDeptId),
+  });
+
+  const { semesters: rawSemesters, loading: loadingSemesters } = useSemesters({
+    levelId: modalLevelId ? Number(modalLevelId) : undefined,
+    enabled: Boolean(modalLevelId),
+  });
+
+  const { offerings: rawOfferings, loading: loadingOfferings } =
+    useCourseOfferings({
+      semesterId: modalSemesterId ? Number(modalSemesterId) : undefined,
+      enabled: Boolean(modalSemesterId),
+    });
+
+  const { assignments: rawCourseDoctors, loading: loadingDoctors } =
+    useCourseDoctors({
+      offeringId: modalOfferingId ? Number(modalOfferingId) : undefined,
+      enabled: Boolean(modalOfferingId),
+    });
+
+  // حماية عزل الكاش: تفريغ القوائم عند عدم تحديد العنصر الأب لمنع تسرب البيانات العامة
+  const levelsList = useMemo(
+    () => (modalDeptId ? rawLevels : []),
+    [modalDeptId, rawLevels],
   );
-  const [courseDoctorsList, setCourseDoctorsList] = useState<
-    CourseDoctorEntity[]
-  >([]);
+  const semestersList = useMemo(
+    () => (modalLevelId ? rawSemesters : []),
+    [modalLevelId, rawSemesters],
+  );
+  const offeringsList = useMemo(
+    () => (modalSemesterId ? rawOfferings : []),
+    [modalSemesterId, rawOfferings],
+  );
+  const courseDoctorsList = useMemo(
+    () => (modalOfferingId ? rawCourseDoctors : []),
+    [modalOfferingId, rawCourseDoctors],
+  );
 
-  // حالات تحميل الفلاتر
-  const [loadingLevels, setLoadingLevels] = useState(false);
-  const [loadingSemesters, setLoadingSemesters] = useState(false);
-  const [loadingOfferings, setLoadingOfferings] = useState(false);
-  const [loadingDoctors, setLoadingDoctors] = useState(false);
+  // 3. دوال إعادة الضبط المتتالي عند تغيير التحديد (Cascading Resets)
+  const handleDeptChange = (val: string) => {
+    setModalDeptId(val ? Number(val) : "");
+    setModalLevelId("");
+    setModalSemesterId("");
+    setModalOfferingId("");
+    setModalCourseDoctorId("");
+  };
 
-  // 3. حقول بيانات المحتوى المرفوع
+  const handleLevelChange = (val: string) => {
+    setModalLevelId(val ? Number(val) : "");
+    setModalSemesterId("");
+    setModalOfferingId("");
+    setModalCourseDoctorId("");
+  };
+
+  const handleSemesterChange = (val: string) => {
+    setModalSemesterId(val ? Number(val) : "");
+    setModalOfferingId("");
+    setModalCourseDoctorId("");
+  };
+
+  const handleOfferingChange = (val: string) => {
+    setModalOfferingId(val ? Number(val) : "");
+    setModalCourseDoctorId("");
+  };
+
+  // 4. حقول بيانات المحتوى المرفوع
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [contentTypeId, setContentTypeId] = useState<number>(
@@ -818,89 +871,6 @@ function UploadModal({
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // ─── API Cascading 1: جلب المستويات عند اختيار القسم ───
-  useEffect(() => {
-    if (!modalDeptId) {
-      setLevelsList([]);
-      setModalLevelId("");
-      return;
-    }
-    setLoadingLevels(true);
-    apiClient
-      .get(`/levels?department_id=${modalDeptId}`)
-      .then((res) => {
-        setLevelsList(res.data?.data || res.data || []);
-      })
-      .catch(() => setLevelsList([]))
-      .finally(() => setLoadingLevels(false));
-
-    // تفريغ الفروع التابعة
-    setModalLevelId("");
-    setModalSemesterId("");
-    setModalOfferingId("");
-    setModalCourseDoctorId("");
-  }, [modalDeptId]);
-
-  // ─── API Cascading 2: جلب الترمات عند اختيار المستوى ───
-  useEffect(() => {
-    if (!modalLevelId) {
-      setSemestersList([]);
-      setModalSemesterId("");
-      return;
-    }
-    setLoadingSemesters(true);
-    apiClient
-      .get(`/semesters?level_id=${modalLevelId}`)
-      .then((res) => {
-        setSemestersList(res.data?.data || res.data || []);
-      })
-      .catch(() => setSemestersList([]))
-      .finally(() => setLoadingSemesters(false));
-
-    setModalSemesterId("");
-    setModalOfferingId("");
-    setModalCourseDoctorId("");
-  }, [modalLevelId]);
-
-  // ─── API Cascading 3: جلب المقررات عند اختيار الترم ───
-  useEffect(() => {
-    if (!modalSemesterId) {
-      setOfferingsList([]);
-      setModalOfferingId("");
-      return;
-    }
-    setLoadingOfferings(true);
-    apiClient
-      .get(`/course-offerings?semester_id=${modalSemesterId}`)
-      .then((res) => {
-        setOfferingsList(res.data?.data || res.data || []);
-      })
-      .catch(() => setOfferingsList([]))
-      .finally(() => setLoadingOfferings(false));
-
-    setModalOfferingId("");
-    setModalCourseDoctorId("");
-  }, [modalSemesterId]);
-
-  // ─── API Cascading 4: جلب الدكاترة عند اختيار المقرر المطروح ───
-  useEffect(() => {
-    if (!modalOfferingId) {
-      setCourseDoctorsList([]);
-      setModalCourseDoctorId("");
-      return;
-    }
-    setLoadingDoctors(true);
-    apiClient
-      .get(`/course-doctors?offering_id=${modalOfferingId}`)
-      .then((res) => {
-        setCourseDoctorsList(res.data?.data || res.data || []);
-      })
-      .catch(() => setCourseDoctorsList([]))
-      .finally(() => setLoadingDoctors(false));
-
-    setModalCourseDoctorId("");
-  }, [modalOfferingId]);
 
   // إرسال البيانات للباك إند
   const handleSubmit = async (e: React.FormEvent) => {
@@ -993,9 +963,7 @@ function UploadModal({
                 <select
                   required
                   value={modalDeptId}
-                  onChange={(e) =>
-                    setModalDeptId(e.target.value ? Number(e.target.value) : "")
-                  }
+                  onChange={(e) => handleDeptChange(e.target.value)}
                   className="w-full rounded-xl border border-white/[0.1] bg-[#242D42] p-2 text-xs text-[#F8FAFC] focus:border-[#7DA49F] focus:outline-none cursor-pointer"
                 >
                   <option value="">اختر القسم...</option>
@@ -1019,11 +987,7 @@ function UploadModal({
                   required
                   disabled={!modalDeptId || loadingLevels}
                   value={modalLevelId}
-                  onChange={(e) =>
-                    setModalLevelId(
-                      e.target.value ? Number(e.target.value) : "",
-                    )
-                  }
+                  onChange={(e) => handleLevelChange(e.target.value)}
                   className="w-full rounded-xl border border-white/[0.1] bg-[#242D42] p-2 text-xs text-[#F8FAFC] focus:border-[#7DA49F] focus:outline-none disabled:opacity-40 cursor-pointer"
                 >
                   <option value="">
@@ -1049,11 +1013,7 @@ function UploadModal({
                   required
                   disabled={!modalLevelId || loadingSemesters}
                   value={modalSemesterId}
-                  onChange={(e) =>
-                    setModalSemesterId(
-                      e.target.value ? Number(e.target.value) : "",
-                    )
-                  }
+                  onChange={(e) => handleSemesterChange(e.target.value)}
                   className="w-full rounded-xl border border-white/[0.1] bg-[#242D42] p-2 text-xs text-[#F8FAFC] focus:border-[#7DA49F] focus:outline-none disabled:opacity-40 cursor-pointer"
                 >
                   <option value="">
@@ -1079,11 +1039,7 @@ function UploadModal({
                   required
                   disabled={!modalSemesterId || loadingOfferings}
                   value={modalOfferingId}
-                  onChange={(e) =>
-                    setModalOfferingId(
-                      e.target.value ? Number(e.target.value) : "",
-                    )
-                  }
+                  onChange={(e) => handleOfferingChange(e.target.value)}
                   className="w-full rounded-xl border border-white/[0.1] bg-[#242D42] p-2 text-xs text-[#F8FAFC] focus:border-[#7DA49F] focus:outline-none disabled:opacity-40 cursor-pointer"
                 >
                   <option value="">

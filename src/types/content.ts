@@ -61,6 +61,7 @@ export interface CourseDoctorEntity {
   course_doctor_id: number;
   offering_id: number;
   doctor_id: number;
+  doctor_name?: string;
   doctor?: DoctorUserEntity;
   created_at?: string;
 }

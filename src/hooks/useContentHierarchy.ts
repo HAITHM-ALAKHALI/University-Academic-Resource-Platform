@@ -105,7 +105,7 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
   }, [semesters, selectedLevelId]);
 
   // 4. استعلام المقررات المطروحة (Course Offerings Query - Dependent on selectedSemesterId)
-  const { data: filteredOfferings = [] } = useQuery<CourseOfferingEntity[]>({
+  const { data: rawOfferings = [] } = useQuery<CourseOfferingEntity[]>({
     queryKey: queryKeys.courseOfferings.list(
       selectedSemesterId ? Number(selectedSemesterId) : undefined,
     ),
@@ -120,8 +120,13 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     enabled: Boolean(selectedSemesterId),
   });
 
+  const filteredOfferings = useMemo(() => {
+    if (!selectedSemesterId) return [];
+    return rawOfferings;
+  }, [selectedSemesterId, rawOfferings]);
+
   // 5. استعلام الدكاترة المسندين (Course Doctors Query - Dependent on selectedOfferingId)
-  const { data: filteredCourseDoctors = [] } = useQuery<CourseDoctorEntity[]>({
+  const { data: rawCourseDoctors = [] } = useQuery<CourseDoctorEntity[]>({
     queryKey: queryKeys.courseDoctors.list(
       selectedOfferingId ? Number(selectedOfferingId) : undefined,
     ),
@@ -135,6 +140,11 @@ export function useContentHierarchy(): UseContentHierarchyReturn {
     },
     enabled: Boolean(selectedOfferingId),
   });
+
+  const filteredCourseDoctors = useMemo(() => {
+    if (!selectedOfferingId) return [];
+    return rawCourseDoctors;
+  }, [selectedOfferingId, rawCourseDoctors]);
 
   // 6. استعلام المحتويات الأكاديمية (Contents Query - Filtered by doctor or all contents)
   const contentFilter = useMemo(() => {
