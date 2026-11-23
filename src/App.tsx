@@ -28,7 +28,6 @@ function LoadingFallback() {
 export default function App() {
   // إدارة الجلسة والمصادقة عبر الـ hook المحدث
   const {
-    currentUser,
     mode,
     setMode,
     handleLoginSuccess,

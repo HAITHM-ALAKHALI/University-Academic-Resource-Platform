@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, UserCheck, AlertCircle, Loader2 } from "lucide-react";
-import type { DoctorEntity, CourseOfferingEntity } from "../../types/api";
+import type { DoctorEntity, CourseOfferingEntity } from "../../../../types/api";
 
 interface AssignDoctorCourseModalProps {
   isOpen: boolean;

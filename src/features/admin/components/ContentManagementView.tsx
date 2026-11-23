@@ -34,10 +34,6 @@ import type {
   ContentStatus,
   ContentSourceType,
   DepartmentEntity,
-  LevelEntity,
-  SemesterEntity,
-  CourseOfferingEntity,
-  CourseDoctorEntity,
   ContentTypeEntity,
 } from "../../../types/content";
 
